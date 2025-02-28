@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Keloboy - 1. Sınıf Oyunları</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #fafafa;
+      color: #333;
+    }
+
+    /* Header Başlangıcı */
+    header {
+      background: linear-gradient(135deg, #63cdda, #2b9bd3);
+      padding: 30px;
+      text-align: center;
+      color: #fff;
+      position: relative;
+    }
+
+    .logo {
+      display: inline-block;
+      width: 120px; /* Logonuzun boyutuna göre güncelleyebilirsiniz */
+      margin-bottom: 10px;
+    }
+
+    .logo img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    header h1 {
+      font-size: 2.5rem;
+      margin-bottom: 10px;
+    }
+
+    header p {
+      font-size: 1.2rem;
+      margin-bottom: 20px;
+    }
+
+    /* Kelo karakteri için yer tutucu */
+    .kelo-character {
+      position: absolute;
+      bottom: -25px;
+      right: 20px;
+      width: 80px;
+      height: 80px;
+      background: url('kelo.png') no-repeat center center/cover;
+      border: 3px solid #fff;
+      border-radius: 50%;
+    }
+    /* Header Sonu */
+
+    .container {
+      max-width: 1200px;
+      margin: 60px auto 40px;
+      padding: 0 20px;
+    }
+
+    /* Grade Section (Sınıf Bölümü) */
+    .grade-section {
+      margin-bottom: 40px;
+    }
+
+    .grade-section h2 {
+      font-size: 2rem;
+      color: #2b9bd3;
+      margin-bottom: 20px;
+      text-shadow: 1px 1px 2px #ccc;
+    }
+
+    .games-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 20px;
+    }
+
+    .game-card {
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .game-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    }
+
+    .game-card h3 {
+      font-size: 1.2rem;
+      margin-bottom: 10px;
+      color: #444;
+    }
+
+    .game-card p {
+      font-size: 0.95rem;
+      line-height: 1.4;
+      margin-bottom: 15px;
+      color: #555;
+    }
+
+    .game-card a {
+      text-decoration: none;
+      color: #2b9bd3;
+      font-weight: bold;
+      border: 1px solid #2b9bd3;
+      padding: 8px 12px;
+      border-radius: 4px;
+      transition: background 0.2s ease, color 0.2s ease;
+    }
+
+    .game-card a:hover {
+      background: #2b9bd3;
+      color: #fff;
+    }
+
+    /* Footer */
+    footer {
+      background-color: #f0f0f0;
+      text-align: center;
+      padding: 20px 0;
+      margin-top: 40px;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <!-- Keloboy logosu -->
+    <div class="logo">
+      <img src="keloboy-logo.png" alt="Keloboy Logo" />
+    </div>
+    <h1>Keloboy</h1>
+    <p>1. Sınıf İçin Eğlenceli ve Öğretici Oyunlar!</p>
+    <!-- Kelo karakteri (isteğe bağlı, kendi görselinizi kullanabilirsiniz) -->
+    <div class="kelo-character"></div>
+  </header>
+
+  <div class="container">
+
+    <!-- 1. Sınıf Oyunları -->
+    <section class="grade-section">
+      <h2>1. Sınıf Oyunları</h2>
+      <div class="games-grid">
+        <!-- Oyun Kartı 1: Harf Tanıma & Ses Bilgisi -->
+        <div class="game-card">
+          <h3>Harf Tanıma & Ses Bilgisi</h3>
+          <p>Türkçe alfabenin harflerini ve seslerini eğlenceli etkinliklerle öğrenin!</p>
+          <a href="harf-tanima.html">Başla</a>
+        </div>
+        <!-- Oyun Kartı 2: Hece Birleştirme -->
+        <div class="game-card">
+          <h3>Hece Birleştirme</h3>
+          <p>Karışık heceleri sürükleyip anlamlı kelimeler oluşturun ve okuma pratiği yapın.</p>
+          <a href="hece-birlestirme.html">Başla</a>
+        </div>
+        <!-- Oyun Kartı 3: Görsel Eşleştirme -->
+        <div class="game-card">
+          <h3>Görsel Eşleştirme</h3>
+          <p>Resimleri ve kelimeleri doğru şekilde eşleştirerek kelime dağarcığınızı geliştirin.</p>
+          <a href="gorsel-eslestirme.html">Başla</a>
+        </div>
+        <!-- Oyun Kartı 4: Basit Matematik (Toplama & Çıkarma) -->
+        <div class="game-card">
+          <h3>Basit Matematik</h3>
+          <p>1-20 arasındaki sayılarla toplama ve çıkarma işlemleri yaparak pratik kazanın.</p>
+          <a href="basit-matematik.html">Başla</a>
+        </div>
+        <!-- Oyun Kartı 5: Sayı Sıralama -->
+        <div class="game-card">
+          <h3>Sayı Sıralama</h3>
+          <p>Karışık verilen sayıları doğru sıraya dizin. Küçükten büyüğe veya tam tersi!</p>
+          <a href="sayi-siralama.html">Başla</a>
+        </div>
+        <!-- Oyun Kartı 6: Renk ve Şekil Avı -->
+        <div class="game-card">
+          <h3>Renk ve Şekil Avı</h3>
+          <p>Kelo'nun yönlendirmeleriyle, renkleri ve şekilleri hızla bulmaya çalışın.</p>
+          <a href="renk-sekil-avi.html">Başla</a>
+        </div>
+        <!-- Oyun Kartı 7: Hafıza Kartları -->
+        <div class="game-card">
+          <h3>Hafıza Kartları</h3>
+          <p>Çevir-aç kartlarla aynı harfi, rakamı veya şekli bulup eşleştirme yapın.</p>
+          <a href="hafiza-kartlari.html">Başla</a>
+        </div>
+        <!-- Oyun Kartı 8: Okuma Anlama -->
+        <div class="game-card">
+          <h3>Okuma Anlama</h3>
+          <p>Kısa hikâyeleri okuyun ve ardından sorulan sorularla anlama becerilerinizi test edin.</p>
+          <a href="okuma-anlama.html">Başla</a>
+        </div>
+        <!-- Oyun Kartı 9: Saat Okumaya Giriş -->
+        <div class="game-card">
+          <h3>Saat Okumaya Giriş</h3>
+          <p>Tam ve yarım saat kavramlarını öğrenin. Akrep ve yelkovanı doğru yere sürükleyin.</p>
+          <a href="saat-okuma.html">Başla</a>
+        </div>
+        <!-- Oyun Kartı 10: Etkinlik / Boyama -->
+        <div class="game-card">
+          <h3>Boyama Sayfası</h3>
+          <p>Kelo ve arkadaşlarının resimlerini boyayarak el-göz koordinasyonunu geliştirin.</p>
+          <a href="boyama.html">Başla</a>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <footer>
+    <p>© 2025 Keloboy. Tüm Hakları Saklıdır.</p>
+  </footer>
+
+</body>
+</html>
