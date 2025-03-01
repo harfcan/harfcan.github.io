@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Harfcan - Kelime Testi</title>
+  <!-- Harici CSS dosyasını ekliyoruz -->
+  <link rel="stylesheet" href="quiz.css" />
+</head>
+<body>
+
+  <!-- Sayfanın üst kısmı (Header) -->
+  <header>
+    <div class="logo">
+      <img src="harfcan-logo.png" alt="Harfcan Logo" />
+    </div>
+    <h1>Kelime Testi</h1>
+    <!-- Harfcan karakteri (isteğe göre düzenleyebilirsiniz) -->
+    <div class="harfcan-character"></div>
+  </header>
+
+  <!-- İçerik alanı -->
+  <div class="container quiz-container">
+    <div class="instructions">
+      Seviyeni seçtiğin için teşekkürler. "Söylenişi Dinle" tuşuna bas, sonra doğru yazımı bul!
+    </div>
+
+    <!-- Kelimenin seslendirilmesi -->
+    <div class="word-audio">
+      <button id="playButton">Söylenişi Dinle</button>
+    </div>
+
+    <!-- Cevap seçenekleri -->
+    <div class="options" id="optionsContainer"></div>
+
+    <!-- Geri bildirim (Doğru/Yanlış) -->
+    <div id="feedback" class="feedback"></div>
+
+    <!-- Sonraki soru butonu -->
+    <button id="nextButton" style="display:none;">Sonraki Kelime</button>
+
+    <!-- Seviye seçim sayfasına geri dönüş linki -->
+    <a class="back-link" href="seviye-secimi.html">← Başka Seviye Seç</a>
+  </div>
+
+  <!-- Alt kısım (Footer) -->
+  <footer>
+    <p>© 2025 Harfcan. Tüm Hakları Saklıdır.</p>
+  </footer>
+
+  <!-- JavaScript kodu en sonda -->
+  <script>
+    // 1. Quiz verileri (kelime listesi)
+    const quizData = [
+      // Seviye 1
+      { level: 1, text: "kedi",      incorrectOptions: ["kady", "kidi", "kedı"] },
+      { level: 1, text: "köpek",     incorrectOptions: ["köpük", "köper", "kopak"] },
+      { level: 1, text: "su",        incorrectOptions: ["sü", "şu", "suu"] },
+      { level: 1, text: "elma",      incorrectOptions: ["alma", "elam", "elmı"] },
+      { level: 1, text: "araba",     incorrectOptions: ["arbaa", "arabaç", "arbas"] },
+      { level: 1, text: "kuş",       incorrectOptions: ["kus", "küş", "kuşu"] },
+      { level: 1, text: "balık",     incorrectOptions: ["balik", "balıg", "balıkı"] },
+      { level: 1, text: "tuz",       incorrectOptions: ["tüs", "tuzh", "tuzl"] },
+      { level: 1, text: "kasa",      incorrectOptions: ["kase", "kasu", "kas"] },
+
+      // Seviye 2
+      { level: 2, text: "çiçek",     incorrectOptions: ["cicek", "çicek", "çiçak"] },
+      { level: 2, text: "arkadaş",   incorrectOptions: ["arkdas", "arkadaç", "arkadaz"] },
+      { level: 2, text: "kalem",     incorrectOptions: ["kalım", "kalim", "kalam"] },
+      { level: 2, text: "yastık",    incorrectOptions: ["yastik", "yaştık", "yaştik"] },
+      { level: 2, text: "beyaz",     incorrectOptions: ["bayaz", "beyasz", "beyza"] },
+      { level: 2, text: "dünya",     incorrectOptions: ["dunya", "dünyıa", "düynia"] },
+      { level: 2, text: "koltuk",    incorrectOptions: ["koltuğ", "koltok", "koltık"] },
+      { level: 2, text: "defter",    incorrectOptions: ["deftar", "deftır", "defterr"] },
+      { level: 2, text: "fikir",     incorrectOptions: ["fikri", "fıkr", "fıker"] },
+
+      // Seviye 3
+      { level: 3, text: "teşekkürler", incorrectOptions: ["teşekürler", "teşkürler", "tesekkürler"] },
+      { level: 3, text: "mükemmel",    incorrectOptions: ["mükemel", "mükkemel", "mükemme"] },
+      { level: 3, text: "öğretmen",    incorrectOptions: ["öğretman", "öretmen", "ögretmen"] },
+      { level: 3, text: "sorumluluk",  incorrectOptions: ["soromluluk", "sorumlulk", "sorumlülük"] },
+      { level: 3, text: "bağımsızlık", incorrectOptions: ["bağımsızlıık", "bağimsızlık", "bağımsızlik"] },
+      { level: 3, text: "alışveriş",   incorrectOptions: ["alişveriş", "alışveirş", "alışvriş"] },
+      { level: 3, text: "yaratıcılık", incorrectOptions: ["yaratıklık", "yaratcıllık", "yaratışılık"] },
+      { level: 3, text: "özgürlük",    incorrectOptions: ["özgurluk", "özgürlükü", "öğzürlük"] },
+      { level: 3, text: "istasyon",    incorrectOptions: ["istayon", "istasyonr", "istasyan"] },
+    ];
+
+    // 2. URL parametresinden seviye bilgisi
+    const urlParams       = new URLSearchParams(window.location.search);
+    const selectedLevel   = parseInt(urlParams.get("level"), 10);
+    const filteredWords   = quizData.filter(item => item.level === selectedLevel);
+
+    // Geçersiz seviye seçimi
+    if (!selectedLevel || filteredWords.length === 0) {
+      document.body.innerHTML = `
+        <div style="margin: 50px; text-align:center;">
+          <h2>Geçersiz seviye seçimi!</h2>
+          <a href="seviye-secimi.html" style="text-decoration:none; color:#ff7a7a; font-weight:bold;">← Geri Dön</a>
+        </div>
+      `;
+    } else {
+      let currentQuestionIndex = 0;
+      let mistakeCount = 0;
+
+      // HTML'deki element referansları
+      const playButton       = document.getElementById("playButton");
+      const optionsContainer = document.getElementById("optionsContainer");
+      const feedback         = document.getElementById("feedback");
+      const nextButton       = document.getElementById("nextButton");
+
+      // Soru yükleniyor
+      loadQuestion();
+
+      // Etkinlik dinleyicileri
+      playButton.addEventListener("click", speakCurrentWord);
+      nextButton.addEventListener("click", handleNext);
+
+      function loadQuestion() {
+        feedback.textContent = "";
+        optionsContainer.innerHTML = "";
+        nextButton.style.display = "none";
+
+        const currentData = filteredWords[currentQuestionIndex];
+        if (!currentData) return;
+
+        // Doğru + yanlış şıkları
+        const allOptions = [currentData.text, ...currentData.incorrectOptions];
+        shuffleArray(allOptions);
+
+        // Butonları oluşturma
+        allOptions.forEach(optionText => {
+          const btn = document.createElement("button");
+          btn.textContent = optionText;
+          btn.addEventListener("click", () => checkAnswer(optionText));
+          optionsContainer.appendChild(btn);
+        });
+      }
+
+      function checkAnswer(selectedOption) {
+        const correctAnswer = filteredWords[currentQuestionIndex].text;
+        if (selectedOption === correctAnswer) {
+          feedback.textContent = "Doğru!";
+          feedback.style.color = "green";
+        } else {
+          feedback.textContent = `Yanlış! Doğrusu: "${correctAnswer}"`;
+          feedback.style.color = "red";
+          mistakeCount++;
+        }
+
+        // Butonları devre dışı bırakma
+        const buttons = optionsContainer.querySelectorAll("button");
+        buttons.forEach(b => (b.disabled = true));
+
+        // Sonraki soru var mı?
+        if (currentQuestionIndex < filteredWords.length - 1) {
+          nextButton.style.display = "inline-block";
+        } else {
+          nextButton.textContent = "Test Bitti";
+          nextButton.style.display = "inline-block";
+        }
+      }
+
+      function handleNext() {
+        if (currentQuestionIndex < filteredWords.length - 1) {
+          currentQuestionIndex++;
+          loadQuestion();
+        } else {
+          // Quiz bitti
+          feedback.style.color = "blue";
+          feedback.textContent = `Tebrikler, bu seviyeyi bitirdin! Toplam ${mistakeCount} yanlış yaptın.`;
+          nextButton.style.display = "none";
+        }
+      }
+
+      function speakCurrentWord() {
+        const currentWord = filteredWords[currentQuestionIndex].text;
+        if (!currentWord) return;
+
+        const allVoices    = speechSynthesis.getVoices();
+        let turkishVoice   = allVoices.find(voice => voice.lang.startsWith("tr"));
+
+        if (!turkishVoice) {
+          // Bazı tarayıcılarda ses listesi geç yüklenebilir
+          speechSynthesis.onvoiceschanged = () => {
+            turkishVoice = speechSynthesis.getVoices().find(voice => voice.lang.startsWith("tr"));
+            speakWithVoice(currentWord, turkishVoice);
+          };
+        } else {
+          speakWithVoice(currentWord, turkishVoice);
+        }
+      }
+
+      function speakWithVoice(text, voice) {
+        const utterance = new SpeechSynthesisUtterance(text);
+        if (voice) {
+          utterance.voice = voice;
+        }
+        speechSynthesis.speak(utterance);
+      }
+
+      function shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
+      }
+    }
+  </script>
+</body>
+</html>
