@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Harfcan - Okuma Anlama Quiz</title>
+  <link rel="stylesheet" href="okuma-quiz.css" />
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <!-- Logoyu ana sayfaya yönlendirecek şekilde <a> etiketi ekliyoruz -->
+    <div class="logo">
+      <a href="index.html">
+        <img src="harfcan-logo.png" alt="Harfcan Logo" />
+      </a>
+    </div>
+    <h1>Okuma Anlama</h1>
+    <div class="harfcan-character"></div>
+  </header>
+
+  <!-- Quiz Container -->
+  <div class="container quiz-container">
+
+    <div id="readingText" class="reading-text">
+      <!-- Kısa metin buraya JavaScript tarafından eklenecek -->
+    </div>
+
+    <div id="questionText" class="question-text">
+      <!-- Soru metni buraya eklenecek -->
+    </div>
+
+    <div class="options" id="optionsContainer">
+      <!-- Çoktan seçmeli şıklar (düğmeler) buraya JS ile eklenir -->
+    </div>
+
+    <div id="feedback" class="feedback"></div>
+
+    <button id="nextButton" style="display:none;">Sonraki Soru</button>
+
+    <!-- Geri dönüş linki -->
+    <a class="back-link" href="okuma-seviye-secimi.html">← Başka Seviye Seç</a>
+  </div>
+
+  <footer>
+    <p>© 2025 Harfcan. Tüm Hakları Saklıdır.</p>
+  </footer>
+
+  <!-- JavaScript dosyaları (önce data, sonra quiz mantığı) -->
+  <script src="okuma-data.js"></script>
+  <script src="okuma-quiz.js"></script>
+</body>
+</html>

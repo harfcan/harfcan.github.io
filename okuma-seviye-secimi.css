@@ -1,0 +1,99 @@
+/* ---------------------------
+   Ortak Harfcan Stilleri
+--------------------------- */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #fafafa;
+  color: #333;
+}
+
+header {
+  background: linear-gradient(135deg, #63cdda, #2b9bd3);
+  padding: 30px;
+  text-align: center;
+  color: #fff;
+  position: relative;
+}
+
+.logo {
+  display: inline-block;
+  width: 120px;
+  margin-bottom: 10px;
+}
+
+.logo img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+header h1 {
+  font-size: 2rem;
+  margin-bottom: 10px;
+}
+
+.harfcan-character {
+  position: absolute;
+  bottom: -25px;
+  right: 20px;
+  width: 80px;
+  height: 80px;
+  background: url('harfcan.png') no-repeat center center / cover;
+  border: 3px solid #fff;
+  border-radius: 50%;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 60px auto 40px;
+  padding: 0 20px;
+}
+
+footer {
+  background-color: #f0f0f0;
+  text-align: center;
+  padding: 20px 0;
+  margin-top: 40px;
+}
+
+/* ---------------------------
+   Seviye Seçimi Özel Stiller
+--------------------------- */
+.seviye-container {
+  text-align: center;
+  padding: 40px 20px;
+}
+
+.seviye-container h2 {
+  font-size: 1.6rem;
+  color: #2b9bd3;
+  margin-bottom: 30px;
+  text-shadow: 1px 1px 2px #ccc;
+}
+
+.level-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+}
+
+.level-buttons a {
+  background-color: #ffa64d;
+  color: #fff;
+  text-decoration: none;
+  padding: 15px 25px;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  transition: background-color 0.3s ease;
+}
+
+.level-buttons a:hover {
+  background-color: #ff8833;
+}

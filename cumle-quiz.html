@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Harfcan - Cümle Anlama Quiz</title>
+  <!-- Quiz sayfasına ait CSS dosyası -->
+  <link rel="stylesheet" href="cumle-quiz.css" />
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <div class="logo">
+    <a href="index.html">
+      <img src="harfcan-logo.png" alt="Harfcan Logo" />
+    </a>
+  </div>
+    <h1>Cümle Anlama</h1>
+    <div class="harfcan-character"></div>
+  </header>
+
+  <!-- İçerik: Quiz container -->
+  <div class="container quiz-container">
+    <div class="instructions">
+      Lütfen dinlediğiniz veya okuduğunuz cümlenin doğru yazımını seçin!
+    </div>
+
+    <!-- Cümleyi dinleme butonu -->
+    <div class="sentence-audio">
+      <button id="playButton">Cümleyi Dinle</button>
+    </div>
+
+    <!-- Şıklar -->
+    <div class="options" id="optionsContainer"></div>
+
+    <!-- Geri bildirim (Doğru/Yanlış) -->
+    <div id="feedback" class="feedback"></div>
+
+    <!-- Sonraki cümle butonu -->
+    <button id="nextButton" style="display:none;">Sonraki Cümle</button>
+
+    <!-- Seviye seçim sayfasına geri link -->
+    <a class="back-link" href="cumle-seviye-secimi.html">← Başka Seviye Seç</a>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <p>© 2025 Harfcan. Tüm Hakları Saklıdır.</p>
+  </footer>
+
+  <!-- JavaScript Kodunu En Sona Ekliyoruz -->
+  <script src="cumle-quiz-data.js"></script>
+  <script src="cumle-quiz.js"></script>
+</body>
+</html>
