@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Kelime Okuma</title>
+  <link rel="stylesheet" href="seviye-secimi.css" />
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <a href="index.html">
+      <img src="harfcan-logo.png" alt="Harfcan Logo" />
+    </a>
+  </div>
+  <h1 id="pageTitle">Kelime Testi</h1>
+  <div class="harfcan-character"></div>
+</header>
+
+<div class="container quiz-container">
+  <h2 id="currentWord">Kelime</h2>
+
+  <div id="controls" style="margin: 20px;">
+    <button id="playWordButton">Kelimeyi Dinle</button>
+  </div>
+
+  <div id="quiz">
+    <div id="options" class="options"></div>
+  </div>
+
+  <div id="feedback" class="feedback" style="margin-top: 20px;"></div>
+
+  <button id="nextButton" style="margin-top: 20px; display:none;">Sonraki Kelime</button>
+</div>
+
+<footer>
+  <p>© 2025 Harfcan. Tüm Hakları Saklıdır.</p>
+</footer>
+
+<script src="kelimeler.js"></script>
+<script>
+const urlParams = new URLSearchParams(window.location.search);
+const level = urlParams.get('level');
+const letter = urlParams.get('letter');
+const key = `${level}-${letter.toUpperCase()}`;
+
+const kelimeSeti = kelimelerData[key] || [];
+
+let currentQuestionIndex = 0;
+
+document.addEventListener('DOMContentLoaded', () => {
+  if (kelimeSeti.length === 0) {
+    document.getElementById('pageTitle').innerText = "Kelimeler Bulunamadı!";
+    document.getElementById('currentWord').innerText = "";
+    document.getElementById('playWordButton').style.display = 'none';
+    return;
+  }
+
+  document.getElementById('pageTitle').innerText = `Seviye ${level} - ${letter.toUpperCase()} Harfi`;
+  loadWord();
+});
+
+function loadWord() {
+  const data = kelimeSeti[currentQuestionIndex];
+  document.getElementById('currentWord').innerText = data.word;
+
+  const optionsDiv = document.getElementById('options');
+  optionsDiv.innerHTML = '';
+
+  data.options.forEach(option => {
+    const btn = document.createElement('button');
+    btn.className = 'option-button';
+    btn.innerText = option;
+    btn.onclick = () => checkAnswer(option);
+    optionsDiv.appendChild(btn);
+  });
+
+  document.getElementById('feedback').innerText = "";
+  document.getElementById('nextButton').style.display = "none";
+}
+
+document.getElementById('playWordButton').addEventListener('click', () => {
+  const word = kelimeSeti[currentQuestionIndex].word;
+  const utterance = new SpeechSynthesisUtterance(word);
+  utterance.lang = 'tr-TR';
+  speechSynthesis.speak(utterance);
+});
+
+function checkAnswer(selectedOption) {
+  const data = kelimeSeti[currentQuestionIndex];
+  if (selectedOption === data.answer) {
+    document.getElementById('feedback').innerText = "Doğru!";
+    document.getElementById('feedback').style.color = "green";
+  } else {
+    document.getElementById('feedback').innerText = `Yanlış! Doğru cevap: ${data.answer}`;
+    document.getElementById('feedback').style.color = "red";
+  }
+  document.getElementById('nextButton').style.display = "inline-block"; // Sonraki butonu aç
+}
+
+document.getElementById('nextButton').addEventListener('click', () => {
+  currentQuestionIndex++;
+  if (currentQuestionIndex < kelimeSeti.length) {
+    loadWord();
+  } else {
+    showFinishScreen();
+  }
+});
+
+function showFinishScreen() {
+  document.getElementById('controls').style.display = 'none'; // Kelimeyi Dinle gizle
+  document.getElementById('quiz').classList.add('hidden');
+  document.getElementById('nextButton').style.display = "none";
+
+  document.getElementById('feedback').innerText = "Tebrikler! Tüm kelimeleri tamamladın.";
+
+  const backButton = document.createElement('button');
+  backButton.innerText = "Kelime Menüsüne Dön";
+  backButton.className = 'option-button';
+  backButton.style.marginTop = '20px';
+  backButton.onclick = function() {
+    window.location.href = 'kelime-okuma.html'; // kelime menüsüne dönüş
+  };
+  document.getElementById('feedback').appendChild(backButton);
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Hikaye Oku ve Test Çöz</title>
+  <link rel="stylesheet" href="seviye-secimi.css" />
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <a href="index.html">
+      <img src="harfcan-logo.png" alt="Harfcan Logo" />
+    </a>
+  </div>
+  <h1>Hikaye Anla ve Test Çöz</h1>
+  <div class="harfcan-character"></div>
+</header>
+
+<div class="container quiz-container">
+  <div id="storyText" class="instructions"></div>
+
+  <div id="controls" style="margin-top:20px;">
+    <button id="playButton">Hikayeyi Dinle</button>
+  </div>
+
+  <div id="quiz">
+    <h2 id="question"></h2>
+    <div id="options" class="options"></div>
+  </div>
+
+  <div id="result" class="feedback hidden">
+    <div id="resultText"></div>
+    <button onclick="goBack()" id="nextButton">Hikaye Seçimine Dön</button>
+  </div>
+</div>
+
+<footer>
+  <p>© 2025 Harfcan. Tüm Hakları Saklıdır.</p>
+</footer>
+
+<script src="stories.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const urlParams = new URLSearchParams(window.location.search);
+  const level = urlParams.get('level');
+  const story = urlParams.get('story');
+  const storyKey = `${level}-${story}`;
+  const currentStory = stories[storyKey];
+
+  if (!currentStory) {
+    document.body.innerHTML = '<h2>Geçersiz Hikaye Seçimi</h2><a href="hikaye-secimi.html">← Hikaye Seç</a>';
+    return;
+  }
+
+  document.getElementById('storyText').innerText = currentStory.text;
+
+  document.getElementById('playButton').addEventListener('click', () => {
+    const utterance = new SpeechSynthesisUtterance(currentStory.text);
+    utterance.lang = 'tr-TR';
+
+    const voices = window.speechSynthesis.getVoices();
+    const turkishVoice = voices.find(v => v.lang.startsWith('tr'));
+
+    if (turkishVoice) {
+      utterance.voice = turkishVoice;
+    }
+
+    speechSynthesis.speak(utterance);
+  });
+
+  // Hemen ilk soruyu göster
+  loadQuestion(currentStory);
+});
+
+let currentQuestion = 0;
+let score = 0;
+let currentStory = null;
+
+function loadQuestion(storyData) {
+  currentStory = storyData; // Şu anki hikaye datasını set et
+  if (currentQuestion >= currentStory.questions.length) {
+    showResult();
+    return;
+  }
+
+  document.getElementById('quiz').classList.remove('hidden');
+
+  const q = currentStory.questions[currentQuestion];
+  document.getElementById('question').innerText = q.q;
+
+  const optionsDiv = document.getElementById('options');
+  optionsDiv.innerHTML = '';
+
+  q.options.forEach(opt => {
+    const btn = document.createElement('button');
+    btn.className = 'option-button';
+    btn.innerText = opt;
+    btn.onclick = () => checkAnswer(opt);
+    optionsDiv.appendChild(btn);
+  });
+}
+
+function checkAnswer(selected) {
+  const q = currentStory.questions[currentQuestion];
+  if (selected === q.answer) {
+    score += 10;
+  }
+  currentQuestion++;
+  loadQuestion(currentStory);
+}
+
+function showResult() {
+  document.getElementById('quiz').classList.add('hidden');
+  const resultDiv = document.getElementById('result');
+  resultDiv.classList.remove('hidden');
+  document.getElementById('resultText').innerText = `Test tamamlandı! Toplam Puanın: ${score} / ${currentStory.questions.length * 10}`;
+  const urlParams = new URLSearchParams(window.location.search);
+  const level = urlParams.get('level');
+  const story = urlParams.get('story');
+  localStorage.setItem(`completed-level-${level}-story-${story}`, score === currentStory.questions.length * 10 ? 'passed' : 'failed');
+}
+
+function goBack() {
+  window.location.href = 'hikaye-secimi.html';
+}
+</script>
+
+
+</body>
+</html>

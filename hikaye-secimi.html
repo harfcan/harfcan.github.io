@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Harfcan - Hikaye Seçimi</title>
+  <link rel="stylesheet" href="seviye-secimi.css" />
+  <style>
+
+    .seviye-group {
+     margin-bottom: 20px; /* Artırıldı */
+     border: 1px solid #ccc;
+     border-radius: 4px;
+     padding: 10px; /* Gruplar arası iç boşluk eklendi */
+    }
+
+    .stories {
+     display: none;
+     margin: 10px 0;
+     padding: 0 20px 10px;
+    }
+
+    .stories li {
+     list-style: none;
+     margin: 12px 0; /* Artırıldı */
+    }
+
+    .stories a {
+     text-decoration: none;
+     color: #007bff;
+     border: 1px solid #007bff;
+     padding: 10px 16px; /* Buton gibi durması için artırıldı */
+     border-radius: 6px;
+     display: inline-block; /* Blok gibi görünmesi için */
+     transition: background 0.3s;
+    }
+
+    .stories a:hover {
+     background: #007bff;
+     color: #fff;
+    }
+
+    .checkmark, .xmark {
+      display: none;
+      margin-left: 8px;
+      font-weight: bold;
+    }
+
+    .checkmark {
+      color: green;
+    }
+
+    .xmark {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <a href="index.html">
+      <img src="harfcan-logo.png" alt="Harfcan Logo" />
+    </a>
+  </div>
+  <h1>Hikaye Seçimi</h1>
+  <div class="harfcan-character"></div>
+</header>
+
+<div class="container seviye-container">
+  <h2>Seviye Seçin</h2>
+
+  <!-- Seviye 1 - Kolay -->
+  <div class="seviye-group">
+    <div class="seviye" onclick="toggleStories('seviye1-stories')">
+      <strong>Seviye 1 (Kolay)</strong>
+    </div>
+    <ul id="seviye1-stories" class="stories">
+      <li><a href="hikaye.html?level=1&story=1">Ayşe'nin Topu</a></li>
+      <li><a href="hikaye.html?level=1&story=2">Küçük Kedi</a></li>
+      <li><a href="hikaye.html?level=1&story=3">Emre'nin Balonu</a></li>
+      <li><a href="hikaye.html?level=1&story=4">Deniz ve Karpuz</a></li>
+    </ul>
+  </div>
+
+  <!-- Seviye 2 - Orta -->
+  <div class="seviye-group">
+    <div class="seviye" onclick="toggleStories('seviye2-stories')">
+      <strong>Seviye 2 (Orta)</strong>
+    </div>
+    <ul id="seviye2-stories" class="stories">
+      <li><a href="hikaye.html?level=2&story=1">Ali ve Küçük Kuş</a></li>
+      <li><a href="hikaye.html?level=2&story=2">Mavi Balık</a></li>
+      <li><a href="hikaye.html?level=2&story=3">Parkta Bir Gün</a></li>
+      <li><a href="hikaye.html?level=2&story=4">Yağmurlu Gün</a></li>
+    </ul>
+  </div>
+
+  <!-- Seviye 3 - Zor -->
+  <div class="seviye-group">
+    <div class="seviye" onclick="toggleStories('seviye3-stories')">
+      <strong>Seviye 3 (Zor)</strong>
+    </div>
+    <ul id="seviye3-stories" class="stories">
+      <li><a href="hikaye.html?level=3&story=1">Ormandaki Macera</a></li>
+      <li><a href="hikaye.html?level=3&story=2">Kayıp Oyuncak</a></li>
+      <li><a href="hikaye.html?level=3&story=3">Uçurtma Şenliği</a></li>
+      <li><a href="hikaye.html?level=3&story=4">Sınıf Gezisi</a></li>
+    </ul>
+  </div>
+</div>
+
+</div>
+
+<footer>
+  <p>© 2025 Harfcan. Tüm Hakları Saklıdır.</p>
+</footer>
+
+<script>
+  function toggleStories(elementId) {
+    const storiesList = document.getElementById(elementId);
+    if (storiesList.style.display === 'none' || storiesList.style.display === '') {
+      storiesList.style.display = 'block';
+    } else {
+      storiesList.style.display = 'none';
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const totalLevels = 3;
+    const storiesPerLevel = 2;
+
+    for (let level = 1; level <= totalLevels; level++) {
+      for (let story = 1; story <= storiesPerLevel; story++) {
+        const key = `completed-level-${level}-story-${story}`;
+        const storyStatus = localStorage.getItem(key);
+
+        const checkEl = document.getElementById(`level-${level}-story-${story}-check`);
+        const xEl = document.getElementById(`level-${level}-story-${story}-x`);
+
+        if (storyStatus === "passed") {
+          checkEl.style.display = "inline-block";
+        } else if (storyStatus === "failed") {
+          xEl.style.display = "inline-block";
+        }
+      }
+    }
+  });
+</script>
+
+</body>
+</html>

@@ -2,38 +2,122 @@
 <html lang="tr">
 <head>
   <meta charset="UTF-8" />
-  <title>Harfcan - Seviye Seçimi</title>
-  <!-- Seviye Seçimi için özel CSS dosyasını dahil ediyoruz -->
+  <title>Kelime Okuma</title>
   <link rel="stylesheet" href="seviye-secimi.css" />
+  <style>
+    .seviye-group {
+      margin-bottom: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    .seviye-group .seviye {
+      padding: 10px;
+      background: #f7f7f7;
+      cursor: pointer;
+    }
+    .seviye-group .seviye:hover {
+      background: #eee;
+    }
+    .groups {
+      display: none;
+      margin: 0;
+      padding: 0 20px 10px;
+    }
+    .groups li {
+      list-style: none;
+      margin: 8px 0;
+    }
+    .groups a {
+      text-decoration: none;
+      color: #007bff;
+      border: 1px solid #007bff;
+      padding: 6px 12px;
+      border-radius: 4px;
+      transition: background 0.3s;
+    }
+    .groups a:hover {
+      background: #007bff;
+      color: #fff;
+    }
+
+  </style>
 </head>
 <body>
 
-  <!-- Sayfa Üst Kısmı (Header) -->
-  <header>
-    <div class="logo">
-      <a href="index.html">
-        <img src="harfcan-logo.png" alt="Harfcan Logo" />
-      </a>
-    </div>
-    <h1>Kelime Testi - Seviye Seçimi</h1>
-    <!-- Harfcan karakteri (İsteğe göre düzenleyebilirsiniz) -->
-    <div class="harfcan-character"></div>
-  </header>
+<header>
+  <div class="logo">
+    <a href="index.html">
+      <img src="harfcan-logo.png" alt="Harfcan Logo" />
+    </a>
+  </div>
+  <h1>Kelime Okuma</h1>
+  <div class="harfcan-character"></div>
+</header>
 
-  <!-- İçerik Alanı -->
-  <div class="container seviye-container">
-    <h2>Seviye Seçin</h2>
-    <div class="level-buttons">
-      <a href="quiz.html?level=1">Seviye 1 (Kolay)</a>
-      <a href="quiz.html?level=2">Seviye 2 (Orta)</a>
-      <a href="quiz.html?level=3">Seviye 3 (Zor)</a>
+<div class="container seviye-container">
+  <h2>Seviye Seçin</h2>
+
+  <!-- Seviye 1 - Basit -->
+  <div class="seviye-group">
+    <div class="seviye" onclick="toggleGroups('seviye1-groups')">
+      <strong>Seviye 1 (Basit)</strong>
     </div>
+    <ul id="seviye1-groups" class="groups">
+      <!-- Harfler A-Z -->
+      <!-- Bunu otomatik generate edeceğiz -->
+    </ul>
   </div>
 
-  <!-- Alt Kısım (Footer) -->
-  <footer>
-    <p>© 2025 Harfcan. Tüm Hakları Saklıdır.</p>
-  </footer>
-  
+  <!-- Seviye 2 - Orta -->
+  <div class="seviye-group">
+    <div class="seviye" onclick="toggleGroups('seviye2-groups')">
+      <strong>Seviye 2 (Orta)</strong>
+    </div>
+    <ul id="seviye2-groups" class="groups">
+      <!-- Harfler A-Z -->
+    </ul>
+  </div>
+
+  <!-- Seviye 3 - Zor -->
+  <div class="seviye-group">
+    <div class="seviye" onclick="toggleGroups('seviye3-groups')">
+      <strong>Seviye 3 (Zor)</strong>
+    </div>
+    <ul id="seviye3-groups" class="groups">
+      <!-- Harfler A-Z -->
+    </ul>
+  </div>
+
+</div>
+
+<footer>
+  <p>© 2025 Harfcan. Tüm Hakları Saklıdır.</p>
+</footer>
+
+<script>
+function toggleGroups(elementId) {
+  const groupsList = document.getElementById(elementId);
+  if (groupsList.style.display === 'none' || groupsList.style.display === '') {
+    groupsList.style.display = 'block';
+  } else {
+    groupsList.style.display = 'none';
+  }
+}
+
+// A-Z Harfleri otomatik üret
+const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+
+function generateLinks(level) {
+  return alphabet.map(letter => `
+    <li><a href="kelimeler.html?level=${level}&letter=${letter}">${letter} Harfi ile Başlayanlar</a></li>
+  `).join('');
+}
+
+document.getElementById('seviye1-groups').innerHTML = generateLinks(1);
+document.getElementById('seviye2-groups').innerHTML = generateLinks(2);
+document.getElementById('seviye3-groups').innerHTML = generateLinks(3);
+
+</script>
+
 </body>
 </html>

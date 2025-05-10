@@ -41,7 +41,7 @@
     <button id="nextButton" style="display:none;">Sonraki Kelime</button>
 
     <!-- Seviye seçim sayfasına geri dönüş linki -->
-    <a class="back-link" href="seviye-secimi.html">← Başka Seviye Seç</a>
+    <a class="back-link" href="updated-seviye-secimi.html">← Başka Seviye Seç</a>
   </div>
 
   <!-- Alt kısım (Footer) -->
@@ -51,7 +51,7 @@
 
   <!-- JavaScript kodu en sonda -->
   <script>
-    // 1. Quiz verileri (kelime listesi)
+    // 1. Quiz verileri (her seviye için 9 kelime; 3'erli test parçaları)
     const quizData = [
       // Seviye 1
       { level: 1, text: "kedi",      incorrectOptions: ["kady", "kidi", "kedı"] },
@@ -87,36 +87,49 @@
       { level: 3, text: "istasyon",    incorrectOptions: ["istayon", "istasyonr", "istasyan"] },
     ];
 
-    // 2. URL parametresinden seviye bilgisi
-    const urlParams       = new URLSearchParams(window.location.search);
-    const selectedLevel   = parseInt(urlParams.get("level"), 10);
-    const filteredWords   = quizData.filter(item => item.level === selectedLevel);
+    // 2. URL parametrelerinden seviye ve test bilgisi
+    const urlParams     = new URLSearchParams(window.location.search);
+    const selectedLevel = parseInt(urlParams.get("level"), 10);
+    const selectedTest  = parseInt(urlParams.get("test"), 10) || 1;
 
-    // Geçersiz seviye seçimi
+    // Her test, level başına 9 kelimeden 3'erli parçalar
+    const chunkSize   = 3;
+    const startIndex  = (selectedTest - 1) * chunkSize;
+    const endIndex    = startIndex + chunkSize;
+    const wordsForLevel = quizData.filter(item => item.level === selectedLevel);
+
+    // slice -> Seçilen testin sözlük dilimi
+    const filteredWords = wordsForLevel.slice(startIndex, endIndex);
+
+    // Geçerli test yoksa veya seviye yoksa hata
     if (!selectedLevel || filteredWords.length === 0) {
       document.body.innerHTML = `
         <div style="margin: 50px; text-align:center;">
-          <h2>Geçersiz seviye seçimi!</h2>
-          <a href="seviye-secimi.html" style="text-decoration:none; color:#ff7a7a; font-weight:bold;">← Geri Dön</a>
+          <h2>Geçersiz seviye veya test seçimi!</h2>
+          <a href="updated-seviye-secimi.html" style="text-decoration:none; color:#ff7a7a; font-weight:bold;">
+            ← Geri Dön
+          </a>
         </div>
       `;
     } else {
+      // Quiz durumu
       let currentQuestionIndex = 0;
-      let mistakeCount = 0;
+      let mistakeCount         = 0;
 
-      // HTML'deki element referansları
+      // HTML element referansları
       const playButton       = document.getElementById("playButton");
       const optionsContainer = document.getElementById("optionsContainer");
       const feedback         = document.getElementById("feedback");
       const nextButton       = document.getElementById("nextButton");
 
-      // Soru yükleniyor
+      // Başlangıçta ilk soruyu yükle
       loadQuestion();
 
-      // Etkinlik dinleyicileri
+      // Olay dinleyicileri
       playButton.addEventListener("click", speakCurrentWord);
       nextButton.addEventListener("click", handleNext);
 
+      // Soru ve şıklar
       function loadQuestion() {
         feedback.textContent = "";
         optionsContainer.innerHTML = "";
@@ -125,11 +138,11 @@
         const currentData = filteredWords[currentQuestionIndex];
         if (!currentData) return;
 
-        // Doğru + yanlış şıkları
+        // Tüm şıkları (doğru + yanlış) oluşturma
         const allOptions = [currentData.text, ...currentData.incorrectOptions];
         shuffleArray(allOptions);
 
-        // Butonları oluşturma
+        // Butonları ekle
         allOptions.forEach(optionText => {
           const btn = document.createElement("button");
           btn.textContent = optionText;
@@ -138,6 +151,7 @@
         });
       }
 
+      // Şık seçildiğinde doğru/yanlış kontrol
       function checkAnswer(selectedOption) {
         const correctAnswer = filteredWords[currentQuestionIndex].text;
         if (selectedOption === correctAnswer) {
@@ -149,40 +163,47 @@
           mistakeCount++;
         }
 
-        // Butonları devre dışı bırakma
+        // Tüm butonları devre dışı
         const buttons = optionsContainer.querySelectorAll("button");
         buttons.forEach(b => (b.disabled = true));
 
-        // Sonraki soru var mı?
+        // Sonraki soru
         if (currentQuestionIndex < filteredWords.length - 1) {
           nextButton.style.display = "inline-block";
         } else {
-          nextButton.textContent = "Test Bitti";
+          nextButton.textContent = "Testi Bitir";
           nextButton.style.display = "inline-block";
         }
       }
 
+      // Sonraki soruya geç veya testi bitir
       function handleNext() {
         if (currentQuestionIndex < filteredWords.length - 1) {
           currentQuestionIndex++;
           loadQuestion();
         } else {
-          // Quiz bitti
+          // Tüm sorular bitti
           feedback.style.color = "blue";
-          feedback.textContent = `Tebrikler, bu seviyeyi bitirdin! Toplam ${mistakeCount} yanlış yaptın.`;
+          if (mistakeCount === 0) {
+            feedback.textContent = `Tebrikler, hepsini doğru yaptın!`;
+            markTestComplete(selectedLevel, selectedTest, "passed");
+          } else {
+            feedback.textContent = `Test bitti, ${mistakeCount} yanlışın var!`;
+            markTestComplete(selectedLevel, selectedTest, "failed");
+          }
           nextButton.style.display = "none";
         }
       }
 
+      // Seslendirme
       function speakCurrentWord() {
         const currentWord = filteredWords[currentQuestionIndex].text;
         if (!currentWord) return;
 
-        const allVoices    = speechSynthesis.getVoices();
-        let turkishVoice   = allVoices.find(voice => voice.lang.startsWith("tr"));
+        const allVoices  = speechSynthesis.getVoices();
+        let turkishVoice = allVoices.find(voice => voice.lang.startsWith("tr"));
 
         if (!turkishVoice) {
-          // Bazı tarayıcılarda ses listesi geç yüklenebilir
           speechSynthesis.onvoiceschanged = () => {
             turkishVoice = speechSynthesis.getVoices().find(voice => voice.lang.startsWith("tr"));
             speakWithVoice(currentWord, turkishVoice);
@@ -200,12 +221,21 @@
         speechSynthesis.speak(utterance);
       }
 
+      // Dizi karıştırma
       function shuffleArray(array) {
         for (let i = array.length - 1; i > 0; i--) {
           const j = Math.floor(Math.random() * (i + 1));
           [array[i], array[j]] = [array[j], array[i]];
         }
         return array;
+      }
+
+      // 3. Testi tamamlama durumu kaydetme
+      function markTestComplete(level, test, status) {
+        // status: "passed" veya "failed"
+        localStorage.setItem(`completed-level-${level}-test-${test}`, status);
+        // İsteğe göre yönlendirme veya mesaj
+        // alert(`Test Sonucu: ${status.toUpperCase()}`);
       }
     }
   </script>
