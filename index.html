@@ -1,67 +1,78 @@
-
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-  
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-ECTE4D9MK9"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-ECTE4D9MK9');
-</script>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-ECTE4D9MK9"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-ECTE4D9MK9');
+  </script>
 
   <meta charset="UTF-8" />
-  <title>Harfcan - 1. Sınıf Oyunları</title>
-  <!-- Harici CSS dosyasını dahil ediyoruz -->
+  <title>1, 2, 3. Sınıflar İçin Okuma Yazma Oyunları, Masallar ve Bilim Yazıları - Harfcan</title>
+  <meta name="description" content="Harfcan: 1. sınıf, 2. sınıf ve 3. sınıf öğrencileri için okuma yazma oyunları, interaktif masallar, düşünme kutuları ve eğlenceli fen yazıları sunar. Okuma alışkanlığı ve eleştirel düşünme gelişimi için özel hazırlanmış içerikler." />
   <link rel="stylesheet" href="harfcan.css" />
 </head>
 <body>
 
   <header>
-    <!-- Harfcan logosu -->
     <div class="logo">
-    <a href="index.html">
-      <img src="harfcan-logo.png" alt="Harfcan Logo" />
-    </a>
-  </div>
-
-    <h1>Harfcan</h1>
-    <p>1. Sınıf İçin Eğlenceli ve Öğretici Oyunlar!</p>
-    <!-- Harfcan karakteri (isteğe bağlı, kendi görselinizi kullanabilirsiniz) -->
+      <a href="index.html">
+        <img src="harfcan-logo.png" alt="Harfcan Logo" />
+      </a>
+    </div>
+    <h1>1, 2 ve 3. Sınıflar İçin Okuma Yazma Oyunları, Masallar ve Bilim Yazıları</h1>
+    <p>Oyunlar, Masallar ve Düşünme Kutuları... Okumayı, keşfetmeyi ve düşünmeyi seven çocuklar için!</p>
     <div class="harfcan-character"></div>
   </header>
 
   <div class="container">
 
-    <!-- 1. Sınıf Oyunları -->
+    <!-- Bölüm 1: Okuma Yazma Oyunları -->
     <section class="grade-section">
-      <h2>1. Sınıf Oyunları</h2>
+      <h2>İlkokul İçin Okuma Yazma Oyunları</h2>
       <div class="games-grid">
-
-        <!-- Oyun Kartı 1: Kelime Tanıma & Ses Bilgisi -->
         <div class="game-card">
           <h3>Kelime Tanıma & Ses Bilgisi</h3>
           <p>Türkçe kelimelerin seslerini dinleyin ve eğlenceli etkinliklerle yazılışlarını öğrenin!</p>
-          <a href="kelime-okuma.html">Başla</a>
+          <a href="kelime-okuma.html" class="button">Başla</a>
         </div>
-
-        <!-- Oyun Kartı 2: Cümle Anlama -->
         <div class="game-card">
           <h3>Cümle Anlama</h3>
           <p>Cümleleri dinleyin ve doğru yazılmış olanı seçin.</p>
-          <a href="cumle-seviye-secimi.html">Başla</a>
-        </div>        
-
-        <!-- Oyun Kartı 3: Okuma Anlama -->
+          <a href="cumle-seviye-secimi.html" class="button">Başla</a>
+        </div>
         <div class="game-card">
           <h3>Okuma Anlama</h3>
           <p>Kısa hikâyeleri okuyun ve ardından sorulan sorularla anlama becerinizi test edin.</p>
-          <a href="hikaye-secimi.html">Başla</a>
+          <a href="hikaye-secimi.html" class="button">Başla</a>
         </div>
+      </div>
+    </section>
 
+    <!-- Bölüm 2: Hikaye ve Masallar -->
+    <section class="grade-section">
+      <h2>Çocuklar İçin Masallar ve Okuma Hikayeleri</h2>
+      <div class="games-grid">
+        <div class="game-card">
+          <h3>Hikayelerle öğren, sorularla düşün!</h3>
+          <p>Sorularla zenginleştirilmiş klasik hikayeler. Okuma alışkanlığı kazandırmak ve düşünme becerilerini geliştirmek için tasarlandı.</p>
+          <a href="masal-ve-hikaye.html" class="button">Oku</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Bölüm 3: Fen Yazıları -->
+    <section class="grade-section">
+      <h2>Bilim Yazıları – Çocuklar İçin Merak Köşesi</h2>
+      <div class="games-grid">
+        <div class="game-card">
+          <h3>Fen kavramlarını keşfet, eğlen!</h3>
+          <p>“Şimşek neden çarpar?”, “Kuşlar neden uçar?” gibi sorularla çocukların merak duygusunu harekete geçiren eğlenceli fen yazıları.</p>
+          <a href="fen-yazilari.html" class="button">Keşfet</a>
+        </div>
       </div>
     </section>
 
