@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Mevsim Dedektifi 🌳</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box}
+        html,body{width:100%;height:100%;overflow:hidden}
+        body{font-family:'Nunito',sans-serif;touch-action:none;user-select:none;-webkit-user-select:none}
+
+        /* ── Screens ─────────────────── */
+        .screen{display:none;position:absolute;inset:0;flex-direction:column}
+        .screen.active{display:flex}
+
+        /* ── Title ────────────────────── */
+        #title-screen{
+            background:linear-gradient(180deg,#74b9ff 0%,#a8e6cf 100%);
+            align-items:center;justify-content:center;gap:12px;
+        }
+        .t-tree{font-size:min(90px,18vw);filter:drop-shadow(0 4px 8px rgba(0,0,0,0.15))}
+        .t-title{
+            font-size:min(52px,10vw);font-weight:900;color:#fff;
+            text-shadow:3px 3px 0 #2d6a4f,0 6px 20px rgba(0,0,0,0.12);
+            text-align:center;line-height:1.15;
+        }
+        .t-sub{
+            font-size:min(20px,4vw);color:rgba(255,255,255,0.88);
+            text-align:center;max-width:420px;padding:0 20px;margin-bottom:8px;
+        }
+        .btn{
+            font-family:'Nunito',sans-serif;font-size:min(30px,6vw);font-weight:900;
+            padding:14px 56px;border:none;border-radius:50px;cursor:pointer;
+            color:#fff;text-shadow:1px 1px 2px rgba(0,0,0,0.2);
+        }
+        .btn-play{
+            background:linear-gradient(180deg,#ff6b6b,#e74c3c);
+            box-shadow:0 5px 0 #c0392b,0 8px 20px rgba(0,0,0,0.2);
+        }
+        .btn-play:active{transform:translateY(3px);box-shadow:0 2px 0 #c0392b}
+        .btn-again{
+            background:linear-gradient(180deg,#00b894,#00a885);
+            box-shadow:0 5px 0 #007f5f,0 8px 20px rgba(0,0,0,0.2);
+        }
+        .btn-again:active{transform:translateY(3px);box-shadow:0 2px 0 #007f5f}
+
+        /* ── Animated bg particles ───── */
+        .particle{
+            position:absolute;font-size:24px;opacity:0;pointer-events:none;
+        }
+
+        /* ── Game ─────────────────────── */
+        #game-screen{background:linear-gradient(180deg,#74b9ff 0%,#dfe6e9 100%)}
+
+        .hud{
+            display:flex;justify-content:space-between;align-items:center;
+            padding:10px 16px;background:rgba(255,255,255,0.25);
+            backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+        }
+        .hud-text{font-size:min(20px,4vw);font-weight:700;color:#fff;text-shadow:1px 1px 2px rgba(0,0,0,0.3)}
+
+        .board{
+            display:grid;grid-template-columns:1fr 1fr;
+            gap:min(10px,2vw);padding:min(10px,2vw);flex:1;min-height:0;
+        }
+
+        .zone{
+            border-radius:min(16px,3vw);display:flex;flex-direction:column;
+            align-items:center;justify-content:center;gap:2px;
+            border:3px solid rgba(255,255,255,0.55);
+            box-shadow:0 4px 12px rgba(0,0,0,0.1);
+            transition:border-color 0.25s,box-shadow 0.25s;
+            position:relative;overflow:hidden;
+            background-size:cover;background-position:center;
+        }
+        .zone-ov{position:absolute;inset:0;border-radius:inherit;pointer-events:none;transition:background 0.3s}
+        .zone .ze{font-size:min(36px,7vw);position:relative;z-index:1}
+        .zone .zl{
+            font-size:min(17px,3.4vw);font-weight:900;color:#fff;
+            text-shadow:1px 1px 4px rgba(0,0,0,0.35);position:relative;z-index:1;
+        }
+        .zone .zs{
+            font-size:min(20px,4vw);position:relative;z-index:1;
+            min-height:28px;text-align:center;line-height:1.5;
+        }
+
+        .zone-spring{background:linear-gradient(135deg,#a8e6cf,#88d8a8,#dcedc1)}
+        .zone-summer{background:linear-gradient(135deg,#ffeaa7,#fdcb6e,#f8c291)}
+        .zone-autumn{background:linear-gradient(135deg,#fab1a0,#e17055,#fdcb6e)}
+        .zone-winter{background:linear-gradient(135deg,#c8d6e5,#74b9ff,#a29bfe)}
+
+        .zone.glow{border-color:#ffd700;box-shadow:0 0 22px rgba(255,215,0,0.55)}
+        .zone.wrong .zone-ov{background:rgba(255,60,60,0.22)}
+
+        /* ── Card ─────────────────────── */
+        .card-area{
+            display:flex;align-items:center;justify-content:center;
+            padding:10px;min-height:min(150px,20vh);position:relative;
+        }
+
+        #card{
+            width:min(115px,26vw);height:min(140px,19vh);
+            border-radius:16px;background:#fff;
+            box-shadow:0 6px 22px rgba(0,0,0,0.18);
+            display:flex;flex-direction:column;align-items:center;justify-content:center;
+            cursor:grab;position:fixed;z-index:100;border:3px solid #eee;
+            will-change:transform,left,top;
+        }
+        #card:active{cursor:grabbing}
+        #card .ce{font-size:min(44px,11vw)}
+        #card .cn{font-size:min(13px,2.8vw);font-weight:700;color:#555;margin-top:2px}
+
+        .hint{
+            position:absolute;bottom:8px;left:50%;transform:translateX(-50%);
+            font-size:min(14px,3vw);color:rgba(0,0,0,0.35);font-weight:700;
+            pointer-events:none;
+        }
+
+        /* ── Feedback ─────────────────── */
+        #fb{
+            position:fixed;top:40%;left:50%;transform:translate(-50%,-50%);
+            font-size:min(40px,8vw);font-weight:900;color:#fff;
+            text-shadow:3px 3px 0 rgba(0,0,0,0.22);
+            pointer-events:none;z-index:200;opacity:0;white-space:nowrap;
+        }
+
+        /* ── Confetti ─────────────────── */
+        #confetti{position:fixed;inset:0;pointer-events:none;z-index:150}
+
+        /* ── End ──────────────────────── */
+        #end-screen{
+            background:linear-gradient(180deg,#6c5ce7,#a29bfe,#dfe6e9);
+            align-items:center;justify-content:center;gap:10px;
+        }
+        .e-stars{font-size:min(60px,13vw)}
+        .e-score{font-size:min(34px,7vw);font-weight:900;color:#fff;text-shadow:2px 2px 0 rgba(0,0,0,0.2)}
+        .e-msg{font-size:min(20px,4.5vw);color:rgba(255,255,255,0.9);text-align:center;padding:0 20px}
+        .e-summary{
+            display:grid;grid-template-columns:1fr 1fr;gap:8px;
+            padding:0 16px;max-width:480px;width:100%;
+        }
+        .e-z{background:rgba(255,255,255,0.15);border-radius:12px;padding:8px;text-align:center}
+        .e-zt{font-size:13px;font-weight:700;color:#fff}
+        .e-zi{font-size:22px;margin-top:4px}
+    </style>
+</head>
+<body>
+
+<!-- ═══════════════════════════ TITLE ═══════════════════════════ -->
+<div id="title-screen" class="screen active">
+    <div class="t-tree" id="title-tree">🌳</div>
+    <div class="t-title">Mevsim<br>Dedektifi</div>
+    <div class="t-sub">Her nesne bir mevsime ait!<br>Doğru mevsime sürükle bırak 🎯</div>
+    <button class="btn btn-play" id="btn-play">🎮 Oyna!</button>
+</div>
+
+<!-- ═══════════════════════════ GAME ════════════════════════════ -->
+<div id="game-screen" class="screen">
+    <div class="hud">
+        <div class="hud-text" id="hud-score">⭐ 0</div>
+        <div class="hud-text" id="hud-prog">1 / 16</div>
+    </div>
+    <div class="board" id="board">
+        <div class="zone zone-spring" data-season="spring">
+            <div class="zone-ov"></div>
+            <div class="ze">🌸</div><div class="zl">İlkbahar</div><div class="zs" id="s-spring"></div>
+        </div>
+        <div class="zone zone-summer" data-season="summer">
+            <div class="zone-ov"></div>
+            <div class="ze">☀️</div><div class="zl">Yaz</div><div class="zs" id="s-summer"></div>
+        </div>
+        <div class="zone zone-autumn" data-season="autumn">
+            <div class="zone-ov"></div>
+            <div class="ze">🍂</div><div class="zl">Sonbahar</div><div class="zs" id="s-autumn"></div>
+        </div>
+        <div class="zone zone-winter" data-season="winter">
+            <div class="zone-ov"></div>
+            <div class="ze">❄️</div><div class="zl">Kış</div><div class="zs" id="s-winter"></div>
+        </div>
+    </div>
+    <div class="card-area" id="card-area">
+        <div id="card">
+            <div class="ce" id="c-emoji">🌷</div>
+            <div class="cn" id="c-name">Lale</div>
+        </div>
+        <div class="hint" id="hint">👆 Sürükle!</div>
+    </div>
+</div>
+
+<!-- ═══════════════════════════ END ═════════════════════════════ -->
+<div id="end-screen" class="screen">
+    <div class="e-stars" id="e-stars">⭐⭐⭐</div>
+    <div class="e-score" id="e-score">16 / 16</div>
+    <div class="e-msg" id="e-msg">Tebrikler!</div>
+    <div class="e-summary" id="e-summary"></div>
+    <button class="btn btn-again" id="btn-again">🔄 Tekrar Oyna</button>
+</div>
+
+<!-- ═══════════════════════════ OVERLAYS ════════════════════════ -->
+<div id="fb"></div>
+<canvas id="confetti"></canvas>
+
+<script>
+/* ═══════════════════════════════════════════════════════════════
+   MEVSIM DEDEKTIFI — Season Detective Drag & Drop Game
+   Uses GSAP for animations. Turkish UI. Ages 7-8.
+   ═══════════════════════════════════════════════════════════════ */
+
+// ── Data ──────────────────────────────────────────────────────
+const ITEMS = [
+    { emoji:'🌷', name:'Lale',           season:'spring' },
+    { emoji:'🦋', name:'Kelebek',        season:'spring' },
+    { emoji:'🐣', name:'Civciv',         season:'spring' },
+    { emoji:'🌈', name:'Gökkuşağı',      season:'spring' },
+    { emoji:'🍦', name:'Dondurma',       season:'summer' },
+    { emoji:'🏖️', name:'Kumsal',         season:'summer' },
+    { emoji:'🕶️', name:'Güneş Gözlüğü', season:'summer' },
+    { emoji:'🍉', name:'Karpuz',         season:'summer' },
+    { emoji:'🍂', name:'Yaprak',         season:'autumn' },
+    { emoji:'🎃', name:'Balkabağı',      season:'autumn' },
+    { emoji:'🌰', name:'Palamut',        season:'autumn' },
+    { emoji:'🍄', name:'Mantar',         season:'autumn' },
+    { emoji:'⛄', name:'Kardan Adam',    season:'winter' },
+    { emoji:'❄️', name:'Kar Tanesi',     season:'winter' },
+    { emoji:'🧣', name:'Atkı',           season:'winter' },
+    { emoji:'🧤', name:'Eldiven',        season:'winter' },
+];
+
+const S_LABELS = { spring:'İlkbahar', summer:'Yaz', autumn:'Sonbahar', winter:'Kış' };
+const OK_MSG  = ['Harika! 🎉','Süper! ⭐','Aferin! 👏','Doğru! ✅','Mükemmel! 🌟','Bravo! 🏆'];
+const BAD_MSG = ['Tekrar Dene! 🤔','Olmadı! 😅','Başka Mevsim! 🔄'];
+
+// ── State ─────────────────────────────────────────────────────
+let items, idx, score, busy;
+let dragging = false, offX, offY, homeX, homeY;
+let sorted;
+
+// ── DOM ───────────────────────────────────────────────────────
+const card     = document.getElementById('card');
+const cEmoji   = document.getElementById('c-emoji');
+const cName    = document.getElementById('c-name');
+const hint     = document.getElementById('hint');
+const fb       = document.getElementById('fb');
+const cvs      = document.getElementById('confetti');
+const ctx2     = cvs.getContext('2d');
+
+// ── Audio (Web Audio synth) ───────────────────────────────────
+const ACtx = window.AudioContext || window.webkitAudioContext;
+let actx;
+function ensureA(){ if(!actx) actx = new ACtx(); if(actx.state==='suspended') actx.resume(); }
+
+function tone(f,d,t='sine',v=0.18){
+    ensureA();
+    const o=actx.createOscillator(), g=actx.createGain();
+    o.type=t; o.frequency.value=f;
+    g.gain.setValueAtTime(v,actx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001,actx.currentTime+d);
+    o.connect(g).connect(actx.destination); o.start(); o.stop(actx.currentTime+d);
+}
+
+function sfxOk()  { tone(523,.12); setTimeout(()=>tone(659,.12),100); setTimeout(()=>tone(784,.2),200); }
+function sfxBad() { tone(200,.3,'square',.1); }
+function sfxWin() { [0,150,300,450,600].forEach((d,i)=>setTimeout(()=>tone([523,659,784,1047,1319][i],.25),d)); }
+
+// ── Confetti ──────────────────────────────────────────────────
+let parts=[], cRun=false;
+function resizeCvs(){ cvs.width=innerWidth; cvs.height=innerHeight; }
+addEventListener('resize', resizeCvs); resizeCvs();
+
+function burst(x,y,n=35){
+    const C=['#ff6b6b','#ffd93d','#6bcb77','#4d96ff','#ff6bcb','#a29bfe','#fd79a8'];
+    for(let i=0;i<n;i++) parts.push({
+        x,y, vx:(Math.random()-.5)*14, vy:(Math.random()-.7)*12-3,
+        w:Math.random()*8+4, h:Math.random()*5+3,
+        c:C[Math.floor(Math.random()*C.length)],
+        r:Math.random()*360, rv:(Math.random()-.5)*15, l:1
+    });
+    if(!cRun){ cRun=true; aCon(); }
+}
+function aCon(){
+    ctx2.clearRect(0,0,cvs.width,cvs.height);
+    parts.forEach(p=>{
+        p.x+=p.vx; p.y+=p.vy; p.vy+=0.28; p.r+=p.rv; p.l-=0.013;
+        ctx2.save(); ctx2.translate(p.x,p.y); ctx2.rotate(p.r*Math.PI/180);
+        ctx2.globalAlpha=Math.max(0,p.l); ctx2.fillStyle=p.c;
+        ctx2.fillRect(-p.w/2,-p.h/2,p.w,p.h); ctx2.restore();
+    });
+    parts=parts.filter(p=>p.l>0);
+    if(parts.length) requestAnimationFrame(aCon);
+    else{ cRun=false; ctx2.clearRect(0,0,cvs.width,cvs.height); }
+}
+
+// ── Screens ───────────────────────────────────────────────────
+function show(id){
+    document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+}
+
+// ── Title background particles ────────────────────────────────
+function titleParticles(){
+    const ts = document.getElementById('title-screen');
+    const emojis = ['🍂','❄️','🌸','☀️','🌷','⛄','🦋','🍉'];
+    setInterval(()=>{
+        if(!ts.classList.contains('active')) return;
+        const p = document.createElement('div');
+        p.className = 'particle';
+        p.textContent = emojis[Math.floor(Math.random()*emojis.length)];
+        p.style.left = Math.random()*100 + '%';
+        p.style.top = '-30px';
+        ts.appendChild(p);
+        gsap.to(p,{
+            y: innerHeight+40, x: (Math.random()-.5)*120,
+            rotation: Math.random()*360, opacity:0.7,
+            duration: 4+Math.random()*3, ease:'none',
+            onComplete:()=>p.remove()
+        });
+    }, 400);
+}
+titleParticles();
+
+// ── Title button bounce ───────────────────────────────────────
+gsap.to('#title-tree',{y:-8,duration:1.2,yoyo:true,repeat:-1,ease:'sine.inOut'});
+gsap.to('#btn-play',{scale:1.05,duration:0.8,yoyo:true,repeat:-1,ease:'sine.inOut'});
+
+// ── Try load zone images ──────────────────────────────────────
+['spring','summer','autumn','winter'].forEach(s=>{
+    const img = new Image();
+    img.onload = ()=>{
+        const zone = document.querySelector(`.zone-${s}`);
+        zone.style.backgroundImage = `url(${img.src})`;
+    };
+    img.src = `${s}_bg.png`;
+});
+
+// ── Shuffle ───────────────────────────────────────────────────
+function shuffle(a){
+    const b=[...a];
+    for(let i=b.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [b[i],b[j]]=[b[j],b[i]]; }
+    return b;
+}
+
+// ── Game Logic ────────────────────────────────────────────────
+function startGame(){
+    ensureA();
+    items = shuffle(ITEMS);
+    idx=0; score=0; busy=false;
+    sorted = { spring:[], summer:[], autumn:[], winter:[] };
+    ['spring','summer','autumn','winter'].forEach(s=>{ document.getElementById('s-'+s).textContent=''; });
+    hint.style.display = 'block';
+    updHUD(); show('game-screen');
+    requestAnimationFrame(()=>showItem());
+}
+
+function updHUD(){
+    document.getElementById('hud-score').textContent = '⭐ '+score;
+    document.getElementById('hud-prog').textContent = Math.min(idx+1,items.length)+' / '+items.length;
+}
+
+function showItem(){
+    if(idx>=items.length){ endGame(); return; }
+    const it = items[idx];
+    cEmoji.textContent = it.emoji;
+    cName.textContent  = it.name;
+
+    const area = document.getElementById('card-area').getBoundingClientRect();
+    homeX = area.left + (area.width  - card.offsetWidth)  / 2;
+    homeY = area.top  + (area.height - card.offsetHeight) / 2;
+
+    card.style.display = 'flex';
+    gsap.set(card,{left:homeX, top:homeY+50, opacity:0, scale:1, x:0});
+    gsap.to(card,{top:homeY, opacity:1, duration:0.4, ease:'back.out(1.7)', onComplete:()=>{busy=false;}});
+}
+
+function checkDrop(season){
+    const it = items[idx];
+    const ok = it.season === season;
+    const zone = document.querySelector(`[data-season="${season}"]`);
+
+    if(ok){
+        busy = true;
+        score++; sfxOk();
+        hint.style.display = 'none';
+
+        sorted[season].push(it.emoji);
+        document.getElementById('s-'+season).textContent = sorted[season].join(' ');
+
+        const zr = zone.getBoundingClientRect();
+        gsap.to(card,{
+            left: zr.left+zr.width/2-card.offsetWidth/2,
+            top:  zr.top+zr.height/2-card.offsetHeight/2,
+            scale:0.25, opacity:0, duration:0.35, ease:'power2.in',
+            onComplete:()=>{ idx++; updHUD(); gsap.set(card,{scale:1}); showItem(); }
+        });
+
+        zone.classList.add('glow');
+        setTimeout(()=>zone.classList.remove('glow'),600);
+
+        burst(zr.left+zr.width/2, zr.top+zr.height/2, 28);
+        showFB(OK_MSG[Math.floor(Math.random()*OK_MSG.length)]);
+
+    } else {
+        sfxBad();
+        zone.classList.add('wrong');
+        setTimeout(()=>zone.classList.remove('wrong'),350);
+
+        const tl = gsap.timeline();
+        tl.to(card,{x:14,duration:.05})
+          .to(card,{x:-14,duration:.05})
+          .to(card,{x:10,duration:.05})
+          .to(card,{x:-10,duration:.05})
+          .to(card,{x:0,duration:.05})
+          .to(card,{left:homeX, top:homeY, duration:.35, ease:'back.out(1.7)',
+              onComplete:()=>{busy=false;}});
+
+        showFB(BAD_MSG[Math.floor(Math.random()*BAD_MSG.length)]);
+    }
+}
+
+function showFB(txt){
+    fb.textContent = txt;
+    gsap.fromTo(fb,{opacity:0,scale:0.5},{opacity:1,scale:1,duration:0.3,ease:'back.out(2)',
+        onComplete:()=>{gsap.to(fb,{opacity:0,y:-25,duration:0.4,delay:0.5,onComplete:()=>{gsap.set(fb,{y:0});}});}
+    });
+}
+
+function endGame(){
+    sfxWin();
+    card.style.display = 'none';
+
+    const pct = score/items.length;
+    let stars, msg;
+    if(pct>=1)       { stars='⭐⭐⭐'; msg='Mükemmel! Hepsini bildin! 🎉🏆'; }
+    else if(pct>=0.75){ stars='⭐⭐';   msg='Harika iş! Çok yakınsın! 💪'; }
+    else              { stars='⭐';     msg='İyi deneme! Tekrar dene! 🌟'; }
+
+    document.getElementById('e-stars').textContent = stars;
+    document.getElementById('e-score').textContent = score+' / '+items.length;
+    document.getElementById('e-msg').textContent   = msg;
+
+    const sum = document.getElementById('e-summary'); sum.innerHTML='';
+    ['spring','summer','autumn','winter'].forEach(s=>{
+        const d = document.createElement('div'); d.className='e-z';
+        d.innerHTML = `<div class="e-zt">${S_LABELS[s]}</div><div class="e-zi">${sorted[s].join(' ')||'—'}</div>`;
+        sum.appendChild(d);
+    });
+
+    show('end-screen');
+    setTimeout(()=>{
+        for(let i=0;i<5;i++) setTimeout(()=>burst(Math.random()*innerWidth, Math.random()*innerHeight*0.4, 30), i*200);
+    },300);
+}
+
+// ── Drag & Drop (Pointer Events) ─────────────────────────────
+card.addEventListener('pointerdown', e=>{
+    if(busy) return;
+    dragging=true; busy=true;
+    const r = card.getBoundingClientRect();
+    offX = e.clientX - r.left;
+    offY = e.clientY - r.top;
+    card.setPointerCapture(e.pointerId);
+    gsap.to(card,{scale:1.12,duration:0.15});
+});
+
+document.addEventListener('pointermove', e=>{
+    if(!dragging) return;
+    card.style.left = (e.clientX - offX)+'px';
+    card.style.top  = (e.clientY - offY)+'px';
+
+    card.style.pointerEvents='none';
+    const el = document.elementFromPoint(e.clientX, e.clientY);
+    card.style.pointerEvents='auto';
+
+    document.querySelectorAll('.zone').forEach(z=>z.classList.remove('glow'));
+    const z = el?.closest?.('.zone');
+    if(z) z.classList.add('glow');
+});
+
+document.addEventListener('pointerup', e=>{
+    if(!dragging) return;
+    dragging=false;
+    gsap.to(card,{scale:1,duration:0.15});
+    document.querySelectorAll('.zone').forEach(z=>z.classList.remove('glow'));
+
+    card.style.pointerEvents='none';
+    const el = document.elementFromPoint(e.clientX, e.clientY);
+    card.style.pointerEvents='auto';
+    const z = el?.closest?.('.zone');
+
+    if(z){ checkDrop(z.dataset.season); }
+    else { gsap.to(card,{left:homeX,top:homeY,duration:.35,ease:'back.out(1.7)',onComplete:()=>{busy=false;}}); }
+});
+
+// ── Resize handler ────────────────────────────────────────────
+addEventListener('resize',()=>{
+    if(document.getElementById('game-screen').classList.contains('active') && !dragging && card.style.display!=='none'){
+        const area = document.getElementById('card-area').getBoundingClientRect();
+        homeX = area.left+(area.width-card.offsetWidth)/2;
+        homeY = area.top+(area.height-card.offsetHeight)/2;
+        card.style.left = homeX+'px'; card.style.top = homeY+'px';
+    }
+});
+
+// ── Button handlers ───────────────────────────────────────────
+document.getElementById('btn-play').addEventListener('click', startGame);
+document.getElementById('btn-again').addEventListener('click', startGame);
+</script>
+</body>
+</html>

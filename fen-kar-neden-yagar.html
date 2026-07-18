@@ -1,68 +1,82 @@
-
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-  <!-- Google Analytics -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-ECTE4D9MK9"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', 'G-ECTE4D9MK9');
-  </script>
-
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Kar Neden Yağar? - Harfcan</title>
   <meta name="description" content="Kar neden yağar? Soğuk hava, buz kristalleri ve bulutlar hakkında çocuklar için basit bir açıklama." />
-  <link rel="stylesheet" href="harfcanhikaye.css" />
+  <meta name="keywords" content="kar, kar neden yağar, buz kristali, çocuklar için fen, bilim" />
+  <meta name="author" content="Harfcan" />
+
+  <!-- Open Graph (social media previews) -->
+  <meta property="og:title" content="Kar Neden Yağar?" />
+  <meta property="og:description" content="Soğuk hava, buz kristalleri ve bulutlar hakkında çocuklar için basit bir açıklama." />
+  <meta property="og:image" content="https://upload.wikimedia.org/wikipedia/commons/thumb/1/10/Snowflakes.png/440px-Snowflakes.png" />
+  <meta property="og:type" content="article" />
+
+  <link rel="stylesheet" href="styles.css" />
+
+  <!-- Structured Data for Google -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "Kar Neden Yağar?",
+    "description": "Soğuk hava, buz kristalleri ve bulutlar hakkında çocuklar için basit bir açıklama.",
+    "author": { "@type": "Organization", "name": "Harfcan" },
+    "publisher": { "@type": "Organization", "name": "Harfcan" },
+    "audience": { "@type": "EducationalAudience", "educationalRole": "student" },
+    "educationalLevel": "primary school",
+    "inLanguage": "tr"
+  }
+  </script>
 </head>
 <body>
-
-  <header>
-    <div class="logo">
-      <a href="index.html">
-        <img src="harfcan-logo.png" alt="Harfcan Logo" />
-      </a>
-    </div>
-    <h1>Kar Neden Yağar?</h1>
-    <p>Soğuk havada gökyüzünden gelen beyaz taneler</p>
-  </header>
-
   <div class="container">
+    <article>
+      <header>
+        <h1 class="page-title">Kar Neden Yağar?</h1>
+        <p class="page-subtitle">Soğuk havada gökyüzünden gelen beyaz taneler</p>
+      </header>
 
-    <section class="story-text">
-      <p>Hava çok soğuk olduğunda bulutların içindeki su damlaları donar.<br>
-Bu donmuş küçük parçalara buz kristali denir.</p>
-      <p>Buz kristalleri birleşerek kar tanelerini oluşturur.<br>
-Kar taneleri hafif olduğu için yavaş yavaş yere düşer.</p>
-      <p>Hava yere yakın kısımlarda da soğuk kalırsa kar erimez ve yere kar olarak ulaşır.<br>
-Eğer hava biraz daha sıcak olursa kar erir ve yağmur olur.</p>
-    </section>
+      <figure class="content-image">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/10/Snowflakes.png/440px-Snowflakes.png" alt="Farklı şekillerde kar taneleri" />
+        <figcaption>Kar taneleri birçok farklı şekilde olabilir</figcaption>
+      </figure>
 
-    <!-- Düşünme Kutusu -->
-    <section class="grade-section">
-      <div class="think-box">
-        <h3>Düşünme Kutusu</h3>
+      <section class="story-text">
+        <p>Hava çok soğuk olduğunda bulutların içindeki su damlaları donar. Bu donmuş küçük parçalara buz kristali denir.</p>
+      </section>
+
+      <figure class="content-image">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/4f/Snowflake_-_Microphotography.jpg/440px-Snowflake_-_Microphotography.jpg" alt="Mikroskop altında bir buz kristali" />
+        <figcaption>Mikroskopla çekilmiş bir buz kristali</figcaption>
+      </figure>
+
+      <section class="story-text">
+        <p>Buz kristalleri birleşerek kar tanelerini oluşturur. Kar taneleri hafif olduğu için yavaş yavaş yere düşer.</p>
+      </section>
+
+      <figure class="content-image">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e2/Schneelandschaft_in_Lech_am_Arlberg.jpg/640px-Schneelandschaft_in_Lech_am_Arlberg.jpg" alt="Karla kaplı bir manzara" />
+        <figcaption>Kar yere düştüğünde her yeri beyaza boyar</figcaption>
+      </figure>
+
+      <section class="story-text">
+        <p>Hava yere yakın kısımlarda da soğuk kalırsa kar erimez ve yere kar olarak ulaşır. Eğer hava biraz daha sıcak olursa kar erir ve yağmur olur.</p>
+      </section>
+
+      <aside class="think-box">
+        <h2>Düşünme Kutusu</h2>
         <ul>
           <li>Kar taneleri neden farklı şekillerde olur?</li>
           <li>Neden her kış kar yağmaz?</li>
           <li>Kar neden sessiz yağar?</li>
         </ul>
-      </div>
-    </section>
+      </aside>
+    </article>
 
-    <!-- Geri dönüş butonu -->
-    <section class="grade-section">
-      <div class="game-card">
-        <a href="fen-yazilari.html" class="button">Diğer Yazılara Göz At</a>
-      </div>
-    </section>
-
+    <button class="print-btn" onclick="window.print()">Yazdır</button>
   </div>
-
-  <footer>
-    <p>© 2025 Harfcan. Tüm Hakları Saklıdır.</p>
-  </footer>
-
 </body>
 </html>

@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tartı Matematik - Ağırlık ve Toplama Oyunu</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/phaser@3.60.0/dist/phaser.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: linear-gradient(180deg, #1a237e 0%, #283593 50%, #5c6bc0 100%);
+            display: flex; justify-content: center; align-items: center;
+            min-height: 100vh; overflow: hidden;
+        }
+        #game-container {
+            border-radius: 20px; overflow: hidden;
+            box-shadow: 0 15px 50px rgba(0,0,0,0.5);
+        }
+    </style>
+</head>
+<body>
+    <div id="game-container"></div>
+    <script>
+    // ==============================================
+    //  TARTI MATEMATİK - Ağırlık ve Toplama Oyunu
+    //  1. ve 2. Sınıflar İçin Matematik + Bilim
+    // ==============================================
+
+    const FONT = 'Nunito, Arial, sans-serif';
+
+    // ============ 10 NESNE (1–10 kg) ============
+    const NESNELER = [
+        { key: 'tuy',    isim: 'Tüy',      agirlik: 1,  emoji: '🪶' },
+        { key: 'kalem',  isim: 'Kalem',     agirlik: 2,  emoji: '✏️' },
+        { key: 'elma',   isim: 'Elma',      agirlik: 3,  emoji: '🍎' },
+        { key: 'top',    isim: 'Top',       agirlik: 4,  emoji: '⚽' },
+        { key: 'kitap',  isim: 'Kitap',     agirlik: 5,  emoji: '📕' },
+        { key: 'ayicik', isim: 'Ayıcık',    agirlik: 6,  emoji: '🧸' },
+        { key: 'tas',    isim: 'Taş',       agirlik: 7,  emoji: '🪨' },
+        { key: 'karpuz', isim: 'Karpuz',    agirlik: 8,  emoji: '🍉' },
+        { key: 'kova',   isim: 'Kova',      agirlik: 9,  emoji: '🪣' },
+        { key: 'bavul',  isim: 'Bavul',     agirlik: 10, emoji: '🧳' },
+    ];
+
+    const RENKLER = {
+        tuy: 0xE0E0E0, kalem: 0xFFEB3B, elma: 0xEF5350, top: 0x42A5F5,
+        kitap: 0xFF9800, ayicik: 0x8D6E63, tas: 0x78909C, karpuz: 0x66BB6A,
+        kova: 0x5C6BC0, bavul: 0xAB47BC,
+    };
+
+    const nesneByKey = {};
+    NESNELER.forEach(n => nesneByKey[n.key] = n);
+
+    let oyunVerisi = { b1: 0, b2: 0, b3: 0, b4: 0, b1ok: false, b2ok: false, b3ok: false, b4ok: false };
+
+    // ============ SES ============
+    let audioCtx;
+    function ac() { if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); return audioCtx; }
+    function ses(tip) {
+        try {
+            const c = ac(); if (c.state === 'suspended') c.resume();
+            const t = c.currentTime;
+            if (tip === 'dogru') {
+                [523, 659, 784].forEach((f, i) => {
+                    const o = c.createOscillator(), g = c.createGain();
+                    o.connect(g); g.connect(c.destination);
+                    o.frequency.value = f; g.gain.value = 0.2;
+                    o.start(t + i * 0.1); g.gain.linearRampToValueAtTime(0, t + i * 0.1 + 0.25);
+                    o.stop(t + i * 0.1 + 0.3);
+                });
+            } else if (tip === 'yanlis') {
+                const o = c.createOscillator(), g = c.createGain();
+                o.connect(g); g.connect(c.destination);
+                o.type = 'sawtooth'; o.frequency.value = 280; g.gain.value = 0.12;
+                o.start(t); o.frequency.linearRampToValueAtTime(160, t + 0.3);
+                g.gain.linearRampToValueAtTime(0, t + 0.35); o.stop(t + 0.4);
+            } else if (tip === 'tikla') {
+                const o = c.createOscillator(), g = c.createGain();
+                o.connect(g); g.connect(c.destination);
+                o.frequency.value = 700; g.gain.value = 0.1;
+                o.start(t); g.gain.linearRampToValueAtTime(0, t + 0.06); o.stop(t + 0.08);
+            } else if (tip === 'kazan') {
+                [523, 659, 784, 1047].forEach((f, i) => {
+                    const o = c.createOscillator(), g = c.createGain();
+                    o.connect(g); g.connect(c.destination);
+                    o.frequency.value = f; g.gain.value = 0.15;
+                    o.start(t + i * 0.12); g.gain.linearRampToValueAtTime(0, t + i * 0.12 + 0.3);
+                    o.stop(t + i * 0.12 + 0.35);
+                });
+            } else if (tip === 'koy') {
+                const o = c.createOscillator(), g = c.createGain();
+                o.connect(g); g.connect(c.destination);
+                o.frequency.value = 440; g.gain.value = 0.12;
+                o.start(t); o.frequency.linearRampToValueAtTime(330, t + 0.08);
+                g.gain.linearRampToValueAtTime(0, t + 0.12); o.stop(t + 0.15);
+            }
+        } catch (e) {}
+    }
+
+    // ============ UI YARDIMCILARI ============
+    function btn(scene, x, y, w, h, yazi, renk, cb, fs) {
+        const c = scene.add.container(x, y);
+        const sh = scene.add.graphics(); sh.fillStyle(0x000000, 0.2); sh.fillRoundedRect(-w/2+2, -h/2+2, w, h, 12);
+        const bg = scene.add.graphics(); bg.fillStyle(renk); bg.fillRoundedRect(-w/2, -h/2, w, h, 12);
+        bg.lineStyle(2, 0xFFFFFF, 0.35); bg.strokeRoundedRect(-w/2, -h/2, w, h, 12);
+        const tx = scene.add.text(0, 0, yazi, {
+            fontFamily: FONT, fontSize: fs || '20px', fontStyle: 'bold',
+            color: '#FFF', stroke: '#000', strokeThickness: 2,
+        }).setOrigin(0.5);
+        c.add([sh, bg, tx]); c.setSize(w, h); c.setInteractive({ useHandCursor: true });
+        c.on('pointerover', () => scene.tweens.add({ targets: c, scaleX: 1.06, scaleY: 1.06, duration: 60 }));
+        c.on('pointerout', () => scene.tweens.add({ targets: c, scaleX: 1, scaleY: 1, duration: 60 }));
+        c.on('pointerdown', () => { ses('tikla'); cb(); });
+        return c;
+    }
+
+    function arkaplan(scene) {
+        const g = scene.add.graphics();
+        g.fillGradientStyle(0x64B5F6, 0x64B5F6, 0xBBDEFB, 0xBBDEFB);
+        g.fillRect(0, 0, 800, 430);
+        g.fillStyle(0x66BB6A); g.fillRect(0, 430, 800, 170);
+        g.fillStyle(0x81C784);
+        g.fillEllipse(120, 440, 260, 35);
+        g.fillEllipse(520, 445, 320, 30);
+        g.fillEllipse(720, 435, 200, 28);
+        [{ x: 140, y: 50 }, { x: 450, y: 70 }, { x: 680, y: 40 }].forEach((p, i) => {
+            const cl = scene.add.graphics();
+            cl.fillStyle(0xFFFFFF, 0.8);
+            cl.fillCircle(p.x, p.y, 25); cl.fillCircle(p.x + 20, p.y - 5, 20);
+            cl.fillCircle(p.x - 20, p.y - 3, 22); cl.fillCircle(p.x + 10, p.y - 16, 16);
+            scene.tweens.add({ targets: cl, x: 20, duration: 5000 + i * 1500, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' });
+        });
+    }
+
+    // Nesne kartı: emoji/image + kg etiketi + isim
+    function nesneKarti(scene, x, y, nesne, boyut, kgGoster) {
+        const c = scene.add.container(x, y);
+        const cardW = boyut + 16, cardH = boyut + (kgGoster !== false ? 44 : 10);
+        const bg = scene.add.graphics();
+        bg.fillStyle(RENKLER[nesne.key], 0.85);
+        bg.fillRoundedRect(-cardW / 2, -boyut / 2 - 6, cardW, cardH, 10);
+        bg.lineStyle(2, 0xFFFFFF, 0.45);
+        bg.strokeRoundedRect(-cardW / 2, -boyut / 2 - 6, cardW, cardH, 10);
+        c.add(bg);
+
+        if (scene.textures.exists(nesne.key) && scene.textures.get(nesne.key).key !== '__MISSING') {
+            c.add(scene.add.image(0, -4, nesne.key).setDisplaySize(boyut * 0.65, boyut * 0.65));
+        } else {
+            c.add(scene.add.text(0, -6, nesne.emoji, { fontSize: `${boyut * 0.42}px` }).setOrigin(0.5));
+        }
+
+        if (kgGoster !== false) {
+            c.add(scene.add.text(0, boyut / 2 - 2, `${nesne.agirlik} kg`, {
+                fontFamily: FONT, fontSize: '18px', fontStyle: 'bold',
+                color: '#FFF', stroke: '#000', strokeThickness: 3,
+            }).setOrigin(0.5));
+            c.add(scene.add.text(0, boyut / 2 + 18, nesne.isim, {
+                fontFamily: FONT, fontSize: '12px', color: '#FFF',
+                stroke: '#000', strokeThickness: 2,
+            }).setOrigin(0.5));
+        }
+        c.setSize(cardW, cardH);
+        return c;
+    }
+
+    // Matematik tahtası paneli
+    function matTahtasi(scene, x, y) {
+        const c = scene.add.container(x, y);
+        const bg = scene.add.graphics();
+        bg.fillStyle(0x1B5E20, 0.92);
+        bg.fillRoundedRect(-230, -40, 460, 80, 14);
+        bg.lineStyle(3, 0x8D6E63);
+        bg.strokeRoundedRect(-230, -40, 460, 80, 14);
+        // chalk dust effect
+        bg.fillStyle(0xFFFFFF, 0.06);
+        bg.fillRoundedRect(-225, -37, 450, 74, 10);
+        c.add(bg);
+        const icon = scene.add.text(-210, -12, '📝', { fontSize: '22px' }).setOrigin(0.5);
+        c.add(icon);
+
+        const denklem = scene.add.text(10, -12, '', {
+            fontFamily: FONT, fontSize: '28px', fontStyle: 'bold',
+            color: '#FFFFFF', stroke: '#000', strokeThickness: 2,
+        }).setOrigin(0.5);
+        const sonuc = scene.add.text(10, 18, '', {
+            fontFamily: FONT, fontSize: '17px', fontStyle: 'bold',
+            color: '#A5D6A7', stroke: '#000', strokeThickness: 2,
+        }).setOrigin(0.5);
+        c.add([denklem, sonuc]);
+        return {
+            container: c,
+            guncelle(d, s) { denklem.setText(d); sonuc.setText(s || ''); },
+            renkAyarla(renk) { sonuc.setStyle({ color: renk, fontFamily: FONT, fontSize: '17px', fontStyle: 'bold', stroke: '#000', strokeThickness: 2 }); }
+        };
+    }
+
+    // ============ TARTI SINIFI (kg göstergeli) ============
+    class Tarti {
+        constructor(scene, x, y, s) {
+            this.scene = scene; this.cx = x; this.cy = y; this.s = s || 1;
+            this.kol = 130 * this.s; this.zincir = 52 * this.s; this.aci = 0;
+
+            this.taban = scene.add.graphics();
+            this.taban.fillStyle(0x4E342E); this.taban.fillRect(x - 50 * this.s, y + 65 * this.s, 100 * this.s, 12 * this.s);
+            this.taban.fillStyle(0x5D4037); this.taban.fillRect(x - 10 * this.s, y - 8 * this.s, 20 * this.s, 75 * this.s);
+            this.taban.fillStyle(0x795548);
+            this.taban.fillTriangle(x - 20 * this.s, y - 3 * this.s, x + 20 * this.s, y - 3 * this.s, x, y - 20 * this.s);
+
+            this.pivot = scene.add.circle(x, y - 16 * this.s, 5 * this.s, 0xFFD54F);
+            this.pivot.setStrokeStyle(2, 0xF9A825);
+            this.kiris = scene.add.rectangle(x, y - 16 * this.s, this.kol * 2 + 8 * this.s, 9 * this.s, 0x8D6E63);
+            this.kiris.setOrigin(0.5); this.kiris.setStrokeStyle(1, 0x5D4037);
+
+            this.zG = scene.add.graphics(); this.kG = scene.add.graphics();
+
+            // KG göstergeleri (her kefenin üstünde)
+            this.solKgText = scene.add.text(0, 0, '', {
+                fontFamily: FONT, fontSize: `${18 * this.s}px`, fontStyle: 'bold',
+                color: '#FF8A65', stroke: '#000', strokeThickness: 3,
+            }).setOrigin(0.5);
+            this.sagKgText = scene.add.text(0, 0, '', {
+                fontFamily: FONT, fontSize: `${18 * this.s}px`, fontStyle: 'bold',
+                color: '#64B5F6', stroke: '#000', strokeThickness: 3,
+            }).setOrigin(0.5);
+
+            this.solKefeX = x - this.kol; this.solKefeY = y - 16 * this.s + this.zincir;
+            this.sagKefeX = x + this.kol; this.sagKefeY = y - 16 * this.s + this.zincir;
+            this._solKg = 0; this._sagKg = 0;
+            this.guncelle();
+        }
+
+        guncelle() {
+            const rad = this.aci * Math.PI / 180;
+            const py = this.cy - 16 * this.s;
+            this.kiris.setRotation(rad);
+
+            const lx = this.cx - this.kol * Math.cos(rad);
+            const ly = py - this.kol * Math.sin(rad);
+            const rx = this.cx + this.kol * Math.cos(rad);
+            const ry = py + this.kol * Math.sin(rad);
+
+            this.solKefeX = lx; this.solKefeY = ly + this.zincir;
+            this.sagKefeX = rx; this.sagKefeY = ry + this.zincir;
+
+            const cw = 26 * this.s;
+            this.zG.clear(); this.zG.lineStyle(2, 0xAAAAAA);
+            this.zG.lineBetween(lx - cw, ly, lx - cw, ly + this.zincir);
+            this.zG.lineBetween(lx + cw, ly, lx + cw, ly + this.zincir);
+            this.zG.lineBetween(rx - cw, ry, rx - cw, ry + this.zincir);
+            this.zG.lineBetween(rx + cw, ry, rx + cw, ry + this.zincir);
+
+            const pw = 40 * this.s, ph = 9 * this.s;
+            this.kG.clear();
+            this.kG.fillStyle(0xBDBDBD);
+            this.kG.fillRoundedRect(lx - pw, this.solKefeY - ph / 2, pw * 2, ph, 4);
+            this.kG.fillStyle(0xA0A0A0);
+            this.kG.fillRoundedRect(lx - pw + 2, this.solKefeY - ph / 2 + 2, pw * 2 - 4, ph - 3, 3);
+            this.kG.fillStyle(0xBDBDBD);
+            this.kG.fillRoundedRect(rx - pw, this.sagKefeY - ph / 2, pw * 2, ph, 4);
+            this.kG.fillStyle(0xA0A0A0);
+            this.kG.fillRoundedRect(rx - pw + 2, this.sagKefeY - ph / 2 + 2, pw * 2 - 4, ph - 3, 3);
+
+            this.solKgText.setPosition(lx, this.solKefeY - 18 * this.s);
+            this.sagKgText.setPosition(rx, this.sagKefeY - 18 * this.s);
+        }
+
+        kgGoster(sol, sag) {
+            this._solKg = sol; this._sagKg = sag;
+            this.solKgText.setText(sol > 0 ? `${sol} kg` : '');
+            this.sagKgText.setText(sag > 0 ? `${sag} kg` : '');
+        }
+
+        pipiAnimasyon() {
+            if (this._solKg === this._sagKg && this._solKg > 0) {
+                this.solKgText.setStyle({ color: '#69F0AE', fontFamily: FONT, fontSize: `${18*this.s}px`, fontStyle: 'bold', stroke: '#000', strokeThickness: 3 });
+                this.sagKgText.setStyle({ color: '#69F0AE', fontFamily: FONT, fontSize: `${18*this.s}px`, fontStyle: 'bold', stroke: '#000', strokeThickness: 3 });
+            } else {
+                this.solKgText.setStyle({ color: '#FF8A65', fontFamily: FONT, fontSize: `${18*this.s}px`, fontStyle: 'bold', stroke: '#000', strokeThickness: 3 });
+                this.sagKgText.setStyle({ color: '#64B5F6', fontFamily: FONT, fontSize: `${18*this.s}px`, fontStyle: 'bold', stroke: '#000', strokeThickness: 3 });
+            }
+        }
+
+        tartAyarla(sol, sag, sure) {
+            const fark = sol - sag;
+            const hedef = Phaser.Math.Clamp(-(fark / 10) * 22, -22, 22);
+            this.kgGoster(sol, sag);
+            this.pipiAnimasyon();
+            return new Promise(r => {
+                this.scene.tweens.add({
+                    targets: this, aci: hedef, duration: sure || 600,
+                    ease: 'Bounce.easeOut', onUpdate: () => this.guncelle(), onComplete: () => r()
+                });
+            });
+        }
+
+        sifirla(sure) { return this.tartAyarla(0, 0, sure || 300); }
+
+        yokEt() {
+            [this.taban, this.pivot, this.kiris, this.zG, this.kG, this.solKgText, this.sagKgText].forEach(o => o.destroy());
+        }
+    }
+
+    // ============ BÖLÜM SONU ============
+    function bolumSonu(scene, puan, max, esik, vKey, pKey, sahne) {
+        const dim = scene.add.rectangle(400, 300, 800, 600, 0x000000, 0.6).setDepth(200);
+        const p = scene.add.graphics().setDepth(201);
+        p.fillStyle(0x1A237E, 0.92); p.fillRoundedRect(150, 120, 500, 360, 22);
+        p.lineStyle(3, 0xFFD54F, 0.7); p.strokeRoundedRect(150, 120, 500, 360, 22);
+
+        const t = (txt, yy, fs, col) => scene.add.text(400, yy, txt, {
+            fontFamily: FONT, fontSize: fs, fontStyle: 'bold', color: col || '#FFF', stroke: '#000', strokeThickness: 3,
+        }).setOrigin(0.5).setDepth(202);
+
+        t('🎉 Bölüm Tamamlandı!', 165, '32px', '#FFD54F');
+        t(`${puan} / ${max} Doğru`, 215, '28px');
+
+        const stars = scene.add.text(400, 265, '⭐'.repeat(puan) + '☆'.repeat(max - puan), { fontSize: '34px' }).setOrigin(0.5).setDepth(202);
+        scene.tweens.add({ targets: stars, scaleX: 1.12, scaleY: 1.12, duration: 500, yoyo: true, repeat: 2, ease: 'Sine.easeInOut' });
+
+        if (puan >= esik) {
+            oyunVerisi[vKey] = true; oyunVerisi[pKey] = Math.max(oyunVerisi[pKey], puan);
+            ses('kazan');
+            t('🏆 Harika iş çıkardın!', 310, '20px', '#A5D6A7');
+        } else {
+            t('Bir daha dene, yapabilirsin! 💪', 310, '20px', '#FFCC80');
+        }
+
+        const b1 = btn(scene, 310, 410, 160, 48, '🏠 Ana Menü', 0x546E7A, () => scene.scene.start('menu')); b1.setDepth(203);
+        const b2 = btn(scene, 490, 410, 160, 48, '🔄 Tekrar', 0x2E7D32, () => scene.scene.restart()); b2.setDepth(203);
+    }
+
+    // ============ SAHNE: YÜKLEME ============
+    class YuklemeSahne extends Phaser.Scene {
+        constructor() { super('yukleme'); }
+        preload() {
+            const w = 800, h = 600;
+            this.add.rectangle(w / 2, h / 2, w, h, 0x1A237E);
+            this.add.text(w / 2, h / 2 - 50, '⚖️', { fontSize: '64px' }).setOrigin(0.5);
+            this.add.text(w / 2, h / 2 + 5, 'Tartı Matematik', {
+                fontFamily: FONT, fontSize: '36px', fontStyle: 'bold', color: '#FFF', stroke: '#333', strokeThickness: 5,
+            }).setOrigin(0.5);
+            this.add.text(w / 2, h / 2 + 40, 'Yükleniyor...', {
+                fontFamily: FONT, fontSize: '18px', color: '#B3E5FC', stroke: '#333', strokeThickness: 2,
+            }).setOrigin(0.5);
+            const bar = this.add.rectangle(w / 2 - 120, h / 2 + 70, 0, 14, 0x4CAF50).setOrigin(0, 0.5);
+            this.load.on('progress', v => { bar.width = 240 * v; });
+            NESNELER.forEach(n => this.load.image(n.key, `images/${n.key}.png`));
+        }
+        create() { this.scene.start('menu'); }
+    }
+
+    // ============ SAHNE: MENÜ ============
+    class MenuSahne extends Phaser.Scene {
+        constructor() { super('menu'); }
+        create() {
+            arkaplan(this);
+            const baslik = this.add.text(400, 48, '⚖️ TARTI MATEMATİK ⚖️', {
+                fontFamily: FONT, fontSize: '44px', fontStyle: 'bold',
+                color: '#FFF', stroke: '#E65100', strokeThickness: 7,
+                shadow: { offsetX: 2, offsetY: 2, color: '#00000055', blur: 5, fill: true }
+            }).setOrigin(0.5);
+            this.tweens.add({ targets: baslik, scaleX: 1.03, scaleY: 1.03, duration: 1200, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' });
+
+            this.add.text(400, 100, 'Sayıları Öğren • Topla • Dengele!', {
+                fontFamily: FONT, fontSize: '20px', color: '#FFF9C4', stroke: '#333', strokeThickness: 3,
+            }).setOrigin(0.5);
+
+            const dt = new Tarti(this, 400, 200, 0.55);
+            dt.tartAyarla(5, 5, 1500);
+
+            const lvls = [
+                { isim: '🔢 Ağırlıkları Öğren',          sahne: 'bolum1', renk: 0x00897B, ok: oyunVerisi.b1ok, p: oyunVerisi.b1, desc: 'Her nesne kaç kg?' },
+                { isim: '⚖️ Tartıyı Dengele',             sahne: 'bolum2', renk: 0x1565C0, ok: oyunVerisi.b2ok, p: oyunVerisi.b2, desc: 'Aynı kiloyu bul' },
+                { isim: '➕ Topla ve Dengele',             sahne: 'bolum3', renk: 0xC62828, ok: oyunVerisi.b3ok, p: oyunVerisi.b3, desc: 'Toplayarak dengele' },
+                { isim: '🧩 Eksik Kaç Kilo?',             sahne: 'bolum4', renk: 0x6A1B9A, ok: oyunVerisi.b4ok, p: oyunVerisi.b4, desc: 'Çıkarma ile bul' },
+            ];
+            lvls.forEach((l, i) => {
+                const yy = 320 + i * 66;
+                const b = btn(this, 370, yy, 380, 52, l.isim, l.renk, () => this.scene.start(l.sahne));
+                this.add.text(580, yy, l.desc, {
+                    fontFamily: FONT, fontSize: '13px', color: '#B0BEC5', stroke: '#000', strokeThickness: 1,
+                }).setOrigin(0, 0.5);
+                if (l.ok) this.add.text(580, yy - 14, '⭐', { fontSize: '20px' }).setOrigin(0, 0.5);
+                b.setAlpha(0).setX(300);
+                this.tweens.add({ targets: b, alpha: 1, x: 370, duration: 300, delay: 250 + i * 100, ease: 'Back.easeOut' });
+            });
+        }
+    }
+
+    // ============ BÖLÜM 1: AĞIRLIKLARI ÖĞREN ============
+    class Bolum1Sahne extends Phaser.Scene {
+        constructor() { super('bolum1'); }
+        create() {
+            this.puan = 0; this.tur = 0; this.asamaTanitim = true;
+            this.maxTur = 10; // 10 tanıtım + 10 quiz = her nesne 1 kez
+            this.temiz = [];
+            arkaplan(this);
+            this.add.text(400, 22, '🔢 Ağırlıkları Öğren', {
+                fontFamily: FONT, fontSize: '28px', fontStyle: 'bold', color: '#FFF', stroke: '#333', strokeThickness: 4,
+            }).setOrigin(0.5);
+            this.turText = this.add.text(720, 18, '', { fontFamily: FONT, fontSize: '16px', color: '#FFF', stroke: '#333', strokeThickness: 2 }).setOrigin(0.5);
+            this.puanText = this.add.text(720, 40, '', { fontFamily: FONT, fontSize: '14px', color: '#FFD54F', stroke: '#333', strokeThickness: 2 }).setOrigin(0.5);
+
+            this.tarti = new Tarti(this, 400, 265, 0.85);
+            this.tahta = matTahtasi(this, 400, 68);
+
+            this.geriText = this.add.text(400, 555, '', {
+                fontFamily: FONT, fontSize: '22px', fontStyle: 'bold', color: '#FFF', stroke: '#333', strokeThickness: 3,
+            }).setOrigin(0.5);
+
+            btn(this, 50, 18, 80, 30, '← Menü', 0x546E7A, () => this.scene.start('menu'), '14px');
+
+            // Phase 1: show each object (tanıtım)
+            this.tanitimSirasi = Phaser.Utils.Array.Shuffle([...NESNELER]);
+            this.quizSirasi = Phaser.Utils.Array.Shuffle([...NESNELER]);
+            this.yeniTur();
+        }
+        t_temizle() { this.temiz.forEach(o => { if (o && o.destroy) o.destroy(); }); this.temiz = []; }
+
+        yeniTur() {
+            if (this.asamaTanitim && this.tur >= this.tanitimSirasi.length) {
+                this.asamaTanitim = false;
+                this.tur = 0;
+            }
+            if (!this.asamaTanitim && this.tur >= this.maxTur) {
+                bolumSonu(this, this.puan, this.maxTur, 7, 'b1ok', 'b1', 'bolum1');
+                return;
+            }
+            this.t_temizle();
+            this.geriText.setText('');
+
+            if (this.asamaTanitim) {
+                // TANITIM: nesneyi göster
+                const n = this.tanitimSirasi[this.tur];
+                this.turText.setText(`Tanıtım: ${this.tur + 1}/${this.tanitimSirasi.length}`);
+                this.puanText.setText('');
+                this.tahta.guncelle(`${n.isim} = ${n.agirlik} kg`, 'Bunu hatırla!');
+                this.tahta.renkAyarla('#FFF9C4');
+
+                const kart = nesneKarti(this, 400, 430, n, 80);
+                this.temiz.push(kart);
+
+                this.tarti.tartAyarla(n.agirlik, 0, 700);
+
+                // "weight block" on right showing number
+                const agBlock = this.add.container(this.tarti.sagKefeX, 430);
+                const abg = this.add.graphics();
+                abg.fillStyle(0xFFD54F, 0.9); abg.fillRoundedRect(-28, -28, 56, 56, 8);
+                abg.lineStyle(2, 0xF9A825); abg.strokeRoundedRect(-28, -28, 56, 56, 8);
+                const abTxt = this.add.text(0, 0, `${n.agirlik}`, {
+                    fontFamily: FONT, fontSize: '30px', fontStyle: 'bold', color: '#333',
+                }).setOrigin(0.5);
+                agBlock.add([abg, abTxt]);
+                this.temiz.push(agBlock);
+
+                const devamBtn = btn(this, 400, 540, 150, 40, 'Devam ▶', 0x00897B, () => {
+                    this.tur++;
+                    this.yeniTur();
+                }, '18px');
+                this.temiz.push(devamBtn);
+            } else {
+                // QUIZ: nesneyi göster, kg'ı sor
+                const n = this.quizSirasi[this.tur];
+                this.turText.setText(`Soru: ${this.tur + 1}/${this.maxTur}`);
+                this.puanText.setText(`Puan: ${this.puan} ⭐`);
+                this.tahta.guncelle(`${n.isim} = ? kg`, 'Doğru sayıyı seç!');
+                this.tahta.renkAyarla('#FFF9C4');
+
+                this.tarti.sifirla();
+
+                const kart = nesneKarti(this, 400, 380, n, 75, false);
+                this.temiz.push(kart);
+
+                this.add.text(400, 340, `${n.isim}`, {
+                    fontFamily: FONT, fontSize: '20px', fontStyle: 'bold',
+                    color: '#FFF', stroke: '#333', strokeThickness: 3,
+                }).setOrigin(0.5);
+
+                // Number buttons 1-10
+                const dogru = n.agirlik;
+                const nums = Phaser.Utils.Array.Shuffle([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
+                const secenekler = nums.slice(0, 5);
+                if (!secenekler.includes(dogru)) secenekler[Math.floor(Math.random() * 5)] = dogru;
+                secenekler.sort((a, b) => a - b);
+
+                secenekler.forEach((num, i) => {
+                    const bx = 220 + i * 115;
+                    const b = btn(this, bx, 480, 90, 48, `${num} kg`, num === dogru ? 0x2E7D32 : 0x37474F, () => {
+                        if (this._kilitli) return;
+                        this._kilitli = true;
+                        if (num === dogru) {
+                            this.puan++;
+                            ses('dogru');
+                            this.tahta.guncelle(`${n.isim} = ${dogru} kg ✓`, 'Doğru!');
+                            this.tahta.renkAyarla('#69F0AE');
+                            this.tarti.tartAyarla(dogru, dogru, 600);
+                            this.geriText.setText('✅ Doğru!');
+                            this.geriText.setStyle({ color: '#A5D6A7', fontFamily: FONT, fontSize: '22px', fontStyle: 'bold', stroke: '#333', strokeThickness: 3 });
+                        } else {
+                            ses('yanlis');
+                            this.tahta.guncelle(`${n.isim} = ${dogru} kg (${num} değil)`, 'Yanlış!');
+                            this.tahta.renkAyarla('#EF9A9A');
+                            this.tarti.tartAyarla(dogru, num, 600);
+                            this.geriText.setText(`❌ Doğrusu ${dogru} kg idi`);
+                            this.geriText.setStyle({ color: '#EF9A9A', fontFamily: FONT, fontSize: '22px', fontStyle: 'bold', stroke: '#333', strokeThickness: 3 });
+                        }
+                        this.tur++;
+                        this.time.delayedCall(1800, () => { this._kilitli = false; this.yeniTur(); });
+                    }, '18px');
+                    this.temiz.push(b);
+                });
+            }
+        }
+    }
+
+    // ============ BÖLÜM 2: TARTIYI DENGELE (eşle) ============
+    class Bolum2Sahne extends Phaser.Scene {
+        constructor() { super('bolum2'); }
+        create() {
+            this.puan = 0; this.tur = 0; this.maxTur = 6;
+            this.temiz = []; this._kilitli = false;
+            arkaplan(this);
+            this.add.text(400, 22, '⚖️ Tartıyı Dengele', {
+                fontFamily: FONT, fontSize: '28px', fontStyle: 'bold', color: '#FFF', stroke: '#333', strokeThickness: 4,
+            }).setOrigin(0.5);
+            this.turText = this.add.text(720, 18, '', { fontFamily: FONT, fontSize: '16px', color: '#FFF', stroke: '#333', strokeThickness: 2 }).setOrigin(0.5);
+            this.puanText = this.add.text(720, 40, '', { fontFamily: FONT, fontSize: '14px', color: '#FFD54F', stroke: '#333', strokeThickness: 2 }).setOrigin(0.5);
+            this.tarti = new Tarti(this, 400, 250, 0.85);
+            this.tahta = matTahtasi(this, 400, 68);
+            this.geriText = this.add.text(400, 555, '', {
+                fontFamily: FONT, fontSize: '22px', fontStyle: 'bold', color: '#FFF', stroke: '#333', strokeThickness: 3,
+            }).setOrigin(0.5);
+            btn(this, 50, 18, 80, 30, '← Menü', 0x546E7A, () => this.scene.start('menu'), '14px');
+            this.yeniTur();
+        }
+        t_temizle() { this.temiz.forEach(o => { if (o && o.destroy) o.destroy(); }); this.temiz = []; }
+
+        yeniTur() {
+            if (this.tur >= this.maxTur) { bolumSonu(this, this.puan, this.maxTur, 4, 'b2ok', 'b2', 'bolum2'); return; }
+            this.turText.setText(`Tur: ${this.tur + 1}/${this.maxTur}`);
+            this.puanText.setText(`Puan: ${this.puan} ⭐`);
+            this.geriText.setText('');
+            this.t_temizle();
+            this._kilitli = false;
+
+            // Pick a target object for the left side
+            const hedefIdx = 2 + this.tur; // starts from weight 3, goes up
+            const hedef = NESNELER[Math.min(hedefIdx, NESNELER.length - 1)];
+            this.hedefKg = hedef.agirlik;
+
+            this.tahta.guncelle(`${hedef.isim} = ${hedef.agirlik} kg → Aynı kiloyu bul!`, '');
+            this.tahta.renkAyarla('#FFF9C4');
+
+            // Show target on left
+            const solKart = nesneKarti(this, 220, 410, hedef, 70);
+            this.temiz.push(solKart);
+            this.tarti.tartAyarla(this.hedefKg, 0, 500);
+
+            // Pick 4 answer choices (1 correct + 3 wrong)
+            const secenekKeys = [];
+            secenekKeys.push(hedef.key); // correct
+            const diger = NESNELER.filter(n => n.agirlik !== hedef.agirlik);
+            Phaser.Utils.Array.Shuffle(diger);
+            for (let i = 0; i < 3 && i < diger.length; i++) secenekKeys.push(diger[i].key);
+            const secenekler = Phaser.Utils.Array.Shuffle(secenekKeys).map(k => nesneByKey[k]);
+
+            secenekler.forEach((n, i) => {
+                const bx = 350 + i * 110;
+                const kart = nesneKarti(this, bx, 465, n, 60);
+                kart.setInteractive({ useHandCursor: true });
+                kart.on('pointerover', () => this.tweens.add({ targets: kart, scaleX: 1.1, scaleY: 1.1, duration: 60 }));
+                kart.on('pointerout', () => this.tweens.add({ targets: kart, scaleX: 1, scaleY: 1, duration: 60 }));
+                kart.on('pointerdown', () => this.secim(n));
+                this.temiz.push(kart);
+            });
+        }
+
+        secim(n) {
+            if (this._kilitli) return;
+            this._kilitli = true;
+            ses('koy');
+            this.tarti.tartAyarla(this.hedefKg, n.agirlik, 600);
+
+            this.time.delayedCall(700, () => {
+                if (n.agirlik === this.hedefKg) {
+                    this.puan++; ses('dogru');
+                    this.tahta.guncelle(`${this.hedefKg} kg = ${n.agirlik} kg ✓`, 'DENGEDE! Harika!');
+                    this.tahta.renkAyarla('#69F0AE');
+                    this.geriText.setText(`✅ Doğru! ${n.isim} da ${n.agirlik} kg!`);
+                    this.geriText.setStyle({ color: '#A5D6A7', fontFamily: FONT, fontSize: '22px', fontStyle: 'bold', stroke: '#333', strokeThickness: 3 });
+                } else {
+                    ses('yanlis');
+                    const op = n.agirlik > this.hedefKg ? '>' : '<';
+                    this.tahta.guncelle(`${this.hedefKg} kg ≠ ${n.agirlik} kg ✗`, `${n.agirlik} ${op} ${this.hedefKg} — Eşit değil!`);
+                    this.tahta.renkAyarla('#EF9A9A');
+                    this.geriText.setText(`❌ ${n.isim} ${n.agirlik} kg, ${this.hedefKg} kg değil`);
+                    this.geriText.setStyle({ color: '#EF9A9A', fontFamily: FONT, fontSize: '22px', fontStyle: 'bold', stroke: '#333', strokeThickness: 3 });
+                }
+                this.tur++;
+                this.time.delayedCall(1800, () => this.yeniTur());
+            });
+        }
+    }
+
+    // ============ BÖLÜM 3: TOPLA VE DENGELE ============
+    class Bolum3Sahne extends Phaser.Scene {
+        constructor() { super('bolum3'); }
+        create() {
+            this.puan = 0; this.tur = 0; this.maxTur = 5;
+            this.sagKg = 0; this.sagSecim = []; this.temiz = [];
+            arkaplan(this);
+            this.add.text(400, 22, '➕ Topla ve Dengele', {
+                fontFamily: FONT, fontSize: '28px', fontStyle: 'bold', color: '#FFF', stroke: '#333', strokeThickness: 4,
+            }).setOrigin(0.5);
+            this.turText = this.add.text(720, 18, '', { fontFamily: FONT, fontSize: '16px', color: '#FFF', stroke: '#333', strokeThickness: 2 }).setOrigin(0.5);
+            this.puanText = this.add.text(720, 40, '', { fontFamily: FONT, fontSize: '14px', color: '#FFD54F', stroke: '#333', strokeThickness: 2 }).setOrigin(0.5);
+            this.tarti = new Tarti(this, 400, 245, 0.82);
+            this.tahta = matTahtasi(this, 400, 68);
+            this.geriText = this.add.text(400, 560, '', {
+                fontFamily: FONT, fontSize: '22px', fontStyle: 'bold', color: '#FFF', stroke: '#333', strokeThickness: 3,
+            }).setOrigin(0.5);
+            this.toplamText = this.add.text(560, 395, '', {
+                fontFamily: FONT, fontSize: '16px', fontStyle: 'bold', color: '#B3E5FC', stroke: '#333', strokeThickness: 2,
+            }).setOrigin(0.5);
+            btn(this, 50, 18, 80, 30, '← Menü', 0x546E7A, () => this.scene.start('menu'), '14px');
+            this.yeniTur();
+        }
+        t_temizle() { this.temiz.forEach(o => { if (o && o.destroy) o.destroy(); }); this.temiz = []; }
+
+        yeniTur() {
+            if (this.tur >= this.maxTur) { bolumSonu(this, this.puan, this.maxTur, 3, 'b3ok', 'b3', 'bolum3'); return; }
+            this.turText.setText(`Tur: ${this.tur + 1}/${this.maxTur}`);
+            this.puanText.setText(`Puan: ${this.puan} ⭐`);
+            this.geriText.setText(''); this.toplamText.setText('');
+            this.sagKg = 0; this.sagSecim = [];
+            this.t_temizle();
+            this.tarti.sifirla(300);
+
+            // Round definitions with solvable combos
+            const turlar = [
+                { solKey: 'kitap',  secKeys: ['tuy','kalem','elma','top'] },        // 5 = 1+4 or 2+3
+                { solKey: 'tas',    secKeys: ['tuy','kalem','elma','top','kitap'] }, // 7
+                { solKey: 'karpuz', secKeys: ['tuy','kalem','elma','top','kitap'] }, // 8
+                { solKey: 'kova',   secKeys: ['kalem','elma','top','ayicik'] },      // 9 = 3+6 or 4+5 or 2+3+4
+                { solKey: 'bavul',  secKeys: ['tuy','kalem','elma','top','kitap','ayicik'] }, // 10
+            ];
+            const tur = turlar[this.tur % turlar.length];
+            const solNesne = nesneByKey[tur.solKey];
+            this.hedefKg = solNesne.agirlik;
+
+            // Left side display
+            const solKart = nesneKarti(this, 210, 400, solNesne, 65);
+            this.temiz.push(solKart);
+            this.tarti.tartAyarla(this.hedefKg, 0, 500);
+
+            this.tahta.guncelle(`? + ? = ${this.hedefKg} kg`, `Sol kefe: ${this.hedefKg} kg — Sağ kefeyi topla!`);
+            this.tahta.renkAyarla('#FFF9C4');
+
+            // Available objects
+            const secNesneler = tur.secKeys.map(k => nesneByKey[k]);
+            this.secenekData = [];
+            const startX = 310;
+            const spacing = Math.min(95, (470) / secNesneler.length);
+
+            secNesneler.forEach((n, i) => {
+                const bx = startX + i * spacing;
+                const kart = nesneKarti(this, bx, 460, n, 52);
+                kart.setInteractive({ useHandCursor: true });
+                const item = { nesne: n, kart, secili: false };
+                kart.on('pointerdown', () => this.nesneToggle(item));
+                kart.on('pointerover', () => {
+                    if (!item.secili) this.tweens.add({ targets: kart, scaleX: 1.08, scaleY: 1.08, duration: 60 });
+                });
+                kart.on('pointerout', () => {
+                    const s = item.secili ? 0.85 : 1;
+                    this.tweens.add({ targets: kart, scaleX: s, scaleY: s, duration: 60 });
+                });
+                this.secenekData.push(item);
+                this.temiz.push(kart);
+            });
+
+            const kontrol = btn(this, 700, 460, 110, 40, '✓ Kontrol', 0x2E7D32, () => this.kontrol(), '16px');
+            this.temiz.push(kontrol);
+        }
+
+        denklemGuncelle() {
+            const parcalar = this.sagSecim.map(k => `${nesneByKey[k].agirlik}`);
+            const toplam = this.sagKg;
+            const dStr = parcalar.length > 0 ? parcalar.join(' + ') + ` = ${toplam}` : '?';
+            const kalan = this.hedefKg - toplam;
+            let durum = '';
+            if (toplam === this.hedefKg) { durum = '✅ DENGEDE!'; this.tahta.renkAyarla('#69F0AE'); }
+            else if (toplam > this.hedefKg) { durum = `⚠️ ${toplam - this.hedefKg} kg fazla!`; this.tahta.renkAyarla('#EF9A9A'); }
+            else { durum = `${kalan} kg daha lazım`; this.tahta.renkAyarla('#FFF9C4'); }
+            this.tahta.guncelle(`${dStr}  →  hedef ${this.hedefKg} kg`, durum);
+            this.toplamText.setText(`Sağ kefe: ${toplam} kg`);
+        }
+
+        nesneToggle(item) {
+            const n = item.nesne;
+            if (item.secili) {
+                item.secili = false;
+                this.sagSecim = this.sagSecim.filter(k => k !== n.key);
+                this.sagKg -= n.agirlik;
+                this.tweens.add({ targets: item.kart, scaleX: 1, scaleY: 1, alpha: 1, duration: 120 });
+            } else {
+                item.secili = true;
+                this.sagSecim.push(n.key);
+                this.sagKg += n.agirlik;
+                this.tweens.add({ targets: item.kart, scaleX: 0.85, scaleY: 0.85, alpha: 0.55, duration: 120 });
+            }
+            ses('koy');
+            this.tarti.tartAyarla(this.hedefKg, this.sagKg, 400);
+            this.denklemGuncelle();
+        }
+
+        kontrol() {
+            if (this.sagKg === this.hedefKg) {
+                this.puan++; ses('dogru');
+                const parcalar = this.sagSecim.map(k => `${nesneByKey[k].agirlik}`);
+                this.tahta.guncelle(`${parcalar.join(' + ')} = ${this.hedefKg} kg ✓`, '🎉 DENGEDE! Harika toplama!');
+                this.tahta.renkAyarla('#69F0AE');
+                this.geriText.setText('✅ Mükemmel! Toplama doğru!');
+                this.geriText.setStyle({ color: '#A5D6A7', fontFamily: FONT, fontSize: '22px', fontStyle: 'bold', stroke: '#333', strokeThickness: 3 });
+                this.tur++;
+                this.time.delayedCall(2000, () => this.yeniTur());
+            } else {
+                ses('yanlis');
+                const fark = this.hedefKg - this.sagKg;
+                const mesaj = fark > 0 ? `${fark} kg daha ekle!` : `${-fark} kg fazla, bir şey çıkar!`;
+                this.geriText.setText(`❌ ${mesaj}`);
+                this.geriText.setStyle({ color: '#EF9A9A', fontFamily: FONT, fontSize: '22px', fontStyle: 'bold', stroke: '#333', strokeThickness: 3 });
+                this.time.delayedCall(1200, () => this.geriText.setText(''));
+            }
+        }
+    }
+
+    // ============ BÖLÜM 4: EKSİK KAÇ KİLO? ============
+    class Bolum4Sahne extends Phaser.Scene {
+        constructor() { super('bolum4'); }
+        create() {
+            this.puan = 0; this.tur = 0; this.maxTur = 5;
+            this.temiz = []; this._kilitli = false;
+            arkaplan(this);
+            this.add.text(400, 22, '🧩 Eksik Kaç Kilo?', {
+                fontFamily: FONT, fontSize: '28px', fontStyle: 'bold', color: '#FFF', stroke: '#333', strokeThickness: 4,
+            }).setOrigin(0.5);
+            this.turText = this.add.text(720, 18, '', { fontFamily: FONT, fontSize: '16px', color: '#FFF', stroke: '#333', strokeThickness: 2 }).setOrigin(0.5);
+            this.puanText = this.add.text(720, 40, '', { fontFamily: FONT, fontSize: '14px', color: '#FFD54F', stroke: '#333', strokeThickness: 2 }).setOrigin(0.5);
+            this.tarti = new Tarti(this, 400, 240, 0.82);
+            this.tahta = matTahtasi(this, 400, 68);
+            this.geriText = this.add.text(400, 560, '', {
+                fontFamily: FONT, fontSize: '22px', fontStyle: 'bold', color: '#FFF', stroke: '#333', strokeThickness: 3,
+            }).setOrigin(0.5);
+            btn(this, 50, 18, 80, 30, '← Menü', 0x546E7A, () => this.scene.start('menu'), '14px');
+            this.yeniTur();
+        }
+        t_temizle() { this.temiz.forEach(o => { if (o && o.destroy) o.destroy(); }); this.temiz = []; }
+
+        yeniTur() {
+            if (this.tur >= this.maxTur) { bolumSonu(this, this.puan, this.maxTur, 3, 'b4ok', 'b4', 'bolum4'); return; }
+            this.turText.setText(`Tur: ${this.tur + 1}/${this.maxTur}`);
+            this.puanText.setText(`Puan: ${this.puan} ⭐`);
+            this.geriText.setText('');
+            this.t_temizle(); this._kilitli = false;
+
+            const turlar = [
+                { solKey: 'kitap',  sagKeys: ['kalem'],       eksik: 3 },  // 5 - 2 = 3
+                { solKey: 'tas',    sagKeys: ['elma'],        eksik: 4 },  // 7 - 3 = 4
+                { solKey: 'karpuz', sagKeys: ['tuy','kalem'], eksik: 5 },  // 8 - 3 = 5
+                { solKey: 'kova',   sagKeys: ['top'],         eksik: 5 },  // 9 - 4 = 5
+                { solKey: 'bavul',  sagKeys: ['elma','kalem'],eksik: 5 },  // 10 - 5 = 5
+            ];
+            const tur = turlar[this.tur % turlar.length];
+            const solNesne = nesneByKey[tur.solKey];
+            const sagNesneler = tur.sagKeys.map(k => nesneByKey[k]);
+            const sagMevcutKg = sagNesneler.reduce((s, n) => s + n.agirlik, 0);
+            this.hedefKg = solNesne.agirlik;
+            this.eksikKg = tur.eksik;
+
+            // Left display
+            const solKart = nesneKarti(this, 200, 400, solNesne, 60);
+            this.temiz.push(solKart);
+
+            // Right - existing objects
+            sagNesneler.forEach((n, i) => {
+                const kart = nesneKarti(this, 520 + i * 80, 400, n, 50);
+                this.temiz.push(kart);
+            });
+
+            // Question mark block on right
+            const qBlock = this.add.container(520 + sagNesneler.length * 80, 400);
+            const qbg = this.add.graphics();
+            qbg.fillStyle(0xFFD54F, 0.8); qbg.fillRoundedRect(-30, -35, 60, 70, 10);
+            qbg.lineStyle(2, 0xF9A825); qbg.strokeRoundedRect(-30, -35, 60, 70, 10);
+            const qTxt = this.add.text(0, -2, '?', { fontFamily: FONT, fontSize: '36px', fontStyle: 'bold', color: '#333' }).setOrigin(0.5);
+            const qKg = this.add.text(0, 22, '? kg', { fontFamily: FONT, fontSize: '14px', fontStyle: 'bold', color: '#555' }).setOrigin(0.5);
+            qBlock.add([qbg, qTxt, qKg]);
+            this.temiz.push(qBlock);
+
+            // Math on board
+            const sagStr = sagNesneler.map(n => n.agirlik).join(' + ');
+            this.tahta.guncelle(`${this.hedefKg} kg = ${sagStr} + ? kg`, `${this.hedefKg} − ${sagMevcutKg} = ?    Eksik kaç kilo?`);
+            this.tahta.renkAyarla('#FFF9C4');
+
+            this.tarti.tartAyarla(this.hedefKg, sagMevcutKg, 600);
+
+            // Answer buttons
+            const dogru = this.eksikKg;
+            let secenekler = [dogru];
+            while (secenekler.length < 5) {
+                const r = Phaser.Math.Between(1, 10);
+                if (!secenekler.includes(r)) secenekler.push(r);
+            }
+            secenekler.sort((a, b) => a - b);
+
+            this.add.text(400, 490, 'Eksik kilo kaç?', {
+                fontFamily: FONT, fontSize: '18px', fontStyle: 'bold', color: '#FFF9C4', stroke: '#333', strokeThickness: 3,
+            }).setOrigin(0.5);
+
+            secenekler.forEach((num, i) => {
+                const bx = 200 + i * 120;
+                const b = btn(this, bx, 530, 95, 44, `${num} kg`, 0x37474F, () => {
+                    if (this._kilitli) return;
+                    this._kilitli = true;
+
+                    if (num === dogru) {
+                        this.puan++; ses('dogru');
+                        const sagStr2 = sagNesneler.map(n => n.agirlik).join(' + ');
+                        this.tahta.guncelle(`${this.hedefKg} = ${sagStr2} + ${dogru} ✓`, `${this.hedefKg} − ${sagMevcutKg} = ${dogru} 🎉`);
+                        this.tahta.renkAyarla('#69F0AE');
+                        this.tarti.tartAyarla(this.hedefKg, this.hedefKg, 600);
+                        this.geriText.setText(`✅ Doğru! Eksik ${dogru} kg idi!`);
+                        this.geriText.setStyle({ color: '#A5D6A7', fontFamily: FONT, fontSize: '22px', fontStyle: 'bold', stroke: '#333', strokeThickness: 3 });
+                        // Update question mark
+                        qTxt.setText(`${dogru}`); qKg.setText(`${dogru} kg`);
+                    } else {
+                        ses('yanlis');
+                        this.tahta.guncelle(`${this.hedefKg} − ${sagMevcutKg} ≠ ${num}`, `Doğru cevap: ${dogru} kg`);
+                        this.tahta.renkAyarla('#EF9A9A');
+                        this.tarti.tartAyarla(this.hedefKg, sagMevcutKg + num, 600);
+                        this.geriText.setText(`❌ Hayır! ${this.hedefKg} − ${sagMevcutKg} = ${dogru}`);
+                        this.geriText.setStyle({ color: '#EF9A9A', fontFamily: FONT, fontSize: '22px', fontStyle: 'bold', stroke: '#333', strokeThickness: 3 });
+                    }
+                    this.tur++;
+                    this.time.delayedCall(2200, () => this.yeniTur());
+                }, '16px');
+                this.temiz.push(b);
+            });
+        }
+    }
+
+    // ============ OYUN BAŞLAT ============
+    const config = {
+        type: Phaser.AUTO,
+        width: 800, height: 600,
+        parent: 'game-container',
+        backgroundColor: '#64B5F6',
+        scene: [YuklemeSahne, MenuSahne, Bolum1Sahne, Bolum2Sahne, Bolum3Sahne, Bolum4Sahne],
+        scale: { mode: Phaser.Scale.FIT, autoCenter: Phaser.Scale.CENTER_BOTH },
+    };
+
+    const game = new Phaser.Game(config);
+    </script>
+</body>
+</html>

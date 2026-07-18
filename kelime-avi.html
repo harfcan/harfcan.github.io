@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kelime Avı - Uzay Teması - Harfcan</title>
+  <meta name="description" content="12x12 kelime avı bulmacası! Uzay temalı gizli kelimeleri bul." />
+  <link rel="canonical" href="https://www.harfcan.com/kelime-avi.html" />
+  <meta property="og:title" content="Kelime Avı - Harfcan" />
+  <meta property="og:description" content="12x12 harf tablosunda gizli kelimeleri bul! Uzay, hayvanlar, meyveler ve daha fazla tema." />
+  <meta property="og:url" content="https://www.harfcan.com/kelime-avi.html" />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="https://www.harfcan.com/harfcan-logo.png" />
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+      min-height: 100vh;
+      padding: 1rem;
+      color: #fff;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+
+    .logo { display: inline-block; width: 120px; margin-bottom: 10px; }
+    .logo img { width: 100%; height: auto; display: block; }
+
+    header h1 { font-size: 1.5rem; margin-bottom: 0.3rem; }
+    header p { font-size: 0.9rem; opacity: 0.7; }
+
+    /* Word List */
+    .word-list {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .word-tag {
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.2);
+      padding: 0.3rem 0.8rem;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      transition: all 0.3s;
+    }
+
+    .word-tag.found {
+      background: rgba(76, 175, 80, 0.3);
+      border-color: #4caf50;
+      text-decoration: line-through;
+      opacity: 0.7;
+    }
+
+    /* Grid */
+    .grid-wrapper {
+      background: rgba(255,255,255,0.05);
+      border-radius: 12px;
+      padding: 0.5rem;
+      border: 1px solid rgba(255,255,255,0.1);
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: none;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 2px;
+    }
+
+    .cell {
+      aspect-ratio: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: clamp(0.7rem, 2.5vw, 1rem);
+      font-weight: 700;
+      background: rgba(255,255,255,0.08);
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background 0.15s, transform 0.1s;
+      text-transform: uppercase;
+    }
+
+    .cell:hover {
+      background: rgba(255,255,255,0.15);
+    }
+
+    .cell.selecting {
+      background: rgba(100, 181, 246, 0.4);
+      transform: scale(1.05);
+    }
+
+    .cell.found {
+      background: rgba(76, 175, 80, 0.35);
+      color: #a5d6a7;
+    }
+
+    .cell.wrong {
+      background: rgba(244, 67, 54, 0.3);
+      animation: shake 0.3s;
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-3px); }
+      75% { transform: translateX(3px); }
+    }
+
+    /* Score & Status */
+    .status-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+
+    .found-count {
+      font-size: 1rem;
+      font-weight: 700;
+    }
+
+    .timer {
+      font-size: 1rem;
+      opacity: 0.8;
+    }
+
+    /* Win Screen */
+    .win-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+    }
+
+    .win-box {
+      background: #1a1a2e;
+      border: 2px solid #4caf50;
+      border-radius: 16px;
+      padding: 2rem;
+      text-align: center;
+      max-width: 350px;
+    }
+
+    .win-box h2 { font-size: 1.5rem; color: #4caf50; margin-bottom: 0.5rem; }
+    .win-box .win-emoji { font-size: 3rem; margin-bottom: 1rem; }
+    .win-box p { color: #aaa; margin-bottom: 1.5rem; }
+
+    .play-again-btn {
+      padding: 0.8rem 2rem;
+      background: linear-gradient(135deg, #4caf50, #2e7d32);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    /* Direction hint */
+    .hint {
+      text-align: center;
+      font-size: 0.8rem;
+      opacity: 0.5;
+      margin-top: 0.8rem;
+    }
+
+    /* Theme Selection */
+    .theme-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .theme-card {
+      background: rgba(255,255,255,0.08);
+      border: 2px solid rgba(255,255,255,0.15);
+      border-radius: 14px;
+      padding: 1.2rem 0.8rem;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .theme-card:hover {
+      background: rgba(255,255,255,0.15);
+      border-color: rgba(255,255,255,0.4);
+      transform: translateY(-3px);
+    }
+
+    .theme-emoji { font-size: 2.5rem; margin-bottom: 0.5rem; }
+    .theme-name { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.2rem; }
+    .theme-desc { font-size: 0.75rem; opacity: 0.6; }
+
+    /* Back Button */
+    .back-btn {
+      display: block;
+      margin: 1rem auto 0;
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.2);
+      color: #fff;
+      padding: 0.5rem 1.2rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .back-btn:hover { background: rgba(255,255,255,0.2); }
+
+
+    .hidden { display: none !important; }
+
+    /* Celebration */
+    .celebration { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 999; }
+    .confetti { position: absolute; border-radius: 50%; animation: fall 2s ease-out forwards; }
+    @keyframes fall {
+      0% { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+      100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <header>
+      <div class="logo"><a href="index.html"><img src="harfcan-logo.png" alt="Harfcan Logo" /></a></div>
+      <h1>🔍 Kelime Avı</h1>
+      <p>Gizli kelimeleri bul! Parmağınla veya fareyle sürükle.</p>
+    </header>
+
+    <!-- Theme Selection Screen -->
+    <div id="themeScreen">
+      <div class="theme-grid">
+        <div class="theme-card" onclick="selectTheme('uzay')">
+          <div class="theme-emoji">🚀</div>
+          <div class="theme-name">Uzay</div>
+          <div class="theme-desc">Gezegenler, yıldızlar ve roketler</div>
+        </div>
+        <div class="theme-card" onclick="selectTheme('hayvanlar')">
+          <div class="theme-emoji">🦁</div>
+          <div class="theme-name">Hayvanlar</div>
+          <div class="theme-desc">Ormandan denize tüm canlılar</div>
+        </div>
+        <div class="theme-card" onclick="selectTheme('meyveler')">
+          <div class="theme-emoji">🍎</div>
+          <div class="theme-name">Meyveler</div>
+          <div class="theme-desc">Renkli ve tatlı meyveler</div>
+        </div>
+        <div class="theme-card" onclick="selectTheme('spor')">
+          <div class="theme-emoji">⚽</div>
+          <div class="theme-name">Spor</div>
+          <div class="theme-desc">Futbol, basketbol ve daha fazlası</div>
+        </div>
+        <div class="theme-card" onclick="selectTheme('okul')">
+          <div class="theme-emoji">🎒</div>
+          <div class="theme-name">Okul</div>
+          <div class="theme-desc">Sınıf, kitap ve öğretmenler</div>
+        </div>
+        <div class="theme-card" onclick="selectTheme('deniz')">
+          <div class="theme-emoji">🌊</div>
+          <div class="theme-name">Deniz</div>
+          <div class="theme-desc">Balıklar, dalga ve gemiler</div>
+        </div>
+      </div>
+    </div>
+
+    <header>
+      <h1>🔍 Kelime Avı</h1>
+      <p>Gizli kelimeleri bul! Parmağınla veya fareyle sürükle.</p>
+    </header>
+
+    <!-- Game Screen -->
+    <div id="gameScreen" class="hidden">
+
+    <div class="status-bar">
+      <div class="found-count" id="foundCount">0 / 0</div>
+      <div class="timer" id="timer">⏱ 0:00</div>
+    </div>
+
+    <div class="word-list" id="wordList"></div>
+
+    <div class="grid-wrapper">
+      <div class="grid" id="grid"></div>
+    </div>
+
+    <p class="hint">→ ← ↓ ↑ ↗ ↘ ↙ ↖ her yöne gizlenmiş olabilir</p>
+    <button class="back-btn" onclick="goBack()">← Tema Seçimine Dön</button>
+    </div>
+  </div>
+
+  <!-- Win Overlay -->
+  <div class="win-overlay hidden" id="winOverlay">
+    <div class="win-box">
+      <div class="win-emoji" id="winEmoji">🚀🌟</div>
+      <h2>Tebrikler!</h2>
+      <p id="winText">Tüm kelimeleri buldun!</p>
+      <button class="play-again-btn" onclick="replayTheme()">🔄 Tekrar Oyna</button>
+      <button class="play-again-btn" style="background:linear-gradient(135deg,#7c4dff,#536dfe); margin-top:0.5rem;" onclick="goBack()">🎨 Başka Tema</button>
+    </div>
+  </div>
+
+  <div class="celebration" id="celebration"></div>
+
+  <script>
+    const GRID_SIZE = 12;
+    const THEMES = {
+      uzay: {
+        name: "Uzay",
+        emoji: "🚀",
+        words: ["UZAY", "GEZEGEN", "ROKET", "GALAKSİ", "YILDIZ", "AY", "MARS", "METEOR", "NEBULA", "ORBİT", "KUYRUKLU", "TELESKOP"]
+      },
+      hayvanlar: {
+        name: "Hayvanlar",
+        emoji: "🦁",
+        words: ["ASLAN", "KAPLAN", "FİL", "ZÜRAFA", "PENGUEN", "KARTAL", "YUNUS", "KELEBEK", "KARINCA", "TİMSAH", "PAPAĞAN", "SİNCAP"]
+      },
+      meyveler: {
+        name: "Meyveler",
+        emoji: "🍎",
+        words: ["ELMA", "PORTAKAL", "MUZ", "ÇİLEK", "KARPUZ", "ÜZÜM", "ARMUT", "ŞEFTALİ", "KİRAZ", "ANANAS", "KAVUN", "LİMON"]
+      },
+      spor: {
+        name: "Spor",
+        emoji: "⚽",
+        words: ["FUTBOL", "BASKETBOL", "VOLEYBOL", "TENİS", "YÜZME", "BİSİKLET", "ATLATİZM", "BOKS", "KAYAK", "OKÇULUK", "SATRANÇ", "GOLF"]
+      },
+      okul: {
+        name: "Okul",
+        emoji: "🎒",
+        words: ["KALEM", "KİTAP", "DEFTER", "ÖĞRETMEN", "SINIF", "ÖDEV", "TAHTA", "SİLGİ", "CETVEL", "OKUL", "DERS", "SINAV"]
+      },
+      deniz: {
+        name: "Deniz",
+        emoji: "🌊",
+        words: ["BALIK", "GEMİ", "DALGA", "DENİZ", "AHTAPOT", "MERCAN", "YUNUS", "DENİZYILDIZI", "MİDYE", "KUM", "FIRTINA", "YELKEN"]
+      }
+    };
+
+    let currentTheme = null;
+    let WORDS = [];
+
+    // Directions: [rowDelta, colDelta]
+    const DIRECTIONS = [
+      [0, 1],   // →
+      [0, -1],  // ←
+      [1, 0],   // ↓
+      [-1, 0],  // ↑
+      [1, 1],   // ↘
+      [-1, -1], // ↖
+      [1, -1],  // ↙
+      [-1, 1],  // ↗
+    ];
+
+    const TURKISH_LETTERS = "ABCÇDEFGĞHIİJKLMNOÖPRSŞTUÜVYZ";
+
+    let grid = [];
+    let placedWords = [];
+    let foundWords = [];
+    let selecting = false;
+    let selectedCells = [];
+    let startTime = null;
+    let timerInterval = null;
+
+    // === AUDIO ===
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    let audioCtx = null;
+    function getAudioCtx() { if (!audioCtx) audioCtx = new AudioCtx(); return audioCtx; }
+
+    function playTone(freq, duration, type = 'sine', vol = 0.25) {
+      const ctx = getAudioCtx();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = type;
+      osc.frequency.value = freq;
+      gain.gain.setValueAtTime(vol, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start();
+      osc.stop(ctx.currentTime + duration);
+    }
+
+    function soundFound() {
+      playTone(523, 0.1, 'sine', 0.25);
+      setTimeout(() => playTone(659, 0.1, 'sine', 0.25), 80);
+      setTimeout(() => playTone(784, 0.15, 'sine', 0.3), 160);
+    }
+
+    function soundWrong() {
+      playTone(200, 0.2, 'triangle', 0.15);
+    }
+
+    function soundSelect() {
+      playTone(440 + selectedCells.length * 40, 0.05, 'sine', 0.12);
+    }
+
+    function soundWin() {
+      const notes = [523, 587, 659, 784, 880, 1047];
+      notes.forEach((f, i) => {
+        setTimeout(() => playTone(f, 0.2, 'sine', 0.25), i * 120);
+      });
+    }
+
+
+    // === GRID GENERATION ===
+    function createEmptyGrid() {
+      grid = [];
+      for (let r = 0; r < GRID_SIZE; r++) {
+        grid[r] = [];
+        for (let c = 0; c < GRID_SIZE; c++) {
+          grid[r][c] = '';
+        }
+      }
+    }
+
+    function canPlaceWord(word, row, col, dir) {
+      const [dr, dc] = dir;
+      for (let i = 0; i < word.length; i++) {
+        const r = row + dr * i;
+        const c = col + dc * i;
+        if (r < 0 || r >= GRID_SIZE || c < 0 || c >= GRID_SIZE) return false;
+        if (grid[r][c] !== '' && grid[r][c] !== word[i]) return false;
+      }
+      return true;
+    }
+
+    function placeWord(word, row, col, dir) {
+      const [dr, dc] = dir;
+      const cells = [];
+      for (let i = 0; i < word.length; i++) {
+        const r = row + dr * i;
+        const c = col + dc * i;
+        grid[r][c] = word[i];
+        cells.push({ r, c });
+      }
+      return cells;
+    }
+
+    function generateGrid() {
+      createEmptyGrid();
+      placedWords = [];
+
+      // Sort by length (longest first for better placement)
+      const sortedWords = [...WORDS].sort((a, b) => b.length - a.length);
+
+      for (const word of sortedWords) {
+        let placed = false;
+        const shuffledDirs = shuffle(DIRECTIONS);
+
+        // Try 100 random positions
+        for (let attempt = 0; attempt < 100 && !placed; attempt++) {
+          const row = Math.floor(Math.random() * GRID_SIZE);
+          const col = Math.floor(Math.random() * GRID_SIZE);
+
+          for (const dir of shuffledDirs) {
+            if (canPlaceWord(word, row, col, dir)) {
+              const cells = placeWord(word, row, col, dir);
+              placedWords.push({ word, cells });
+              placed = true;
+              break;
+            }
+          }
+        }
+
+        if (!placed) {
+          // Fallback: try every position
+          for (let r = 0; r < GRID_SIZE && !placed; r++) {
+            for (let c = 0; c < GRID_SIZE && !placed; c++) {
+              for (const dir of shuffledDirs) {
+                if (canPlaceWord(word, r, c, dir)) {
+                  const cells = placeWord(word, r, c, dir);
+                  placedWords.push({ word, cells });
+                  placed = true;
+                }
+              }
+            }
+          }
+        }
+      }
+
+      // Fill empty cells with random letters
+      for (let r = 0; r < GRID_SIZE; r++) {
+        for (let c = 0; c < GRID_SIZE; c++) {
+          if (grid[r][c] === '') {
+            grid[r][c] = TURKISH_LETTERS[Math.floor(Math.random() * TURKISH_LETTERS.length)];
+          }
+        }
+      }
+    }
+
+    // === RENDERING ===
+    function renderGrid() {
+      const gridEl = document.getElementById('grid');
+      gridEl.innerHTML = '';
+
+      for (let r = 0; r < GRID_SIZE; r++) {
+        for (let c = 0; c < GRID_SIZE; c++) {
+          const cell = document.createElement('div');
+          cell.className = 'cell';
+          cell.textContent = grid[r][c];
+          cell.dataset.row = r;
+          cell.dataset.col = c;
+          gridEl.appendChild(cell);
+        }
+      }
+    }
+
+    function renderWordList() {
+      const listEl = document.getElementById('wordList');
+      listEl.innerHTML = '';
+      for (const word of WORDS) {
+        const tag = document.createElement('span');
+        tag.className = 'word-tag';
+        tag.textContent = word;
+        tag.id = `tag-${word}`;
+        listEl.appendChild(tag);
+      }
+    }
+
+    function updateFoundCount() {
+      document.getElementById('foundCount').textContent =
+        `${foundWords.length} / ${placedWords.length}`;
+    }
+
+    // === SELECTION LOGIC ===
+    function getCellAt(row, col) {
+      return document.querySelector(`.cell[data-row="${row}"][data-col="${col}"]`);
+    }
+
+    function getSelectionDirection(cells) {
+      if (cells.length < 2) return null;
+      const dr = cells[1].r - cells[0].r;
+      const dc = cells[1].c - cells[0].c;
+      return { dr, dc };
+    }
+
+    function isValidSelection(cells, newR, newC) {
+      if (cells.length === 0) return true;
+      if (cells.length === 1) {
+        // Any adjacent (including diagonal)
+        const diffR = Math.abs(newR - cells[0].r);
+        const diffC = Math.abs(newC - cells[0].c);
+        return (diffR <= 1 && diffC <= 1 && (diffR + diffC > 0));
+      }
+      // Must follow same direction
+      const dir = getSelectionDirection(cells);
+      const expectedR = cells[cells.length - 1].r + dir.dr;
+      const expectedC = cells[cells.length - 1].c + dir.dc;
+      return newR === expectedR && newC === expectedC;
+    }
+
+    function startSelection(r, c) {
+      selecting = true;
+      selectedCells = [{ r, c }];
+      highlightSelection();
+    }
+
+    function extendSelection(r, c) {
+      if (!selecting) return;
+
+      // Already selected?
+      if (selectedCells.some(cell => cell.r === r && cell.c === c)) return;
+
+      if (isValidSelection(selectedCells, r, c)) {
+        selectedCells.push({ r, c });
+        soundSelect();
+        highlightSelection();
+      }
+    }
+
+    function endSelection() {
+      if (!selecting) return;
+      selecting = false;
+
+      // Check if selection matches any word
+      const selectedWord = selectedCells.map(({ r, c }) => grid[r][c]).join('');
+      const match = placedWords.find(pw =>
+        pw.word === selectedWord && !foundWords.includes(pw.word)
+      );
+
+      if (match) {
+        foundWords.push(match.word);
+        soundFound();
+        markFound(match);
+        updateFoundCount();
+
+        if (foundWords.length === placedWords.length) {
+          setTimeout(showWin, 500);
+        }
+      } else {
+        // Flash wrong
+        selectedCells.forEach(({ r, c }) => {
+          const cell = getCellAt(r, c);
+          if (cell && !cell.classList.contains('found')) {
+            soundWrong();
+
+            cell.classList.add('wrong');
+            setTimeout(() => cell.classList.remove('wrong'), 400);
+          }
+        });
+      }
+
+      clearHighlight();
+      selectedCells = [];
+    }
+
+    function highlightSelection() {
+      // Clear previous
+      document.querySelectorAll('.cell.selecting').forEach(el => el.classList.remove('selecting'));
+      // Highlight current
+      selectedCells.forEach(({ r, c }) => {
+        const cell = getCellAt(r, c);
+        if (cell) cell.classList.add('selecting');
+      });
+    }
+
+    function clearHighlight() {
+      document.querySelectorAll('.cell.selecting').forEach(el => el.classList.remove('selecting'));
+    }
+
+    function markFound(match) {
+      match.cells.forEach(({ r, c }) => {
+        const cell = getCellAt(r, c);
+        if (cell) cell.classList.add('found');
+      });
+
+      const tag = document.getElementById(`tag-${match.word}`);
+      if (tag) tag.classList.add('found');
+
+      showMiniCelebration();
+    }
+
+    // === EVENTS ===
+    function setupEvents() {
+      const gridEl = document.getElementById('grid');
+
+      // Mouse events
+      gridEl.addEventListener('mousedown', (e) => {
+        const cell = e.target.closest('.cell');
+        if (!cell) return;
+        e.preventDefault();
+        startSelection(+cell.dataset.row, +cell.dataset.col);
+      });
+
+      gridEl.addEventListener('mousemove', (e) => {
+        const cell = e.target.closest('.cell');
+        if (!cell) return;
+        extendSelection(+cell.dataset.row, +cell.dataset.col);
+      });
+
+      document.addEventListener('mouseup', () => endSelection());
+
+      // Touch events
+      gridEl.addEventListener('touchstart', (e) => {
+        const touch = e.touches[0];
+        const cell = document.elementFromPoint(touch.clientX, touch.clientY)?.closest('.cell');
+        if (!cell) return;
+        e.preventDefault();
+        startSelection(+cell.dataset.row, +cell.dataset.col);
+      }, { passive: false });
+
+      gridEl.addEventListener('touchmove', (e) => {
+        const touch = e.touches[0];
+        const cell = document.elementFromPoint(touch.clientX, touch.clientY)?.closest('.cell');
+        if (!cell) return;
+        e.preventDefault();
+        extendSelection(+cell.dataset.row, +cell.dataset.col);
+      }, { passive: false });
+
+      document.addEventListener('touchend', () => endSelection());
+    }
+
+    // === TIMER ===
+    function startTimer() {
+      startTime = Date.now();
+      timerInterval = setInterval(() => {
+        const elapsed = Math.floor((Date.now() - startTime) / 1000);
+        const min = Math.floor(elapsed / 60);
+        const sec = elapsed % 60;
+        document.getElementById('timer').textContent =
+          `⏱ ${min}:${sec.toString().padStart(2, '0')}`;
+      }, 1000);
+    }
+
+    // === WIN ===
+    function showWin() {
+      clearInterval(timerInterval);
+      const elapsed = Math.floor((Date.now() - startTime) / 1000);
+      const min = Math.floor(elapsed / 60);
+      const sec = elapsed % 60;
+
+      document.getElementById('winText').textContent =
+        `Tüm ${placedWords.length} kelimeyi ${min}:${sec.toString().padStart(2, '0')} sürede buldun!`;
+      document.getElementById('winOverlay').classList.remove('hidden');
+      soundWin();
+
+      // Big celebration
+      for (let i = 0; i < 3; i++) {
+        setTimeout(showMiniCelebration, i * 300);
+      }
+    }
+
+    // === HELPERS ===
+    function shuffle(arr) {
+      const a = [...arr];
+      for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+      }
+      return a;
+    }
+
+    function showMiniCelebration() {
+      const container = document.getElementById('celebration');
+      const colors = ['#4caf50', '#81c784', '#64b5f6', '#ffd54f', '#ce93d8', '#ff8a65'];
+      for (let i = 0; i < 15; i++) {
+        const c = document.createElement('div');
+        c.className = 'confetti';
+        c.style.left = Math.random() * 100 + '%';
+        c.style.top = '-10px';
+        c.style.background = colors[Math.floor(Math.random() * colors.length)];
+        c.style.animationDelay = Math.random() * 0.5 + 's';
+        c.style.width = (Math.random() * 8 + 4) + 'px';
+        c.style.height = c.style.width;
+        container.appendChild(c);
+      }
+      setTimeout(() => { container.innerHTML = ''; }, 2500);
+    }
+
+    // === THEME & INIT ===
+    function selectTheme(themeKey) {
+      currentTheme = THEMES[themeKey];
+      WORDS = currentTheme.words;
+      document.getElementById('themeScreen').classList.add('hidden');
+      document.getElementById('gameScreen').classList.remove('hidden');
+      startGameWithTheme();
+    }
+
+    function startGameWithTheme() {
+      generateGrid();
+      renderGrid();
+      renderWordList();
+      updateFoundCount();
+      setupEvents();
+      startTimer();
+    }
+
+    function replayTheme() {
+      document.getElementById('winOverlay').classList.add('hidden');
+      foundWords = [];
+      selectedCells = [];
+      selecting = false;
+      startGameWithTheme();
+    }
+
+
+    function goBack() {
+      clearInterval(timerInterval);
+      foundWords = [];
+      selectedCells = [];
+      selecting = false;
+      document.getElementById('gameScreen').classList.add('hidden');
+      document.getElementById('themeScreen').classList.remove('hidden');
+      document.getElementById('winOverlay').classList.add('hidden');
+    }
+  </script>
+</body>
+</html>

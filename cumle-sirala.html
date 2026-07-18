@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cümle Sırala - Harfcan</title>
+  <meta name="description" content="Kelimeleri doğru sıraya koy, cümleyi oluştur! Çocuklar için eğlenceli cümle kurma oyunu." />
+  <link rel="canonical" href="https://www.harfcan.com/cumle-sirala.html" />
+  <meta property="og:title" content="Cümle Sırala - Harfcan" />
+  <meta property="og:description" content="Kelimeleri doğru sıraya koy, cümleyi oluştur! Çocuklar için eğlenceli cümle kurma oyunu." />
+  <meta property="og:url" content="https://www.harfcan.com/cumle-sirala.html" />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="https://www.harfcan.com/harfcan-logo.png" />
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+      min-height: 100vh;
+      padding: 1rem;
+    }
+
+    .container { max-width: 600px; margin: 0 auto; }
+
+    header { text-align: center; color: #fff; margin-bottom: 1.5rem; }
+    .logo { display: inline-block; width: 120px; margin-bottom: 10px; }
+    .logo img { width: 100%; height: auto; display: block; }
+
+    header h1 { font-size: 1.6rem; margin-bottom: 0.3rem; }
+    header p { font-size: 0.95rem; opacity: 0.85; }
+
+    .screen {
+      background: #fff;
+      border-radius: 16px;
+      padding: 2rem;
+      text-align: center;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+    }
+
+    /* Start Screen */
+    .start-screen h2 { font-size: 1.4rem; color: #333; margin-bottom: 1rem; }
+    .start-screen p { color: #666; margin-bottom: 1.5rem; line-height: 1.6; }
+
+    .level-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+    }
+
+    .level-btn {
+      padding: 1rem;
+      border: none;
+      border-radius: 12px;
+      font-size: 1.05rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .level-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+    .level-btn.easy { background: #a8e6cf; color: #1b5e20; }
+    .level-btn.medium { background: #ffd54f; color: #e65100; }
+    .level-btn.hard { background: #ff8a80; color: #b71c1c; }
+
+    /* Game */
+    .game-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .back-btn {
+      background: #f0f0f0;
+      border: none;
+      padding: 0.4rem 0.8rem;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.85rem;
+    }
+
+    .progress { font-size: 0.9rem; color: #666; font-weight: 600; }
+    .lives { font-size: 1.2rem; }
+    .level-indicator { font-size: 0.75rem; color: #999; font-weight: 600; margin-top: 0.2rem; }
+
+    /* Drop zone */
+    .drop-zone {
+      min-height: 60px;
+      padding: 0.8rem;
+      border: 3px dashed #ddd;
+      border-radius: 12px;
+      margin-bottom: 1.5rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      align-items: center;
+      justify-content: center;
+      transition: border-color 0.3s;
+    }
+
+    .drop-zone .placeholder {
+      color: #aaa;
+      font-size: 0.9rem;
+    }
+
+    .drop-zone .word-chip {
+      background: #11998e;
+      color: #fff;
+      cursor: pointer;
+    }
+
+    /* Word chips */
+    .word-bank {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      justify-content: center;
+      margin-bottom: 1.5rem;
+      min-height: 50px;
+    }
+
+    .word-chip {
+      background: #f0f0f0;
+      border: 2px solid #ddd;
+      padding: 0.6rem 1rem;
+      border-radius: 10px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      cursor: pointer;
+      user-select: none;
+      transition: transform 0.15s, opacity 0.15s, box-shadow 0.15s;
+    }
+
+    .word-chip:hover {
+      transform: scale(1.05);
+      box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+    }
+
+    .word-chip.placed {
+      opacity: 0.3;
+      pointer-events: none;
+    }
+
+    /* Feedback */
+    .feedback {
+      min-height: 2rem;
+      font-weight: 600;
+      font-size: 1.1rem;
+      margin-bottom: 1rem;
+    }
+
+    .feedback.correct { color: #2e7d32; }
+    .feedback.wrong { color: #c62828; }
+
+    /* Buttons */
+    .game-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 0.8rem;
+    }
+
+    .btn {
+      padding: 0.6rem 1.3rem;
+      border: none;
+      border-radius: 10px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+
+    .btn:hover { transform: translateY(-2px); }
+    .btn-check { background: #11998e; color: #fff; }
+    .btn-reset { background: #e0e0e0; color: #555; }
+    .btn-next { background: #a8e6cf; color: #1b5e20; }
+
+    /* End Screen */
+    .end-screen h2 { font-size: 1.5rem; color: #2e7d32; margin-bottom: 0.5rem; }
+    .end-screen .big-score { font-size: 3.5rem; margin: 0.5rem 0; }
+    .end-screen p { color: #666; margin-bottom: 1.5rem; }
+
+    .play-again-btn {
+      padding: 0.8rem 2rem;
+      background: linear-gradient(135deg, #11998e, #38ef7d);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .hidden { display: none !important; }
+
+    .celebration { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 999; }
+    .confetti { position: absolute; border-radius: 50%; animation: fall 1.5s ease-out forwards; }
+    @keyframes fall {
+      0% { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+      100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="logo"><a href="index.html"><img src="harfcan-logo.png" alt="Harfcan Logo" /></a></div>
+      <h1>📝 Cümle Sırala</h1>
+      <p>Kelimeleri doğru sıraya koyarak cümleyi oluştur!</p>
+    </header>
+
+    <!-- Level Select -->
+    <div class="screen start-screen" id="startScreen">
+      <h2>Seviye Seç</h2>
+      <p>Kelimeleri sürükleyerek doğru cümleyi kur.<br>Kısa cümlelerden başla, uzunlara doğru ilerle!</p>
+      <div class="level-buttons">
+        <button class="level-btn" style="background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;" onclick="startEndless()">🎮 Sonsuz Mod (3 can)</button>
+        <button class="level-btn easy" onclick="startGame(1)">⭐ Kolay (3-4 kelime)</button>
+        <button class="level-btn medium" onclick="startGame(2)">⭐⭐ Orta (5-6 kelime)</button>
+        <button class="level-btn hard" onclick="startGame(3)">⭐⭐⭐ Zor (7+ kelime)</button>
+      </div>
+    </div>
+
+    <!-- Game Screen -->
+    <div class="screen hidden" id="gameScreen">
+      <div class="game-header">
+        <button class="back-btn" onclick="goBack()">← Geri</button>
+        <div style="text-align:right">
+          <div class="progress" id="progress">1 / 10</div>
+          <div class="lives hidden" id="lives">❤️❤️❤️</div>
+          <div class="level-indicator hidden" id="levelIndicator"></div>
+        </div>
+      </div>
+
+      <div class="drop-zone" id="dropZone">
+        <span class="placeholder">Kelimeleri buraya sırala</span>
+      </div>
+
+      <div class="word-bank" id="wordBank"></div>
+
+      <div class="feedback" id="feedback"></div>
+
+      <div class="game-buttons">
+        <button class="btn btn-reset" onclick="resetSentence()">🔄 Temizle</button>
+        <button class="btn btn-check" id="checkBtn" onclick="checkAnswer()">✓ Kontrol</button>
+        <button class="btn btn-next hidden" id="nextBtn" onclick="nextSentence()">Sonraki →</button>
+      </div>
+    </div>
+
+    <!-- End Screen -->
+    <div class="screen hidden end-screen" id="endScreen">
+      <div class="big-score" id="bigScore">🌟</div>
+      <h2>Tebrikler!</h2>
+      <p id="endText">Tüm cümleleri doğru sıraladın!</p>
+      <button class="play-again-btn" onclick="goBack()">🔄 Tekrar Oyna</button>
+    </div>
+  </div>
+
+  <div class="celebration" id="celebration"></div>
+
+  <script>
+    // === SENTENCE DATA ===
+    const SENTENCES = {
+      1: [
+        "Ali okula gitti.",
+        "Kedi süt içti.",
+        "Güneş çok parlak.",
+        "Annem yemek yapıyor.",
+        "Kuşlar gökyüzünde uçuyor.",
+        "Babam gazete okuyor.",
+        "Çiçekler çok güzel.",
+        "Köpek havlıyor dışarıda.",
+        "Yağmur yağıyor bugün.",
+        "Kardeşim uyuyor şimdi.",
+        "Top bahçede yuvarlanıyor.",
+        "Balıklar suda yüzüyor.",
+      ],
+      2: [
+        "Ali bugün okula erken gitti.",
+        "Annem mutfakta güzel yemek yapıyor.",
+        "Kedimiz her gün süt içer.",
+        "Bahçedeki çiçekler çok güzel kokuyor.",
+        "Babam her sabah gazete okur.",
+        "Küçük kardeşim parkta oynamak istiyor.",
+        "Öğretmenimiz bize hikaye anlattı bugün.",
+        "Kırmızı balon gökyüzüne doğru uçtu.",
+        "Büyükbabam bana bisiklet almış hediye.",
+        "Yaz tatilinde denize gideceğiz hep birlikte.",
+        "Okuldaki arkadaşlarım çok eğlenceli kişiler.",
+        "Dün akşam ailecek film izledik.",
+      ],
+      3: [
+        "Sabah erkenden kalkıp okula yürüyerek gittim bugün.",
+        "Annem mutfakta bize çok güzel bir pasta hazırladı.",
+        "Tatil boyunca her gün denize gidip yüzme öğrendim.",
+        "Öğretmenimiz sınıfta bize çok ilginç bir deney gösterdi.",
+        "Kütüphaneden aldığım kitabı iki günde bitirdim çok güzeldi.",
+        "Büyükannem her pazar bize gelir ve kurabiye yapar.",
+        "Okuldan eve dönerken arkadaşımla birlikte parka uğradık biraz oynadık.",
+        "Babam hafta sonu bizi hayvanat bahçesine götüreceğine söz verdi.",
+        "Kış gelince ağaçların yaprakları sararmaya ve dökülmeye başlar her yerde.",
+        "Dün gece gökyüzünde çok parlak bir yıldız gördüm pencereden.",
+      ]
+    };
+
+    // === STATE ===
+    let currentLevel = 1;
+    let currentIndex = 0;
+    let sentences = [];
+    let placedWords = [];
+    let correctCount = 0;
+    let endlessMode = false;
+    let lives = 3;
+    let endlessScore = 0;
+    let endlessLevel = 1;
+    let endlessStreak = 0;
+
+    // === AUDIO ===
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    let audioCtx = null;
+    function getAudioCtx() { if (!audioCtx) audioCtx = new AudioCtx(); return audioCtx; }
+
+    function playTone(freq, duration, type = 'sine', vol = 0.2) {
+      const ctx = getAudioCtx();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = type;
+      osc.frequency.value = freq;
+      gain.gain.setValueAtTime(vol, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start();
+      osc.stop(ctx.currentTime + duration);
+    }
+
+    function soundPlace() { playTone(500 + placedWords.length * 50, 0.08, 'sine', 0.15); }
+    function soundRemove() { playTone(300, 0.06, 'sine', 0.1); }
+    function soundCorrect() {
+      playTone(523, 0.1, 'sine', 0.3);
+      setTimeout(() => playTone(659, 0.1, 'sine', 0.3), 80);
+      setTimeout(() => playTone(784, 0.15, 'sine', 0.3), 160);
+    }
+    function soundWrong() { playTone(200, 0.2, 'triangle', 0.15); }
+    function soundWin() {
+      [523, 587, 659, 698, 784, 880, 988, 1047].forEach((f, i) => {
+        setTimeout(() => playTone(f, 0.15, 'sine', 0.2), i * 80);
+      });
+    }
+
+    // === HELPERS ===
+    function shuffle(arr) {
+      const a = [...arr];
+      for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+      }
+      return a;
+    }
+
+    function getWords(sentence) {
+      // Remove period, split into words, keep period as last word's part
+      const clean = sentence.replace(/[.]$/, '');
+      return clean.split(' ');
+    }
+
+    // === GAME ===
+    function startEndless() {
+      endlessMode = true;
+      lives = 3;
+      endlessScore = 0;
+      endlessLevel = 1;
+      endlessStreak = 0;
+      currentIndex = 0;
+      correctCount = 0;
+
+      // Combine all sentences
+      sentences = shuffle([
+        ...SENTENCES[1], ...SENTENCES[2], ...SENTENCES[3]
+      ]);
+
+      document.getElementById('startScreen').classList.add('hidden');
+      document.getElementById('gameScreen').classList.remove('hidden');
+      document.getElementById('progress').classList.add('hidden');
+      document.getElementById('lives').classList.remove('hidden');
+      document.getElementById('levelIndicator').classList.remove('hidden');
+      updateLives();
+      updateLevelIndicator();
+      loadEndlessWord();
+    }
+
+    function startGame(level) {
+      endlessMode = false;
+      currentLevel = level;
+      currentIndex = 0;
+      correctCount = 0;
+      sentences = shuffle(SENTENCES[level]).slice(0, 10);
+
+      document.getElementById('startScreen').classList.add('hidden');
+      document.getElementById('gameScreen').classList.remove('hidden');
+      document.getElementById('progress').classList.remove('hidden');
+      document.getElementById('lives').classList.add('hidden');
+      document.getElementById('levelIndicator').classList.add('hidden');
+
+      loadSentence();
+    }
+
+    function goBack() {
+      document.getElementById('gameScreen').classList.add('hidden');
+      document.getElementById('endScreen').classList.add('hidden');
+      document.getElementById('startScreen').classList.remove('hidden');
+    }
+
+    function loadSentence() {
+      placedWords = [];
+
+      document.getElementById('progress').textContent =
+        `${currentIndex + 1} / ${sentences.length}`;
+      document.getElementById('feedback').textContent = '';
+      document.getElementById('feedback').className = 'feedback';
+      document.getElementById('checkBtn').classList.remove('hidden');
+      document.getElementById('nextBtn').classList.add('hidden');
+
+      // Reset drop zone
+      document.getElementById('dropZone').innerHTML =
+        '<span class="placeholder">Kelimeleri buraya sırala</span>';
+
+      // Render shuffled words
+      const words = getWords(sentences[currentIndex]);
+      const shuffled = shuffle(words);
+      const bank = document.getElementById('wordBank');
+      bank.innerHTML = '';
+
+      shuffled.forEach((word, i) => {
+        const chip = document.createElement('div');
+        chip.className = 'word-chip';
+        chip.textContent = word;
+        chip.dataset.word = word;
+        chip.dataset.index = i;
+        chip.addEventListener('click', () => placeWord(chip));
+        bank.appendChild(chip);
+      });
+    }
+
+    function placeWord(chip) {
+      if (chip.classList.contains('placed')) return;
+
+      const dropZone = document.getElementById('dropZone');
+      // Remove placeholder
+      const placeholder = dropZone.querySelector('.placeholder');
+      if (placeholder) placeholder.remove();
+
+      // Create placed chip
+      const placed = document.createElement('div');
+      placed.className = 'word-chip';
+      placed.textContent = chip.dataset.word;
+      placed.dataset.word = chip.dataset.word;
+      placed.dataset.sourceIndex = chip.dataset.index;
+      placed.addEventListener('click', () => removeWord(placed, chip));
+
+      dropZone.appendChild(placed);
+      placedWords.push(chip.dataset.word);
+      soundPlace();
+
+      chip.classList.add('placed');
+
+      // Auto-check when all words placed
+      const totalWords = getWords(sentences[currentIndex]).length;
+      if (placedWords.length === totalWords) {
+        setTimeout(checkAnswer, 200);
+      }
+    }
+
+    function removeWord(placedChip, sourceChip) {
+      const word = placedChip.dataset.word;
+      const idx = placedWords.indexOf(word);
+      if (idx > -1) placedWords.splice(idx, 1);
+
+      placedChip.remove();
+      sourceChip.classList.remove('placed');
+      soundRemove();
+
+      // Re-add placeholder if empty
+      if (placedWords.length === 0) {
+        document.getElementById('dropZone').innerHTML =
+          '<span class="placeholder">Kelimeleri buraya sırala</span>';
+      }
+    }
+
+    function checkAnswer() {
+      const correctWords = getWords(sentences[currentIndex]);
+      const isCorrect = placedWords.join(' ') === correctWords.join(' ');
+
+      if (isCorrect) {
+        correctCount++;
+        document.getElementById('feedback').textContent = '✓ Doğru! Harika!';
+        document.getElementById('feedback').className = 'feedback correct';
+        document.getElementById('checkBtn').classList.add('hidden');
+        document.getElementById('nextBtn').classList.remove('hidden');
+        soundCorrect();
+        showMiniCelebration();
+
+        // Disable removing words
+        document.querySelectorAll('#dropZone .word-chip').forEach(el => {
+          el.style.pointerEvents = 'none';
+          el.style.background = '#2e7d32';
+        });
+      } else {
+        if (endlessMode) {
+          lives--;
+          updateLives();
+          endlessStreak = 0;
+          document.getElementById('feedback').textContent = `✗ Yanlış! (${lives} can kaldı)`;
+          document.getElementById('feedback').className = 'feedback wrong';
+          soundWrong();
+          if (lives <= 0) {
+            setTimeout(showEndlessEnd, 800);
+          }
+        } else {
+          document.getElementById('feedback').textContent = '✗ Tekrar dene! Sıralama yanlış.';
+          document.getElementById('feedback').className = 'feedback wrong';
+          soundWrong();
+        }
+      }
+    }
+
+    function nextSentence() {
+      if (endlessMode) {
+        handleEndlessCorrect();
+        loadEndlessWord();
+      } else {
+        currentIndex++;
+        if (currentIndex >= sentences.length) {
+          showEnd();
+        } else {
+          loadSentence();
+        }
+      }
+    }
+
+    function resetSentence() {
+      placedWords = [];
+      document.getElementById('dropZone').innerHTML =
+        '<span class="placeholder">Kelimeleri buraya sırala</span>';
+      document.getElementById('feedback').textContent = '';
+      document.getElementById('feedback').className = 'feedback';
+      document.querySelectorAll('#wordBank .word-chip').forEach(el => {
+        el.classList.remove('placed');
+      });
+    }
+
+    function getEndlessSentence() {
+      // Pick from appropriate level pool
+      let pool;
+      if (endlessLevel === 1) pool = SENTENCES[1];
+      else if (endlessLevel === 2) pool = [...SENTENCES[1], ...SENTENCES[2]];
+      else pool = [...SENTENCES[2], ...SENTENCES[3]];
+      return pool[Math.floor(Math.random() * pool.length)];
+    }
+
+    function loadEndlessWord() {
+      const sentence = getEndlessSentence();
+      sentences = [sentence];
+      currentIndex = 0;
+      placedWords = [];
+
+      document.getElementById('feedback').textContent = '';
+      document.getElementById('feedback').className = 'feedback';
+      document.getElementById('checkBtn').classList.remove('hidden');
+      document.getElementById('nextBtn').classList.add('hidden');
+
+      document.getElementById('dropZone').innerHTML =
+        '<span class="placeholder">Kelimeleri buraya sırala</span>';
+
+      const words = getWords(sentence);
+      const shuffled = shuffle(words);
+      const bank = document.getElementById('wordBank');
+      bank.innerHTML = '';
+
+      shuffled.forEach((word, i) => {
+        const chip = document.createElement('div');
+        chip.className = 'word-chip';
+        chip.textContent = word;
+        chip.dataset.word = word;
+        chip.dataset.index = i;
+        chip.addEventListener('click', () => placeWord(chip));
+        bank.appendChild(chip);
+      });
+    }
+
+    function updateLives() {
+      const hearts = '❤️'.repeat(lives) + '🦨'.repeat(3 - lives);
+      document.getElementById('lives').textContent = hearts;
+    }
+
+    function updateLevelIndicator() {
+      const labels = ['', 'Kolay', 'Orta', 'Zor'];
+      document.getElementById('levelIndicator').textContent =
+        `⭐ ${endlessScore} puan • ${labels[endlessLevel]}`;
+    }
+
+    function handleEndlessCorrect() {
+      endlessScore++;
+      endlessStreak++;
+
+      // 3 doğru üst üste → seviye atla
+      if (endlessStreak >= 3 && endlessLevel < 3) {
+        endlessLevel++;
+        endlessStreak = 0;
+        document.getElementById('feedback').textContent = '✓ Doğru! 🚀 Seviye atladın!';
+      }
+
+      updateLevelIndicator();
+    }
+
+    function showEndlessEnd() {
+      document.getElementById('gameScreen').classList.add('hidden');
+      document.getElementById('endScreen').classList.remove('hidden');
+
+      let emoji = '⭐';
+      if (endlessScore >= 15) emoji = '🌟🌟🌟';
+      else if (endlessScore >= 10) emoji = '🌟🌟';
+      else if (endlessScore >= 5) emoji = '🌟';
+
+      document.getElementById('bigScore').textContent = emoji;
+      document.getElementById('endText').textContent =
+        `Canların bitti! ${endlessScore} cümle doğru sıraladın!`;
+
+      soundWin();
+      showMiniCelebration();
+    }
+
+
+    function showEnd() {
+      document.getElementById('gameScreen').classList.add('hidden');
+      document.getElementById('endScreen').classList.remove('hidden');
+
+      const percent = Math.round((correctCount / sentences.length) * 100);
+      let emoji = '⭐';
+      if (percent >= 90) emoji = '🌟🌟🌟';
+      else if (percent >= 70) emoji = '🌟🌟';
+
+      document.getElementById('bigScore').textContent = emoji;
+      document.getElementById('endText').textContent =
+        `${sentences.length} cümleden ${correctCount} tanesini doğru sıraladın! (%${percent})`;
+
+      soundWin();
+      showMiniCelebration();
+    }
+
+    function showMiniCelebration() {
+      const container = document.getElementById('celebration');
+      const colors = ['#11998e', '#38ef7d', '#a8e6cf', '#ffd54f', '#ff8a80', '#81d4fa'];
+      for (let i = 0; i < 15; i++) {
+        const c = document.createElement('div');
+        c.className = 'confetti';
+        c.style.left = Math.random() * 100 + '%';
+        c.style.top = '-10px';
+        c.style.background = colors[Math.floor(Math.random() * colors.length)];
+        c.style.animationDelay = Math.random() * 0.3 + 's';
+        c.style.width = (Math.random() * 6 + 4) + 'px';
+        c.style.height = c.style.width;
+        container.appendChild(c);
+      }
+      setTimeout(() => { container.innerHTML = ''; }, 1500);
+    }
+  </script>
+</body>
+</html>

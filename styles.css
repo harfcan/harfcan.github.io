@@ -1,0 +1,187 @@
+/* === Screen Styles === */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  line-height: 1.7;
+  color: #333;
+  background: #f5f7fa;
+  padding: 2rem;
+}
+
+.container {
+  max-width: 700px;
+  margin: 0 auto;
+  background: #fff;
+  border-radius: 12px;
+  padding: 2.5rem;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+}
+
+article header {
+  text-align: center;
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 2px solid #e8ecf0;
+}
+
+.page-title {
+  font-size: 1.8rem;
+  color: #2c3e50;
+  margin-bottom: 0.3rem;
+}
+
+.page-subtitle {
+  color: #7f8c8d;
+  font-size: 1rem;
+}
+
+/* === Content === */
+.story-text {
+  margin-bottom: 1.5rem;
+}
+
+.story-text p {
+  font-size: 1.1rem;
+}
+
+/* === Images === */
+.content-image {
+  margin: 1.5rem 0;
+  text-align: center;
+}
+
+.content-image img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.content-image figcaption {
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+  color: #666;
+  font-style: italic;
+}
+
+/* === Think Box === */
+.think-box {
+  background: #fef9e7;
+  border-left: 4px solid #f1c40f;
+  border-radius: 8px;
+  padding: 1.2rem 1.5rem;
+  margin-top: 2rem;
+}
+
+.think-box h2 {
+  margin-bottom: 0.6rem;
+  color: #d4a017;
+  font-size: 1.1rem;
+}
+
+.think-box ul {
+  padding-left: 1.2rem;
+}
+
+.think-box li {
+  margin-bottom: 0.4rem;
+  font-size: 1rem;
+}
+
+/* === Print Button === */
+.print-btn {
+  display: block;
+  margin: 2rem auto 0;
+  background: #3498db;
+  color: #fff;
+  border: none;
+  padding: 0.8rem 2rem;
+  font-size: 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.print-btn:hover {
+  background: #2980b9;
+}
+
+.print-btn::before {
+  content: "🖨️ ";
+}
+
+/* === Print Styles === */
+@media print {
+  body {
+    background: #fff;
+    padding: 0;
+    font-size: 12pt;
+    line-height: 1.8;
+    color: #000;
+  }
+
+  .container {
+    box-shadow: none;
+    border-radius: 0;
+    padding: 0;
+    max-width: 100%;
+  }
+
+  article header {
+    border-bottom: 1px solid #000;
+    padding-bottom: 0.8rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .page-title {
+    font-size: 20pt;
+    color: #000;
+  }
+
+  .page-subtitle {
+    color: #444;
+    font-size: 11pt;
+  }
+
+  .story-text p {
+    font-size: 12pt;
+  }
+
+  .content-image {
+    margin: 1rem 0;
+    page-break-inside: avoid;
+  }
+
+  .content-image img {
+    max-width: 80%;
+    box-shadow: none;
+    border-radius: 0;
+    border: 1px solid #ccc;
+  }
+
+  .content-image figcaption {
+    color: #333;
+    font-size: 10pt;
+  }
+
+  .think-box {
+    border: 1px solid #999;
+    border-left: 3px solid #000;
+    background: none;
+    padding: 0.8rem 1rem;
+    page-break-inside: avoid;
+  }
+
+  .think-box h2 {
+    color: #000;
+  }
+
+  .print-btn {
+    display: none;
+  }
+}

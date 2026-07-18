@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Piksel Boyama - Harfcan</title>
+  <meta name="description" content="Koordinatları takip et, kareleri boya, sürpriz resmi keşfet!" />
+  <link rel="canonical" href="https://www.harfcan.com/piksel-boyama.html" />
+  <meta property="og:title" content="Piksel Boyama - Harfcan" />
+  <meta property="og:description" content="Koordinatları takip et, kareleri boya, sürpriz resmi keşfet!" />
+  <meta property="og:url" content="https://www.harfcan.com/piksel-boyama.html" />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="https://www.harfcan.com/harfcan-logo.png" />
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      min-height: 100vh;
+      padding: 1rem;
+    }
+
+    .container { max-width: 650px; margin: 0 auto; }
+
+    header { text-align: center; color: #fff; margin-bottom: 1rem; }
+    .logo { display: inline-block; width: 120px; margin-bottom: 10px; }
+    .logo img { width: 100%; height: auto; display: block; }
+
+    header h1 { font-size: 1.5rem; margin-bottom: 0.3rem; }
+    header p { font-size: 0.9rem; opacity: 0.8; }
+
+    .screen {
+      background: #fff;
+      border-radius: 16px;
+      padding: 1.5rem;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+    }
+
+    /* Level Select */
+    .level-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .level-card {
+      background: #f9f0ff;
+      border: 2px solid #e1bee7;
+      border-radius: 14px;
+      padding: 1.2rem;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .level-card:hover {
+      background: #f3e5f5;
+      border-color: #ce93d8;
+      transform: translateY(-3px);
+    }
+
+    .level-card .level-emoji { font-size: 2.5rem; margin-bottom: 0.5rem; }
+    .level-card .level-name { font-size: 1rem; font-weight: 700; color: #6a1b9a; }
+    .level-card .level-size { font-size: 0.75rem; color: #999; margin-top: 0.2rem; }
+
+    /* Game Area */
+    .game-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+
+    .progress { font-size: 0.9rem; color: #666; font-weight: 600; }
+    .back-btn {
+      background: #f0f0f0;
+      border: none;
+      padding: 0.4rem 0.8rem;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.85rem;
+    }
+
+    /* Grid */
+    .grid-container {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 1rem;
+    }
+
+    .grid-area {
+      display: inline-block;
+    }
+
+    .grid-row {
+      display: flex;
+      align-items: center;
+    }
+
+    .row-label, .col-label {
+      width: 22px;
+      height: 22px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.65rem;
+      font-weight: 700;
+      color: #999;
+    }
+
+    .cell {
+      width: 22px;
+      height: 22px;
+      border: 1px solid #e0e0e0;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+
+    .cell:hover { background: #f3e5f5; }
+    .cell.painted { background: #7b1fa2; border-color: #6a1b9a; }
+    .cell.painted-color { border-color: rgba(0,0,0,0.1); }
+    .cell.hint { background: #fff9c4; }
+
+    /* Guide */
+    .guide-section {
+      background: #fafafa;
+      border-radius: 10px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .guide-section h3 {
+      font-size: 0.9rem;
+      color: #6a1b9a;
+      margin-bottom: 0.5rem;
+    }
+
+    .guide-instructions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.3rem;
+    }
+
+    .guide-cell {
+      background: #f3e5f5;
+      border: 1px solid #e1bee7;
+      padding: 0.2rem 0.5rem;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #6a1b9a;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .guide-cell:hover { background: #e1bee7; }
+    .guide-cell.done { background: #c8e6c9; border-color: #a5d6a7; color: #2e7d32; text-decoration: line-through; }
+
+    /* Buttons */
+    .game-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 0.5rem;
+      margin-top: 1rem;
+    }
+
+    .btn {
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+
+    .btn:hover { transform: translateY(-2px); }
+    .btn-hint { background: #fff9c4; color: #f57f17; }
+    .btn-reset { background: #ffcdd2; color: #c62828; }
+    .btn-reveal { background: #c8e6c9; color: #2e7d32; }
+
+    /* Win */
+    .win-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.7);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+    }
+
+    .win-box {
+      background: #fff;
+      border-radius: 16px;
+      padding: 2rem;
+      text-align: center;
+      max-width: 350px;
+    }
+
+    .win-box h2 { font-size: 1.5rem; color: #6a1b9a; margin-bottom: 0.5rem; }
+    .win-box .win-emoji { font-size: 3rem; margin-bottom: 0.5rem; }
+    .win-box p { color: #666; margin-bottom: 1rem; }
+
+    .win-btn {
+      padding: 0.7rem 1.5rem;
+      background: linear-gradient(135deg, #f093fb, #f5576c);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      margin: 0.3rem;
+    }
+
+    .hidden { display: none !important; }
+
+    .celebration { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 999; }
+    .confetti { position: absolute; border-radius: 50%; animation: fall 2s ease-out forwards; }
+    @keyframes fall {
+      0% { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+      100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="logo"><a href="index.html"><img src="harfcan-logo.png" alt="Harfcan Logo" /></a></div>
+      <h1>🎨 Piksel Boyama</h1>
+      <p>Koordinatları boya, sürpriz resmi keşfet!</p>
+    </header>
+
+    <!-- Level Select -->
+    <div class="screen" id="levelScreen">
+      <h2 style="text-align:center; color:#6a1b9a; margin-bottom:0.5rem;">Resim Seç</h2>
+      <p style="text-align:center; color:#999; font-size:0.85rem; margin-bottom:1rem;">Hangi sürprizi keşfetmek istersin?</p>
+      <div class="level-grid" id="levelGrid"></div>
+    </div>
+
+    <!-- Game Screen -->
+    <div class="screen hidden" id="gameScreen">
+      <div class="game-header">
+        <button class="back-btn" onclick="goToLevels()">← Geri</button>
+        <div class="progress" id="progress">0 / 0</div>
+      </div>
+
+      <div class="guide-section">
+        <h3>📋 Bu kareleri boya:</h3>
+        <div class="guide-instructions" id="guideList"></div>
+      </div>
+
+      <div class="grid-container">
+        <div class="grid-area" id="gridArea"></div>
+      </div>
+
+      <div class="game-buttons">
+        <button class="btn btn-hint" onclick="showHint()">💡 İpucu</button>
+        <button class="btn btn-reset" onclick="resetGrid()">🔄 Temizle</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Win Overlay -->
+  <div class="win-overlay hidden" id="winOverlay">
+    <div class="win-box">
+      <div class="win-emoji" id="winEmoji">🎉</div>
+      <h2>Harika!</h2>
+      <p id="winText">Resmi tamamladın!</p>
+      <button class="win-btn" onclick="goToLevels()">🎨 Başka Resim</button>
+    </div>
+  </div>
+
+  <div class="celebration" id="celebration"></div>
+
+  <script>
+    // === PUZZLE DATA ===
+    // Each puzzle: name, emoji, gridSize, color, cells (row, col) - 0-indexed
+    const PUZZLES = [
+      {
+        name: "Kalp", emoji: "❤️", gridSize: 10, color: "#e91e63",
+        cells: [
+          [1,2],[1,3],[1,6],[1,7],
+          [2,1],[2,2],[2,3],[2,4],[2,5],[2,6],[2,7],[2,8],
+          [3,1],[3,2],[3,3],[3,4],[3,5],[3,6],[3,7],[3,8],
+          [4,1],[4,2],[4,3],[4,4],[4,5],[4,6],[4,7],[4,8],
+          [5,2],[5,3],[5,4],[5,5],[5,6],[5,7],
+          [6,3],[6,4],[6,5],[6,6],
+          [7,4],[7,5],
+        ]
+      },
+      {
+        name: "Yıldız", emoji: "⭐", gridSize: 11, color: "#ffc107",
+        cells: [
+          [0,5],
+          [1,4],[1,5],[1,6],
+          [2,3],[2,4],[2,5],[2,6],[2,7],
+          [3,2],[3,3],[3,4],[3,5],[3,6],[3,7],[3,8],
+          [4,4],[4,5],[4,6],
+          [5,3],[5,4],[5,5],[5,6],[5,7],
+          [6,2],[6,3],[6,7],[6,8],
+          [7,1],[7,2],[7,8],[7,9],
+          [8,0],[8,1],[8,9],[8,10],
+        ]
+      },
+      {
+        name: "Roket", emoji: "🚀", gridSize: 12, color: "#2196f3",
+        cells: [
+          [0,5],[0,6],
+          [1,4],[1,5],[1,6],[1,7],
+          [2,4],[2,5],[2,6],[2,7],
+          [3,4],[3,5],[3,6],[3,7],
+          [4,3],[4,4],[4,5],[4,6],[4,7],[4,8],
+          [5,3],[5,4],[5,5],[5,6],[5,7],[5,8],
+          [6,4],[6,5],[6,6],[6,7],
+          [7,4],[7,5],[7,6],[7,7],
+          [8,4],[8,5],[8,6],[8,7],
+          [9,3],[9,5],[9,6],[9,8],
+          [10,2],[10,5],[10,6],[10,9],
+          [11,1],[11,5],[11,6],[11,10],
+        ]
+      },
+      {
+        name: "Ağaç", emoji: "🌲", gridSize: 11, color: "#4caf50",
+        cells: [
+          [0,5],
+          [1,4],[1,5],[1,6],
+          [2,3],[2,4],[2,5],[2,6],[2,7],
+          [3,2],[3,3],[3,4],[3,5],[3,6],[3,7],[3,8],
+          [4,3],[4,4],[4,5],[4,6],[4,7],
+          [5,2],[5,3],[5,4],[5,5],[5,6],[5,7],[5,8],
+          [6,1],[6,2],[6,3],[6,4],[6,5],[6,6],[6,7],[6,8],[6,9],
+          [7,5],
+          [8,5],
+          [9,4],[9,5],[9,6],
+        ]
+      },
+      {
+        name: "Ev", emoji: "🏠", gridSize: 10, color: "#ff9800",
+        cells: [
+          [0,4],[0,5],
+          [1,3],[1,4],[1,5],[1,6],
+          [2,2],[2,3],[2,4],[2,5],[2,6],[2,7],
+          [3,1],[3,2],[3,3],[3,4],[3,5],[3,6],[3,7],[3,8],
+          [4,2],[4,3],[4,4],[4,5],[4,6],[4,7],
+          [5,2],[5,3],[5,4],[5,5],[5,6],[5,7],
+          [6,2],[6,3],[6,4],[6,5],[6,6],[6,7],
+          [7,2],[7,3],[7,4],[7,5],[7,6],[7,7],
+          [8,2],[8,3],[8,4],[8,5],[8,6],[8,7],
+        ]
+      },
+      {
+        name: "Gülen Yüz", emoji: "😊", gridSize: 10, color: "#ffc107",
+        cells: [
+          [1,3],[1,4],[1,5],[1,6],
+          [2,2],[2,3],[2,4],[2,5],[2,6],[2,7],
+          [3,1],[3,2],[3,3],[3,4],[3,5],[3,6],[3,7],[3,8],
+          [4,1],[4,2],[4,4],[4,5],[4,7],[4,8],
+          [5,1],[5,2],[5,3],[5,4],[5,5],[5,6],[5,7],[5,8],
+          [6,1],[6,3],[6,6],[6,8],
+          [7,1],[7,2],[7,4],[7,5],[7,7],[7,8],
+          [8,2],[8,3],[8,4],[8,5],[8,6],[8,7],
+          [9,3],[9,4],[9,5],[9,6],
+        ]
+      },
+    ];
+
+    // === STATE ===
+    let currentPuzzle = null;
+    let paintedCells = new Set();
+    let correctCells = new Set();
+
+    // === AUDIO ===
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    let audioCtx = null;
+    function getAudioCtx() { if (!audioCtx) audioCtx = new AudioCtx(); return audioCtx; }
+
+    function playTone(freq, duration, type = 'sine', vol = 0.2) {
+      const ctx = getAudioCtx();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = type;
+      osc.frequency.value = freq;
+      gain.gain.setValueAtTime(vol, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start();
+      osc.stop(ctx.currentTime + duration);
+    }
+
+    function soundPaint() { playTone(500 + Math.random() * 200, 0.08, 'sine', 0.15); }
+    function soundUnpaint() { playTone(300, 0.06, 'sine', 0.1); }
+    function soundWin() {
+      [523,587,659,784,880,1047].forEach((f,i) => {
+        setTimeout(() => playTone(f, 0.2, 'sine', 0.25), i * 100);
+      });
+    }
+
+    // === HELPERS ===
+    function cellKey(r, c) { return `${r}-${c}`; }
+    function rowLabel(r) { return String.fromCharCode(65 + r); }
+    function colLabel(c) { return (c + 1).toString(); }
+    function coordLabel(r, c) { return `${rowLabel(r)}${colLabel(c)}`; }
+
+    // === LEVEL SELECT ===
+    function renderLevels() {
+      const grid = document.getElementById('levelGrid');
+      grid.innerHTML = '';
+      PUZZLES.forEach((puzzle, i) => {
+        const card = document.createElement('div');
+        card.className = 'level-card';
+        card.onclick = () => startPuzzle(i);
+        card.innerHTML = `
+          <div class="level-emoji">${puzzle.emoji}</div>
+          <div class="level-name">${puzzle.name}</div>
+          <div class="level-size">${puzzle.gridSize}x${puzzle.gridSize} • ${puzzle.cells.length} kare</div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    function goToLevels() {
+      document.getElementById('gameScreen').classList.add('hidden');
+      document.getElementById('winOverlay').classList.add('hidden');
+      document.getElementById('levelScreen').classList.remove('hidden');
+    }
+
+    // === GAME ===
+    function startPuzzle(index) {
+      currentPuzzle = PUZZLES[index];
+      paintedCells = new Set();
+      correctCells = new Set();
+      currentPuzzle.cells.forEach(([r, c]) => correctCells.add(cellKey(r, c)));
+
+      document.getElementById('levelScreen').classList.add('hidden');
+      document.getElementById('gameScreen').classList.remove('hidden');
+
+      renderGrid();
+      renderGuide();
+      updateProgress();
+    }
+
+    function renderGrid() {
+      const area = document.getElementById('gridArea');
+      const size = currentPuzzle.gridSize;
+      let html = '';
+
+      // Column headers
+      html += '<div class="grid-row"><div class="row-label"></div>';
+      for (let c = 0; c < size; c++) {
+        html += `<div class="col-label">${colLabel(c)}</div>`;
+      }
+      html += '</div>';
+
+      // Rows
+      for (let r = 0; r < size; r++) {
+        html += `<div class="grid-row"><div class="row-label">${rowLabel(r)}</div>`;
+        for (let c = 0; c < size; c++) {
+          html += `<div class="cell" data-r="${r}" data-c="${c}" onclick="toggleCell(${r},${c})"></div>`;
+        }
+        html += '</div>';
+      }
+
+      area.innerHTML = html;
+    }
+
+    function renderGuide() {
+      const list = document.getElementById('guideList');
+      // Sort cells by row then column for readability
+      const sorted = [...currentPuzzle.cells].sort((a, b) => a[0] - b[0] || a[1] - b[1]);
+
+      list.innerHTML = sorted.map(([r, c]) => {
+        const key = cellKey(r, c);
+        const label = coordLabel(r, c);
+        return `<span class="guide-cell" id="guide-${key}" onclick="highlightCell(${r},${c})">${label}</span>`;
+      }).join('');
+    }
+
+    function toggleCell(r, c) {
+      const key = cellKey(r, c);
+      const cell = document.querySelector(`.cell[data-r="${r}"][data-c="${c}"]`);
+      if (!cell) return;
+
+      if (paintedCells.has(key)) {
+        paintedCells.delete(key);
+        cell.classList.remove('painted', 'painted-color');
+        cell.style.backgroundColor = '';
+        soundUnpaint();
+
+        // Update guide
+        const guide = document.getElementById(`guide-${key}`);
+        if (guide) guide.classList.remove('done');
+      } else {
+        paintedCells.add(key);
+        cell.classList.add('painted', 'painted-color');
+        cell.style.backgroundColor = currentPuzzle.color;
+        soundPaint();
+
+        // Update guide if it's a correct cell
+        const guide = document.getElementById(`guide-${key}`);
+        if (guide) guide.classList.add('done');
+      }
+
+      updateProgress();
+      checkWin();
+    }
+
+    function highlightCell(r, c) {
+      // Remove previous hints
+      document.querySelectorAll('.cell.hint').forEach(el => el.classList.remove('hint'));
+      // Highlight target
+      const cell = document.querySelector(`.cell[data-r="${r}"][data-c="${c}"]`);
+      if (cell && !paintedCells.has(cellKey(r, c))) {
+        cell.classList.add('hint');
+        setTimeout(() => cell.classList.remove('hint'), 1500);
+      }
+    }
+
+    function updateProgress() {
+      let correct = 0;
+      paintedCells.forEach(key => {
+        if (correctCells.has(key)) correct++;
+      });
+      document.getElementById('progress').textContent =
+        `${correct} / ${correctCells.size}`;
+    }
+
+    function checkWin() {
+      // All correct cells must be painted, no extra cells
+      let allCorrectPainted = true;
+      correctCells.forEach(key => {
+        if (!paintedCells.has(key)) allCorrectPainted = false;
+      });
+
+      if (allCorrectPainted && paintedCells.size === correctCells.size) {
+        setTimeout(showWin, 300);
+      }
+    }
+
+    function showHint() {
+      // Find first unpainted correct cell
+      for (const [r, c] of currentPuzzle.cells) {
+        const key = cellKey(r, c);
+        if (!paintedCells.has(key)) {
+          highlightCell(r, c);
+          // Scroll guide item into view
+          const guide = document.getElementById(`guide-${key}`);
+          if (guide) guide.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+          break;
+        }
+      }
+    }
+
+    function resetGrid() {
+      paintedCells = new Set();
+      document.querySelectorAll('.cell.painted').forEach(el => {
+        el.classList.remove('painted', 'painted-color');
+        el.style.backgroundColor = '';
+      });
+      document.querySelectorAll('.guide-cell.done').forEach(el => el.classList.remove('done'));
+      updateProgress();
+    }
+
+    function showWin() {
+      document.getElementById('winEmoji').textContent = currentPuzzle.emoji;
+      document.getElementById('winText').textContent =
+        `"${currentPuzzle.name}" resmini tamamladın!`;
+      document.getElementById('winOverlay').classList.remove('hidden');
+      soundWin();
+      showCelebration();
+    }
+
+    function showCelebration() {
+      const container = document.getElementById('celebration');
+      const colors = ['#f093fb', '#f5576c', '#4caf50', '#ffc107', '#2196f3', '#ff9800'];
+      for (let i = 0; i < 25; i++) {
+        const c = document.createElement('div');
+        c.className = 'confetti';
+        c.style.left = Math.random() * 100 + '%';
+        c.style.top = '-10px';
+        c.style.background = colors[Math.floor(Math.random() * colors.length)];
+        c.style.animationDelay = Math.random() * 0.5 + 's';
+        c.style.width = (Math.random() * 8 + 4) + 'px';
+        c.style.height = c.style.width;
+        container.appendChild(c);
+      }
+      setTimeout(() => { container.innerHTML = ''; }, 2500);
+    }
+
+    // === INIT ===
+    renderLevels();
+  </script>
+</body>
+</html>
