@@ -1,140 +1,348 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <!-- Homepage -->
+  <!-- Ana Sayfa -->
   <url>
     <loc>https://www.harfcan.com/index.html</loc>
-    <lastmod>2025-07-18</lastmod>
+    <lastmod>2025-08-03</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
 
-  <!-- Stories and Reading Content -->
-  <url>
-    <loc>https://www.harfcan.com/masal-ve-hikaye.html</loc>
-    <lastmod>2025-07-18</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://www.harfcan.com/hikaye.html</loc>
-    <lastmod>2025-07-18</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://www.harfcan.com/hikaye-secimi.html</loc>
-    <lastmod>2025-07-18</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://www.harfcan.com/hikaye-deve-tilki.html</loc>
-    <lastmod>2025-07-18</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://www.harfcan.com/hikaye-kirmizi-baslikli.html</loc>
-    <lastmod>2025-07-18</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
+  <!-- Fen Yazıları Hub -->
   <url>
     <loc>https://www.harfcan.com/fen-yazilari.html</loc>
-    <lastmod>2025-07-18</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
+    <lastmod>2025-08-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- Kategori Sayfaları -->
+  <url>
+    <loc>https://www.harfcan.com/fen-uzay-ve-gokyuzu.html</loc>
+    <lastmod>2025-08-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.harfcan.com/fen-simsek-neden-carpar.html</loc>
-    <lastmod>2025-07-18</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
+    <loc>https://www.harfcan.com/fen-dunya-ve-doga.html</loc>
+    <lastmod>2025-08-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.harfcan.com/fen-ay-neden-parlar.html</loc>
-    <lastmod>2025-07-18</lastmod>
+    <loc>https://www.harfcan.com/fen-canlilar.html</loc>
+    <lastmod>2025-08-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.harfcan.com/fen-fizik-ve-bilim.html</loc>
+    <lastmod>2025-08-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.harfcan.com/fen-insan-vucudu.html</loc>
+    <lastmod>2025-08-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Makale Sayfaları: Uzay ve Gökyüzü -->
+  <url>
+    <loc>https://www.harfcan.com/fen-ay-neden-sekil-degistirir.html</loc>
+    <lastmod>2025-08-03</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.harfcan.com/fen-gunes-neden-sicak.html</loc>
+    <lastmod>2025-08-03</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.harfcan.com/fen-yildizlar-neden-parlar.html</loc>
+    <lastmod>2025-08-03</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.harfcan.com/fen-gece-neden-karanlik-olur.html</loc>
+    <lastmod>2025-08-03</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.harfcan.com/fen-gokyuzu-neden-mavidir.html</loc>
+    <lastmod>2025-08-03</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
   </url>
   <url>
     <loc>https://www.harfcan.com/fen-gokkusagi-nasil-olusur.html</loc>
-    <lastmod>2025-07-18</lastmod>
+    <lastmod>2025-08-03</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.harfcan.com/fen-gokkusaginda-neden-7-renk-var.html</loc>
+    <lastmod>2025-08-03</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
   </url>
 
-  <!-- Games and Interactive Activities -->
+  <!-- Makale Sayfaları: Dünya ve Doğa -->
   <url>
-    <loc>https://www.harfcan.com/kelimeler.html</loc>
-    <lastmod>2025-07-18</lastmod>
-    <changefreq>weekly</changefreq>
+    <loc>https://www.harfcan.com/fen-yagmur-nasil-yagar.html</loc>
+    <lastmod>2025-08-03</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.harfcan.com/fen-kar-neden-yagar.html</loc>
+    <lastmod>2025-08-03</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.harfcan.com/fen-ruzgar-nereden-gelir.html</loc>
+    <lastmod>2025-08-03</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.harfcan.com/fen-simsek-neden-carpar.html</loc>
+    <lastmod>2025-08-03</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.harfcan.com/fen-yanardaglar-neden-patlar.html</loc>
+    <lastmod>2025-08-03</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.harfcan.com/fen-deprem-neden-olur.html</loc>
+    <lastmod>2025-08-03</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.harfcan.com/fen-deniz-suyu-neden-tuzludur.html</loc>
+    <lastmod>2025-08-03</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <!-- Makale Sayfaları: Canlılar -->
+  <url>
+    <loc>https://www.harfcan.com/fen-bitkiler-nasil-buyur.html</loc>
+    <lastmod>2025-08-03</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.harfcan.com/fen-hayvanlar-nasil-nefes-alir.html</loc>
+    <lastmod>2025-08-03</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.harfcan.com/fen-kuslar-nasil-ucar.html</loc>
+    <lastmod>2025-08-03</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.harfcan.com/fen-gozlerimiz-nasil-gorur.html</loc>
+    <lastmod>2025-08-03</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.harfcan.com/fen-dinozorlar-neden-yok-oldu.html</loc>
+    <lastmod>2025-08-03</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <!-- Makale Sayfaları: Fizik ve Bilim -->
+  <url>
+    <loc>https://www.harfcan.com/fen-ses-nasil-yayilir.html</loc>
+    <lastmod>2025-08-03</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.harfcan.com/fen-miknatislar-neden-yapisir.html</loc>
+    <lastmod>2025-08-03</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.harfcan.com/fen-buz-neden-suyun-ustunde-kalir.html</loc>
+    <lastmod>2025-08-03</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.harfcan.com/fen-ates-neden-yanar.html</loc>
+    <lastmod>2025-08-03</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <!-- Makale Sayfaları: İnsan Vücudu -->
+  <url>
+    <loc>https://www.harfcan.com/fen-neden-uyuruz.html</loc>
+    <lastmod>2025-08-03</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.harfcan.com/fen-kalbimiz-nasil-calisir.html</loc>
+    <lastmod>2025-08-03</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.harfcan.com/fen-neden-terleriz.html</loc>
+    <lastmod>2025-08-03</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <!-- Oyunlar -->
+  <url>
+    <loc>https://www.harfcan.com/oyun-kalp-pompasi.html</loc>
+    <lastmod>2025-08-03</lastmod>
+    <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.harfcan.com/kelime-okuma.html</loc>
-    <lastmod>2025-07-18</lastmod>
-    <changefreq>weekly</changefreq>
+    <loc>https://www.harfcan.com/oyun-ay-evreleri.html</loc>
+    <lastmod>2025-08-03</lastmod>
+    <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.harfcan.com/cumle-seviye-secimi.html</loc>
-    <lastmod>2025-07-18</lastmod>
-    <changefreq>weekly</changefreq>
+    <loc>https://www.harfcan.com/bitki-yasam-dongusu.html</loc>
+    <lastmod>2025-08-03</lastmod>
+    <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.harfcan.com/cumle-quiz.html</loc>
-    <lastmod>2025-07-18</lastmod>
-    <changefreq>weekly</changefreq>
+    <loc>https://www.harfcan.com/miknatislab.html</loc>
+    <lastmod>2025-08-03</lastmod>
+    <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.harfcan.com/okuma-seviye-secimi.html</loc>
-    <lastmod>2025-07-18</lastmod>
-    <changefreq>weekly</changefreq>
+    <loc>https://www.harfcan.com/istanbul-bilgi-kartlari.html</loc>
+    <lastmod>2025-08-03</lastmod>
+    <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.harfcan.com/okuma-quiz.html</loc>
-    <lastmod>2025-07-18</lastmod>
-    <changefreq>weekly</changefreq>
+    <loc>https://www.harfcan.com/mevsim-oyunu.html</loc>
+    <lastmod>2025-08-03</lastmod>
+    <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.harfcan.com/quiz.html</loc>
-    <lastmod>2025-07-18</lastmod>
+    <loc>https://www.harfcan.com/piksel-boyama.html</loc>
+    <lastmod>2025-08-03</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.harfcan.com/terazi-oyunu.html</loc>
+    <lastmod>2025-08-03</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.harfcan.com/kelime-avi.html</loc>
+    <lastmod>2025-08-03</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://www.harfcan.com/hece-birlestirme.html</loc>
-    <lastmod>2025-07-18</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://www.harfcan.com/kelime-avi.html</loc>
-    <lastmod>2025-07-18</lastmod>
+    <lastmod>2025-08-03</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://www.harfcan.com/cumle-sirala.html</loc>
-    <lastmod>2025-07-18</lastmod>
+    <lastmod>2025-08-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Okuma/Quiz -->
+  <url>
+    <loc>https://www.harfcan.com/kelime-okuma.html</loc>
+    <lastmod>2025-08-03</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.harfcan.com/piksel-boyama.html</loc>
-    <lastmod>2025-07-18</lastmod>
+    <loc>https://www.harfcan.com/cumle-seviye-secimi.html</loc>
+    <lastmod>2025-08-03</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.harfcan.com/miknatislab.html</loc>
-    <lastmod>2025-07-18</lastmod>
+    <loc>https://www.harfcan.com/cumle-quiz.html</loc>
+    <lastmod>2025-08-03</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.harfcan.com/okuma-seviye-secimi.html</loc>
+    <lastmod>2025-08-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.harfcan.com/okuma-quiz.html</loc>
+    <lastmod>2025-08-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Hikayeler -->
+  <url>
+    <loc>https://www.harfcan.com/masal-ve-hikaye.html</loc>
+    <lastmod>2025-08-03</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.harfcan.com/hikaye-secimi.html</loc>
+    <lastmod>2025-08-03</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.harfcan.com/hikaye.html</loc>
+    <lastmod>2025-08-03</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.harfcan.com/hikaye-deve-tilki.html</loc>
+    <lastmod>2025-08-03</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.harfcan.com/hikaye-kirmizi-baslikli.html</loc>
+    <lastmod>2025-08-03</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
   </url>
 </urlset>

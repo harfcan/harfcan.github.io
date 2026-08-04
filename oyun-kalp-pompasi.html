@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kalp Pompası Oyunu - Harfcan</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      overflow-x: hidden;
+    }
+
+    /* Header */
+    .game-header {
+      text-align: center;
+      padding: 1.5rem 1rem;
+      color: white;
+    }
+
+    .game-header h1 {
+      font-size: 1.8rem;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    }
+
+    .game-header p {
+      font-size: 1rem;
+      opacity: 0.9;
+      margin-top: 0.3rem;
+    }
+
+    /* Score Bar */
+    .score-bar {
+      display: flex;
+      gap: 1.5rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 1rem;
+    }
+
+    .score-item {
+      background: rgba(255,255,255,0.2);
+      padding: 0.5rem 1rem;
+      border-radius: 2rem;
+      color: white;
+      font-weight: 600;
+      font-size: 0.95rem;
+      backdrop-filter: blur(4px);
+    }
+
+    /* Game Area */
+    .game-area {
+      position: relative;
+      width: 360px;
+      height: 480px;
+      background: rgba(255,255,255,0.95);
+      border-radius: 2rem;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.2);
+      overflow: hidden;
+    }
+
+    /* Body outline */
+    .body-container {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Organs */
+    .organ {
+      position: absolute;
+      font-size: 2rem;
+      transition: transform 0.3s ease, filter 0.3s ease;
+      z-index: 2;
+    }
+
+    .organ.happy { filter: none; transform: scale(1.1); }
+    .organ.sad { filter: grayscale(0.7); transform: scale(0.9); }
+
+    .organ-label {
+      font-size: 0.6rem;
+      text-align: center;
+      color: #666;
+      margin-top: 2px;
+    }
+
+    #organ-brain { top: 40px; left: 50%; transform: translateX(-50%); }
+    #organ-lungs { top: 140px; left: 60px; }
+    #organ-lungs2 { top: 140px; right: 60px; }
+    #organ-stomach { top: 260px; left: 50%; transform: translateX(-50%); }
+    #organ-muscle-l { top: 350px; left: 60px; }
+    #organ-muscle-r { top: 350px; right: 60px; }
+
+    /* Heart (clickable) */
+    .heart-container {
+      position: absolute;
+      top: 150px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 10;
+      cursor: pointer;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .heart {
+      font-size: 4.5rem;
+      transition: transform 0.1s ease;
+      filter: drop-shadow(0 4px 8px rgba(255,0,0,0.3));
+    }
+
+    .heart.beating {
+      animation: heartbeat 0.3s ease;
+    }
+
+    @keyframes heartbeat {
+      0% { transform: scale(1); }
+      30% { transform: scale(1.3); }
+      60% { transform: scale(0.95); }
+      100% { transform: scale(1); }
+    }
+
+    .heart-hint {
+      position: absolute;
+      bottom: -20px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 0.7rem;
+      color: #e53e3e;
+      font-weight: 600;
+      white-space: nowrap;
+      opacity: 0.8;
+    }
+
+    /* Blood cells */
+    .blood-cell {
+      position: absolute;
+      width: 14px;
+      height: 14px;
+      background: #e53e3e;
+      border-radius: 50%;
+      z-index: 5;
+      box-shadow: 0 2px 4px rgba(229,62,62,0.4);
+      transition: none;
+    }
+
+    .blood-cell.blue {
+      background: #4a69bd;
+      box-shadow: 0 2px 4px rgba(74,105,189,0.4);
+    }
+
+    /* Oxygen indicator */
+    .oxygen-bar {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80%;
+      height: 20px;
+      background: #eee;
+      border-radius: 10px;
+      overflow: hidden;
+      z-index: 10;
+    }
+
+    .oxygen-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #e53e3e, #43e97b);
+      border-radius: 10px;
+      transition: width 0.3s ease;
+      width: 100%;
+    }
+
+    .oxygen-label {
+      position: absolute;
+      bottom: 44px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 0.75rem;
+      color: #666;
+      font-weight: 600;
+      z-index: 10;
+    }
+
+    /* Rhythm indicator */
+    .rhythm-indicator {
+      position: absolute;
+      top: 15px;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 0.4rem 1rem;
+      border-radius: 1rem;
+      font-size: 0.8rem;
+      font-weight: 700;
+      z-index: 10;
+      transition: all 0.3s ease;
+    }
+
+    .rhythm-indicator.perfect {
+      background: #d4edda;
+      color: #155724;
+    }
+
+    .rhythm-indicator.fast {
+      background: #fff3cd;
+      color: #856404;
+    }
+
+    .rhythm-indicator.slow {
+      background: #f8d7da;
+      color: #721c24;
+    }
+
+    /* Info popup */
+    .info-popup {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: white;
+      border-radius: 1.5rem;
+      padding: 2rem;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.3);
+      z-index: 100;
+      text-align: center;
+      max-width: 300px;
+      display: none;
+    }
+
+    .info-popup.show { display: block; }
+
+    .info-popup h3 {
+      font-size: 1.3rem;
+      margin-bottom: 0.8rem;
+      color: #e53e3e;
+    }
+
+    .info-popup p {
+      font-size: 0.95rem;
+      color: #555;
+      line-height: 1.6;
+      margin-bottom: 1rem;
+    }
+
+    .info-popup button {
+      background: linear-gradient(135deg, #e53e3e, #ff6b6b);
+      color: white;
+      border: none;
+      padding: 0.7rem 2rem;
+      border-radius: 2rem;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+
+    .info-popup button:hover {
+      transform: scale(1.05);
+    }
+
+    /* Game over / Start screen */
+    .overlay {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.7);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 200;
+      border-radius: 2rem;
+    }
+
+    .overlay h2 {
+      color: white;
+      font-size: 1.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .overlay p {
+      color: rgba(255,255,255,0.9);
+      font-size: 0.95rem;
+      text-align: center;
+      padding: 0 1.5rem;
+      line-height: 1.6;
+      margin-bottom: 1rem;
+    }
+
+    .overlay .final-score {
+      font-size: 2rem;
+      color: #FFD93D;
+      font-weight: 700;
+      margin-bottom: 1rem;
+    }
+
+    .overlay button {
+      background: linear-gradient(135deg, #43e97b, #38f9d7);
+      color: #1a4731;
+      border: none;
+      padding: 0.8rem 2.5rem;
+      border-radius: 2rem;
+      font-size: 1.1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+
+    .overlay button:hover { transform: scale(1.05); }
+
+    /* Fact bar at bottom */
+    .fact-bar {
+      margin-top: 1rem;
+      padding: 1rem 1.5rem;
+      background: rgba(255,255,255,0.15);
+      border-radius: 1rem;
+      color: white;
+      text-align: center;
+      max-width: 360px;
+      font-size: 0.9rem;
+      line-height: 1.5;
+      backdrop-filter: blur(4px);
+    }
+
+    /* Responsive */
+    @media (max-width: 400px) {
+      .game-area { width: 320px; height: 440px; }
+      .heart { font-size: 3.5rem; }
+      .game-header h1 { font-size: 1.4rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="game-header">
+    <h1>❤️ Kalp Pompası Oyunu</h1>
+    <p>Kalbe tıkla, kanı pomapala, organları mutlu tut!</p>
+  </div>
+
+  <div class="score-bar">
+    <div class="score-item">⭐ Puan: <span id="score">0</span></div>
+    <div class="score-item">⏱️ Süre: <span id="timer">60</span>s</div>
+    <div class="score-item">💓 Atış: <span id="bpm">0</span>/dk</div>
+  </div>
+
+  <div class="game-area" id="gameArea">
+
+    <!-- Rhythm indicator -->
+    <div class="rhythm-indicator perfect" id="rhythmIndicator">💚 Mükemmel Ritim!</div>
+
+    <!-- Organs -->
+    <div class="organ happy" id="organ-brain">🧠<div class="organ-label">Beyin</div></div>
+    <div class="organ happy" id="organ-lungs">🫁<div class="organ-label">Akciğer</div></div>
+    <div class="organ happy" id="organ-lungs2">🫁<div class="organ-label">Akciğer</div></div>
+    <div class="organ happy" id="organ-stomach">🫃<div class="organ-label">Mide</div></div>
+    <div class="organ happy" id="organ-muscle-l">💪<div class="organ-label">Kas</div></div>
+    <div class="organ happy" id="organ-muscle-r">🦵<div class="organ-label">Bacak</div></div>
+
+    <!-- Heart -->
+    <div class="heart-container" id="heartContainer">
+      <div class="heart" id="heart">❤️</div>
+      <div class="heart-hint">👆 Tıkla!</div>
+    </div>
+
+    <!-- Oxygen bar -->
+    <div class="oxygen-label">🩸 Oksijen Seviyesi</div>
+    <div class="oxygen-bar">
+      <div class="oxygen-fill" id="oxygenFill"></div>
+    </div>
+
+    <!-- Start overlay -->
+    <div class="overlay" id="startOverlay">
+      <h2>❤️ Kalp Pompası</h2>
+      <p>
+        Kalbe ritmik olarak tıkla!<br>
+        🩸 Kanı pompalayarak organları mutlu tut.<br>
+        ⚡ Çok hızlı veya çok yavaş olma!<br>
+        🎯 İdeal ritim: dakikada 70-100 atış
+      </p>
+      <button onclick="startGame()">🎮 Başla!</button>
+    </div>
+
+    <!-- Game over overlay -->
+    <div class="overlay" id="endOverlay" style="display:none;">
+      <h2>⏱️ Süre Doldu!</h2>
+      <div class="final-score" id="finalScore">0</div>
+      <p id="endMessage">Harika oynadın!</p>
+      <button onclick="startGame()">🔄 Tekrar Oyna</button>
+    </div>
+
+    <!-- Info popup -->
+    <div class="info-popup" id="infoPopup">
+      <h3 id="infoTitle">💡 Biliyor muydun?</h3>
+      <p id="infoText"></p>
+      <button onclick="closeInfo()">Tamam! 👍</button>
+    </div>
+
+  </div>
+
+  <div class="fact-bar" id="factBar">
+    💡 Kalbin günde yaklaşık 100.000 kez atar!
+  </div>
+
+  <script>
+    // Game State
+    let score = 0;
+    let timeLeft = 60;
+    let gameRunning = false;
+    let gameTimer = null;
+    let oxygenLevel = 100;
+    let clickTimes = [];
+    let bloodCells = [];
+    let factIndex = 0;
+
+    // DOM Elements
+    const heart = document.getElementById('heart');
+    const heartContainer = document.getElementById('heartContainer');
+    const scoreEl = document.getElementById('score');
+    const timerEl = document.getElementById('timer');
+    const bpmEl = document.getElementById('bpm');
+    const oxygenFill = document.getElementById('oxygenFill');
+    const rhythmIndicator = document.getElementById('rhythmIndicator');
+    const startOverlay = document.getElementById('startOverlay');
+    const endOverlay = document.getElementById('endOverlay');
+    const finalScoreEl = document.getElementById('finalScore');
+    const endMessage = document.getElementById('endMessage');
+    const infoPopup = document.getElementById('infoPopup');
+    const infoTitle = document.getElementById('infoTitle');
+    const infoText = document.getElementById('infoText');
+    const factBar = document.getElementById('factBar');
+    const gameArea = document.getElementById('gameArea');
+
+    // Organs
+    const organs = [
+      document.getElementById('organ-brain'),
+      document.getElementById('organ-lungs'),
+      document.getElementById('organ-lungs2'),
+      document.getElementById('organ-stomach'),
+      document.getElementById('organ-muscle-l'),
+      document.getElementById('organ-muscle-r')
+    ];
+
+    // Fun facts
+    const facts = [
+      "💡 Kalbin yumruğun kadar küçüktür ama çok güçlüdür!",
+      "💡 Bir günde kalbin 7.500 litre kan pompalar!",
+      "💡 Vücudundaki damarları uç uca eksen 100.000 km eder!",
+      "💡 Kırmızı kan hücreleri oksijen taşır, mavi olanlar CO₂ taşır!",
+      "💡 Koşunca kalbin hızlanır çünkü kasların daha çok oksijen ister!",
+      "💡 Kalp dakikada ortalama 72 kez atar!",
+      "💡 Beyin vücuttaki oksijenin %20'sini kullanır!",
+      "💡 Akciğerler kanı temizler ve oksijen yükler!",
+    ];
+
+    // Info messages (shown at score milestones)
+    const infoMessages = [
+      { score: 50, title: "🩸 Kan Dolaşımı", text: "Kalp kanı pompalar, damarlar onu vücuda taşır. Tıpkı bir su borusundaki su gibi!" },
+      { score: 150, title: "🫁 Akciğerler", text: "Kirli kan akciğerlere gider, temiz oksijen alır ve geri döner. Her nefeste bu olur!" },
+      { score: 300, title: "🧠 Beyin ve Oksijen", text: "Beyin en çok oksijene ihtiyaç duyan organdır. Kalp iyi çalışmazsa beyin de yorulur!" },
+      { score: 500, title: "💪 Süper Kalp!", text: "Spor yapan çocukların kalbi daha güçlü olur ve daha az yorulur. Hareket et, kalbin güçlensin!" },
+    ];
+
+    let shownInfos = new Set();
+
+    // Blood cell paths (simplified circular routes)
+    const paths = [
+      // Heart → Brain
+      [{ x: 170, y: 180 }, { x: 170, y: 120 }, { x: 170, y: 70 }],
+      // Heart → Left lung
+      [{ x: 170, y: 180 }, { x: 120, y: 160 }, { x: 80, y: 160 }],
+      // Heart → Right lung
+      [{ x: 170, y: 180 }, { x: 220, y: 160 }, { x: 270, y: 160 }],
+      // Heart → Stomach
+      [{ x: 170, y: 180 }, { x: 170, y: 240 }, { x: 170, y: 280 }],
+      // Heart → Left muscle
+      [{ x: 170, y: 180 }, { x: 120, y: 260 }, { x: 80, y: 370 }],
+      // Heart → Right muscle
+      [{ x: 170, y: 180 }, { x: 220, y: 260 }, { x: 270, y: 370 }],
+    ];
+
+    // Start Game
+    function startGame() {
+      score = 0;
+      timeLeft = 60;
+      oxygenLevel = 100;
+      clickTimes = [];
+      gameRunning = true;
+      shownInfos = new Set();
+
+      scoreEl.textContent = '0';
+      timerEl.textContent = '60';
+      bpmEl.textContent = '0';
+      oxygenFill.style.width = '100%';
+
+      startOverlay.style.display = 'none';
+      endOverlay.style.display = 'none';
+      infoPopup.classList.remove('show');
+
+      updateRhythm('perfect');
+      organs.forEach(o => { o.classList.remove('sad'); o.classList.add('happy'); });
+
+      // Remove old blood cells
+      bloodCells.forEach(cell => cell.el.remove());
+      bloodCells = [];
+
+      // Start timer
+      if (gameTimer) clearInterval(gameTimer);
+      gameTimer = setInterval(gameTick, 1000);
+    }
+
+    // Game Tick (every second)
+    function gameTick() {
+      if (!gameRunning) return;
+
+      timeLeft--;
+      timerEl.textContent = timeLeft;
+
+      // Decrease oxygen over time
+      oxygenLevel = Math.max(0, oxygenLevel - 3);
+      updateOxygen();
+
+      // Calculate BPM
+      const now = Date.now();
+      const recentClicks = clickTimes.filter(t => now - t < 10000);
+      const bpm = Math.round((recentClicks.length / 10) * 60);
+      bpmEl.textContent = bpm;
+
+      // Update rhythm indicator
+      if (bpm >= 60 && bpm <= 110) {
+        updateRhythm('perfect');
+        score += 5;
+      } else if (bpm > 110) {
+        updateRhythm('fast');
+        score += 1;
+      } else if (bpm > 0 && bpm < 60) {
+        updateRhythm('slow');
+        score += 1;
+      } else {
+        updateRhythm('slow');
+      }
+
+      // Update organs based on oxygen
+      updateOrgans();
+
+      // Update score display
+      scoreEl.textContent = score;
+
+      // Check for info popups
+      checkInfoPopups();
+
+      // Rotate facts
+      if (timeLeft % 8 === 0) {
+        factIndex = (factIndex + 1) % facts.length;
+        factBar.textContent = facts[factIndex];
+      }
+
+      // Game over
+      if (timeLeft <= 0) {
+        endGame();
+      }
+    }
+
+    // Heart click
+    heartContainer.addEventListener('click', () => {
+      if (!gameRunning) return;
+
+      // Animate heart
+      heart.classList.remove('beating');
+      void heart.offsetWidth; // trigger reflow
+      heart.classList.add('beating');
+
+      // Record click time
+      const now = Date.now();
+      clickTimes.push(now);
+      clickTimes = clickTimes.filter(t => now - t < 15000); // keep last 15s
+
+      // Boost oxygen
+      oxygenLevel = Math.min(100, oxygenLevel + 8);
+      updateOxygen();
+
+      // Score for click
+      score += 2;
+      scoreEl.textContent = score;
+
+      // Spawn blood cell
+      spawnBloodCell();
+
+      // Hide hint after first click
+      const hint = document.querySelector('.heart-hint');
+      if (hint) hint.style.display = 'none';
+    });
+
+    // Spawn blood cell
+    function spawnBloodCell() {
+      const pathIndex = Math.floor(Math.random() * paths.length);
+      const path = paths[pathIndex];
+
+      const el = document.createElement('div');
+      el.className = 'blood-cell';
+      el.style.left = path[0].x + 'px';
+      el.style.top = path[0].y + 'px';
+      gameArea.appendChild(el);
+
+      const cell = { el, path, step: 0, progress: 0 };
+      bloodCells.push(cell);
+
+      // Animate along path
+      animateCell(cell);
+    }
+
+    function animateCell(cell) {
+      const duration = 800; // ms per segment
+      const startTime = Date.now();
+      const startStep = cell.step;
+
+      function animate() {
+        if (!gameRunning) { cell.el.remove(); return; }
+
+        const elapsed = Date.now() - startTime;
+        const t = Math.min(1, elapsed / duration);
+
+        const from = cell.path[startStep];
+        const to = cell.path[startStep + 1];
+
+        if (!to) {
+          // Reached end — turn blue and fade out
+          cell.el.classList.add('blue');
+          setTimeout(() => {
+            cell.el.remove();
+            bloodCells = bloodCells.filter(c => c !== cell);
+          }, 500);
+          return;
+        }
+
+        const x = from.x + (to.x - from.x) * t;
+        const y = from.y + (to.y - from.y) * t;
+        cell.el.style.left = x + 'px';
+        cell.el.style.top = y + 'px';
+
+        if (t >= 1) {
+          cell.step++;
+          animateCell(cell);
+        } else {
+          requestAnimationFrame(animate);
+        }
+      }
+
+      requestAnimationFrame(animate);
+    }
+
+    // Update oxygen bar
+    function updateOxygen() {
+      oxygenFill.style.width = oxygenLevel + '%';
+
+      if (oxygenLevel > 60) {
+        oxygenFill.style.background = 'linear-gradient(90deg, #43e97b, #38f9d7)';
+      } else if (oxygenLevel > 30) {
+        oxygenFill.style.background = 'linear-gradient(90deg, #f6d365, #fda085)';
+      } else {
+        oxygenFill.style.background = 'linear-gradient(90deg, #e53e3e, #ff6b6b)';
+      }
+    }
+
+    // Update rhythm indicator
+    function updateRhythm(state) {
+      rhythmIndicator.className = 'rhythm-indicator ' + state;
+      if (state === 'perfect') {
+        rhythmIndicator.textContent = '💚 Mükemmel Ritim!';
+      } else if (state === 'fast') {
+        rhythmIndicator.textContent = '💛 Çok Hızlı!';
+      } else {
+        rhythmIndicator.textContent = '❤️ Daha Hızlı Pompala!';
+      }
+    }
+
+    // Update organs
+    function updateOrgans() {
+      organs.forEach(organ => {
+        if (oxygenLevel > 40) {
+          organ.classList.remove('sad');
+          organ.classList.add('happy');
+        } else {
+          organ.classList.remove('happy');
+          organ.classList.add('sad');
+        }
+      });
+    }
+
+    // Check info popups at milestones
+    function checkInfoPopups() {
+      for (const info of infoMessages) {
+        if (score >= info.score && !shownInfos.has(info.score)) {
+          shownInfos.add(info.score);
+          showInfo(info.title, info.text);
+          break;
+        }
+      }
+    }
+
+    function showInfo(title, text) {
+      infoTitle.textContent = title;
+      infoText.textContent = text;
+      infoPopup.classList.add('show');
+      gameRunning = false;
+    }
+
+    function closeInfo() {
+      infoPopup.classList.remove('show');
+      gameRunning = true;
+    }
+
+    // End game
+    function endGame() {
+      gameRunning = false;
+      clearInterval(gameTimer);
+
+      finalScoreEl.textContent = '⭐ ' + score + ' puan!';
+
+      if (score >= 400) {
+        endMessage.textContent = '🏆 Süper Doktor! Kalbin çok güçlü çalıştı!';
+      } else if (score >= 250) {
+        endMessage.textContent = '🌟 Harika! Organların çok mutluydu!';
+      } else if (score >= 100) {
+        endMessage.textContent = '👍 İyi iş! Biraz daha pratikle uzman olursun!';
+      } else {
+        endMessage.textContent = '💪 Tekrar dene! Her seferinde daha iyi olacaksın!';
+      }
+
+      endOverlay.style.display = 'flex';
+    }
+  </script>
+
+</body>
+</html>

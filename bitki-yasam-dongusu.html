@@ -1,0 +1,894 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌱 Bitki Yaşam Döngüsü Oyunu</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(180deg, #87CEEB 0%, #98FB98 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .game-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 2.2em;
+            color: #2d5a27;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            font-size: 1.1em;
+            color: #4a7c43;
+            margin-bottom: 20px;
+        }
+
+        .score-board {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 20px;
+        }
+
+        .score-item {
+            background: rgba(255,255,255,0.8);
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: bold;
+            color: #2d5a27;
+            font-size: 1.1em;
+        }
+
+        /* Plant visualization area */
+        .plant-display {
+            background: rgba(255,255,255,0.3);
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 20px;
+            min-height: 280px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .plant-stage {
+            font-size: 120px;
+            transition: all 0.8s ease;
+            animation: bounce 1s ease infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        @keyframes grow {
+            0% { transform: scale(0); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .plant-stage.growing {
+            animation: grow 0.8s ease forwards;
+        }
+
+        .stage-label {
+            position: absolute;
+            bottom: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(45, 90, 39, 0.9);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 15px;
+            font-size: 1.1em;
+            font-weight: bold;
+        }
+
+        /* Ground */
+        .ground {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background: linear-gradient(180deg, #8B4513 0%, #654321 100%);
+            border-radius: 0 0 20px 20px;
+        }
+
+        .grass {
+            position: absolute;
+            bottom: 55px;
+            left: 0;
+            right: 0;
+            height: 20px;
+            display: flex;
+            justify-content: space-around;
+        }
+
+        .grass span {
+            color: #228B22;
+            font-size: 24px;
+        }
+
+        /* Drag and drop area */
+        .instruction {
+            background: rgba(255,255,255,0.9);
+            border-radius: 15px;
+            padding: 15px;
+            margin-bottom: 15px;
+            font-size: 1.1em;
+            color: #2d5a27;
+            font-weight: bold;
+        }
+
+        .drop-zone {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            min-height: 90px;
+            background: rgba(255,255,255,0.5);
+            border: 3px dashed #4a7c43;
+            border-radius: 15px;
+            padding: 15px;
+            margin-bottom: 20px;
+            transition: all 0.3s;
+        }
+
+        .drop-zone.drag-over {
+            background: rgba(144, 238, 144, 0.5);
+            border-color: #228B22;
+        }
+
+        .drag-items {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .drag-item {
+            background: white;
+            border: 3px solid #4a7c43;
+            border-radius: 15px;
+            padding: 12px 18px;
+            cursor: grab;
+            transition: all 0.3s;
+            font-size: 1em;
+            font-weight: bold;
+            color: #2d5a27;
+            user-select: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .drag-item:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .drag-item:active {
+            cursor: grabbing;
+            transform: scale(0.95);
+        }
+
+        .drag-item.placed {
+            background: #90EE90;
+            border-color: #228B22;
+        }
+
+        .drag-item .emoji {
+            font-size: 1.5em;
+        }
+
+        .dropped-item {
+            background: #90EE90;
+            border: 3px solid #228B22;
+            border-radius: 15px;
+            padding: 12px 18px;
+            font-size: 1em;
+            font-weight: bold;
+            color: #2d5a27;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            animation: grow 0.3s ease;
+        }
+
+        .dropped-item .emoji {
+            font-size: 1.5em;
+        }
+
+        .dropped-item.wrong {
+            background: #FFB3B3;
+            border-color: #FF4444;
+            animation: shake 0.5s ease;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 12px 30px;
+            font-size: 1.1em;
+            font-weight: bold;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin: 5px;
+        }
+
+        .btn-check {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .btn-check:hover {
+            background: #45a049;
+            transform: scale(1.05);
+        }
+
+        .btn-reset {
+            background: #FF9800;
+            color: white;
+        }
+
+        .btn-reset:hover {
+            background: #F57C00;
+            transform: scale(1.05);
+        }
+
+        .btn-hint {
+            background: #2196F3;
+            color: white;
+        }
+
+        .btn-hint:hover {
+            background: #1976D2;
+            transform: scale(1.05);
+        }
+
+        /* Feedback */
+        .feedback {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 15px;
+            font-size: 1.2em;
+            font-weight: bold;
+            display: none;
+        }
+
+        .feedback.success {
+            display: block;
+            background: #C8E6C9;
+            color: #2E7D32;
+            animation: grow 0.5s ease;
+        }
+
+        .feedback.error {
+            display: block;
+            background: #FFCDD2;
+            color: #C62828;
+            animation: shake 0.5s ease;
+        }
+
+        .feedback.hint {
+            display: block;
+            background: #BBDEFB;
+            color: #1565C0;
+        }
+
+        /* Life cycle animation */
+        .cycle-display {
+            display: none;
+            margin-top: 20px;
+        }
+
+        .cycle-display.active {
+            display: block;
+        }
+
+        .cycle-arrow {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            padding: 20px;
+            background: rgba(255,255,255,0.8);
+            border-radius: 20px;
+        }
+
+        .cycle-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            animation: grow 0.5s ease backwards;
+        }
+
+        .cycle-step:nth-child(2) { animation-delay: 0.2s; }
+        .cycle-step:nth-child(3) { animation-delay: 0.4s; }
+        .cycle-step:nth-child(4) { animation-delay: 0.6s; }
+        .cycle-step:nth-child(5) { animation-delay: 0.8s; }
+        .cycle-step:nth-child(6) { animation-delay: 1.0s; }
+        .cycle-step:nth-child(7) { animation-delay: 1.2s; }
+
+        .cycle-step .emoji {
+            font-size: 2.5em;
+        }
+
+        .cycle-step .label {
+            font-size: 0.85em;
+            font-weight: bold;
+            color: #2d5a27;
+        }
+
+        .arrow {
+            font-size: 2em;
+            color: #4a7c43;
+            animation: grow 0.5s ease backwards;
+        }
+
+        /* Info cards */
+        .info-section {
+            display: none;
+            margin-top: 20px;
+        }
+
+        .info-section.active {
+            display: block;
+        }
+
+        .info-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .info-card {
+            background: rgba(255,255,255,0.9);
+            border-radius: 15px;
+            padding: 15px;
+            text-align: left;
+            border-left: 5px solid #4CAF50;
+        }
+
+        .info-card h3 {
+            color: #2d5a27;
+            margin-bottom: 8px;
+            font-size: 1.1em;
+        }
+
+        .info-card p {
+            color: #555;
+            font-size: 0.95em;
+            line-height: 1.4;
+        }
+
+        /* Clouds */
+        .cloud {
+            position: fixed;
+            font-size: 3em;
+            opacity: 0.6;
+            animation: float 20s linear infinite;
+            z-index: -1;
+        }
+
+        .cloud:nth-child(1) { top: 5%; animation-duration: 25s; }
+        .cloud:nth-child(2) { top: 15%; animation-duration: 30s; animation-delay: -10s; }
+        .cloud:nth-child(3) { top: 8%; animation-duration: 22s; animation-delay: -5s; }
+
+        @keyframes float {
+            0% { transform: translateX(-100px); }
+            100% { transform: translateX(calc(100vw + 100px)); }
+        }
+
+        /* Sun */
+        .sun {
+            position: fixed;
+            top: 20px;
+            right: 40px;
+            font-size: 4em;
+            animation: spin 20s linear infinite;
+            z-index: -1;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Confetti */
+        .confetti {
+            position: fixed;
+            top: -10px;
+            font-size: 1.5em;
+            animation: fall 3s ease-in forwards;
+            z-index: 100;
+        }
+
+        @keyframes fall {
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+        }
+
+        /* Level indicator */
+        .level-bar {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        .level-dot {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.5);
+            border: 2px solid #4a7c43;
+            transition: all 0.3s;
+        }
+
+        .level-dot.active {
+            background: #4CAF50;
+            transform: scale(1.2);
+        }
+
+        .level-dot.completed {
+            background: #FFD700;
+            border-color: #FFA000;
+        }
+
+        @media (max-width: 600px) {
+            h1 { font-size: 1.6em; }
+            .drag-item { padding: 8px 12px; font-size: 0.9em; }
+            .plant-stage { font-size: 80px; }
+            .info-cards { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Background elements -->
+    <div class="cloud">☁️</div>
+    <div class="cloud">☁️</div>
+    <div class="cloud">⛅</div>
+    <div class="sun">☀️</div>
+
+    <div class="game-container">
+        <h1>🌱 Bitki Yaşam Döngüsü Oyunu</h1>
+        <p class="subtitle">Aşamaları doğru sıraya diz ve bitkinin büyümesini izle!</p>
+
+        <div class="score-board">
+            <div class="score-item">⭐ Puan: <span id="score">0</span></div>
+            <div class="score-item">🏆 Seviye: <span id="level">1</span>/3</div>
+            <div class="score-item">💡 İpucu: <span id="hints">3</span></div>
+        </div>
+
+        <div class="level-bar">
+            <div class="level-dot active" id="dot-1"></div>
+            <div class="level-dot" id="dot-2"></div>
+            <div class="level-dot" id="dot-3"></div>
+        </div>
+
+        <!-- Plant visualization -->
+        <div class="plant-display">
+            <div class="plant-stage" id="plant-visual">🌰</div>
+            <div class="stage-label" id="stage-label">Tohum bekliyor...</div>
+            <div class="ground"></div>
+            <div class="grass">
+                <span>🌿</span><span>🍃</span><span>🌿</span><span>🍃</span>
+                <span>🌿</span><span>🍃</span><span>🌿</span><span>🍃</span>
+            </div>
+        </div>
+
+        <!-- Instructions -->
+        <div class="instruction" id="instruction">
+            📋 Aşağıdaki aşamaları doğru sıraya göre yukarıdaki alana sürükle!
+        </div>
+
+        <!-- Drop zone -->
+        <div class="drop-zone" id="drop-zone">
+            <p style="color: #888; margin: auto;">Aşamaları buraya sırala ➡️</p>
+        </div>
+
+        <!-- Drag items -->
+        <div class="drag-items" id="drag-items"></div>
+
+        <!-- Buttons -->
+        <div>
+            <button class="btn btn-check" onclick="checkOrder()">✅ Kontrol Et</button>
+            <button class="btn btn-hint" onclick="giveHint()">💡 İpucu</button>
+            <button class="btn btn-reset" onclick="resetLevel()">🔄 Tekrar Dene</button>
+        </div>
+
+        <!-- Feedback -->
+        <div class="feedback" id="feedback"></div>
+
+        <!-- Life Cycle Display (shown on success) -->
+        <div class="cycle-display" id="cycle-display">
+            <h2 style="color: #2d5a27; margin-bottom: 15px;">🔄 Yaşam Döngüsü Tamamlandı!</h2>
+            <div class="cycle-arrow" id="cycle-arrow"></div>
+        </div>
+
+        <!-- Info Section -->
+        <div class="info-section" id="info-section">
+            <h2 style="color: #2d5a27;">📚 Biliyor muydun?</h2>
+            <div class="info-cards" id="info-cards"></div>
+        </div>
+    </div>
+
+    <script>
+        // Game data
+        const levels = [
+            {
+                title: "Çiçekli Bitki Yaşam Döngüsü",
+                stages: [
+                    { emoji: "🌰", name: "Tohum", desc: "Her şey küçük bir tohumla başlar!" },
+                    { emoji: "💧", name: "Çimlenme", desc: "Su ve sıcaklık tohumun uyanmasını sağlar." },
+                    { emoji: "🌱", name: "Filiz", desc: "Tohum çatlayıp ilk yapraklarını çıkarır." },
+                    { emoji: "🪴", name: "Büyüme", desc: "Gövde uzar, yapraklar büyür, kökler güçlenir." },
+                    { emoji: "🌷", name: "Tomurcuk", desc: "Bitki çiçek açmaya hazırlanır." },
+                    { emoji: "🌸", name: "Çiçek", desc: "Çiçek açar ve böcekleri çeker." },
+                    { emoji: "🍎", name: "Meyve/Tohum", desc: "Çiçek meyveye dönüşür, içinde yeni tohumlar oluşur." }
+                ],
+                info: [
+                    { title: "🐝 Tozlaşma", text: "Arılar ve kelebekler çiçekten çiçeğe polen taşıyarak bitkilerin üremesine yardımcı olur." },
+                    { title: "☀️ Fotosentez", text: "Bitkiler güneş ışığını, suyu ve karbondioksiti kullanarak kendi besinlerini üretir." },
+                    { title: "🌍 Tohumların Yayılması", text: "Tohumlar rüzgar, su, hayvanlar veya patlama ile yeni yerlere taşınır." }
+                ]
+            },
+            {
+                title: "Ağaç Yaşam Döngüsü",
+                stages: [
+                    { emoji: "🫘", name: "Tohum/Kozalak", desc: "Ağaç tohumu toprakta bekler." },
+                    { emoji: "💦", name: "Nemlenme", desc: "Yağmur suyu tohumu uyandırır." },
+                    { emoji: "🌱", name: "Fide", desc: "Küçük bir fide topraktan çıkar." },
+                    { emoji: "🌿", name: "Genç Ağaç", desc: "Gövde kalınlaşır, dallar oluşur." },
+                    { emoji: "🌳", name: "Olgun Ağaç", desc: "Ağaç tam boyuna ulaşır." },
+                    { emoji: "🍂", name: "Tohum Üretimi", desc: "Ağaç meyve veya kozalak ile tohum üretir." },
+                    { emoji: "🌰", name: "Tohum Dağılımı", desc: "Tohumlar yeni ağaçlar için yayılır." }
+                ],
+                info: [
+                    { title: "📏 Yaş Halkaları", text: "Bir ağacın gövdesindeki halkalar sayılarak yaşı öğrenilebilir. Her halka bir yılı temsil eder." },
+                    { title: "🫁 Oksijen Fabrikası", text: "Tek bir büyük ağaç, günde 4 kişinin ihtiyacı kadar oksijen üretir." },
+                    { title: "🌲 En Yaşlı Ağaç", text: "Dünyanın en yaşlı ağacı 5000 yaşından fazladır ve California'da yaşar!" }
+                ]
+            },
+            {
+                title: "Mantar Yaşam Döngüsü",
+                stages: [
+                    { emoji: "🟤", name: "Spor", desc: "Mantarlar tohumlar yerine sporlarla çoğalır." },
+                    { emoji: "🕸️", name: "Miselyum", desc: "Sporlar ince ipliksi yapılar oluşturur." },
+                    { emoji: "🫧", name: "Birleşme", desc: "İki miselyum birleşerek yeni yapı oluşturur." },
+                    { emoji: "⚪", name: "Düğme Aşaması", desc: "Küçük bir mantar şekli belirir." },
+                    { emoji: "🍄", name: "Olgun Mantar", desc: "Mantar tam boyuna ulaşır ve şapkasını açar." },
+                    { emoji: "💨", name: "Spor Salınımı", desc: "Şapka altından milyonlarca spor salınır." }
+                ],
+                info: [
+                    { title: "🌐 Devasa Ağ", text: "Mantarların toprak altındaki miselyum ağı kilometrelerce uzanabilir!" },
+                    { title: "♻️ Doğanın Geri Dönüştürücüsü", text: "Mantarlar ölü bitkileri parçalayarak toprağı besler." },
+                    { title: "🤝 Ortak Yaşam", text: "Mantarlar ağaç kökleriyle birlikte yaşayarak karşılıklı besin alışverişi yapar." }
+                ]
+            }
+        ];
+
+        let currentLevel = 0;
+        let score = 0;
+        let hintsLeft = 3;
+        let droppedItems = [];
+        let draggedItem = null;
+
+        function initLevel() {
+            const level = levels[currentLevel];
+            const dragContainer = document.getElementById('drag-items');
+            const dropZone = document.getElementById('drop-zone');
+
+            // Reset
+            droppedItems = [];
+            dropZone.innerHTML = '<p style="color: #888; margin: auto;">Aşamaları buraya sırala ➡️</p>';
+            document.getElementById('feedback').className = 'feedback';
+            document.getElementById('feedback').textContent = '';
+            document.getElementById('cycle-display').className = 'cycle-display';
+            document.getElementById('info-section').className = 'info-section';
+            document.getElementById('plant-visual').textContent = '🌰';
+            document.getElementById('stage-label').textContent = level.title;
+            document.getElementById('level').textContent = currentLevel + 1;
+
+            // Shuffle stages
+            const shuffled = [...level.stages].sort(() => Math.random() - 0.5);
+
+            dragContainer.innerHTML = '';
+            shuffled.forEach((stage, index) => {
+                const item = document.createElement('div');
+                item.className = 'drag-item';
+                item.draggable = true;
+                item.dataset.name = stage.name;
+                item.dataset.emoji = stage.emoji;
+                item.innerHTML = `<span class="emoji">${stage.emoji}</span> ${stage.name}`;
+
+                item.addEventListener('dragstart', handleDragStart);
+                item.addEventListener('touchstart', handleTouchStart, { passive: false });
+                item.addEventListener('click', handleClick);
+
+                dragContainer.appendChild(item);
+            });
+
+            // Setup drop zone
+            dropZone.addEventListener('dragover', handleDragOver);
+            dropZone.addEventListener('drop', handleDrop);
+            dropZone.addEventListener('dragleave', handleDragLeave);
+
+            // Update level dots
+            for (let i = 1; i <= 3; i++) {
+                const dot = document.getElementById(`dot-${i}`);
+                dot.className = 'level-dot';
+                if (i === currentLevel + 1) dot.classList.add('active');
+                if (i < currentLevel + 1) dot.classList.add('completed');
+            }
+        }
+
+        function handleDragStart(e) {
+            draggedItem = e.target;
+            e.dataTransfer.setData('text/plain', '');
+            setTimeout(() => e.target.style.opacity = '0.5', 0);
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+            document.getElementById('drop-zone').classList.add('drag-over');
+        }
+
+        function handleDragLeave(e) {
+            document.getElementById('drop-zone').classList.remove('drag-over');
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            document.getElementById('drop-zone').classList.remove('drag-over');
+            if (draggedItem) {
+                addToDropZone(draggedItem);
+                draggedItem.style.opacity = '1';
+                draggedItem = null;
+            }
+        }
+
+        function handleClick(e) {
+            const item = e.currentTarget;
+            addToDropZone(item);
+        }
+
+        function handleTouchStart(e) {
+            e.preventDefault();
+            const item = e.currentTarget;
+            addToDropZone(item);
+        }
+
+        function addToDropZone(item) {
+            const dropZone = document.getElementById('drop-zone');
+            const name = item.dataset.name;
+            const emoji = item.dataset.emoji;
+
+            // Remove placeholder text
+            const placeholder = dropZone.querySelector('p');
+            if (placeholder) placeholder.remove();
+
+            // Add to drop zone
+            const dropped = document.createElement('div');
+            dropped.className = 'dropped-item';
+            dropped.dataset.name = name;
+            dropped.innerHTML = `<span class="emoji">${emoji}</span> ${name}`;
+            dropped.addEventListener('click', () => removeFromDropZone(dropped, item));
+            dropZone.appendChild(dropped);
+
+            // Mark original as placed
+            item.classList.add('placed');
+            item.style.pointerEvents = 'none';
+            item.draggable = false;
+
+            droppedItems.push({ name, emoji, element: dropped, original: item });
+
+            // Update plant visual
+            updatePlantVisual();
+        }
+
+        function removeFromDropZone(dropped, original) {
+            dropped.remove();
+            original.classList.remove('placed');
+            original.style.pointerEvents = 'auto';
+            original.draggable = true;
+
+            droppedItems = droppedItems.filter(item => item.element !== dropped);
+
+            // Show placeholder if empty
+            const dropZone = document.getElementById('drop-zone');
+            if (droppedItems.length === 0) {
+                dropZone.innerHTML = '<p style="color: #888; margin: auto;">Aşamaları buraya sırala ➡️</p>';
+            }
+
+            updatePlantVisual();
+        }
+
+        function updatePlantVisual() {
+            const plantVisual = document.getElementById('plant-visual');
+            if (droppedItems.length > 0) {
+                const lastItem = droppedItems[droppedItems.length - 1];
+                plantVisual.textContent = lastItem.emoji;
+                plantVisual.className = 'plant-stage growing';
+                setTimeout(() => plantVisual.className = 'plant-stage', 800);
+            } else {
+                plantVisual.textContent = '🌰';
+            }
+        }
+
+        function checkOrder() {
+            const level = levels[currentLevel];
+            const correctOrder = level.stages.map(s => s.name);
+            const playerOrder = droppedItems.map(item => item.name);
+
+            if (playerOrder.length < correctOrder.length) {
+                showFeedback('⚠️ Tüm aşamaları sıraya koy!', 'error');
+                return;
+            }
+
+            let allCorrect = true;
+            droppedItems.forEach((item, index) => {
+                if (item.name !== correctOrder[index]) {
+                    item.element.classList.add('wrong');
+                    setTimeout(() => item.element.classList.remove('wrong'), 1000);
+                    allCorrect = false;
+                }
+            });
+
+            if (allCorrect) {
+                score += (currentLevel + 1) * 100;
+                document.getElementById('score').textContent = score;
+                showFeedback('🎉 Harika! Doğru sıraladın! +' + ((currentLevel + 1) * 100) + ' puan!', 'success');
+                showCycleAnimation();
+                showInfoSection();
+                createConfetti();
+
+                // Update level dot
+                document.getElementById(`dot-${currentLevel + 1}`).classList.add('completed');
+
+                // Next level button
+                if (currentLevel < levels.length - 1) {
+                    setTimeout(() => {
+                        const feedback = document.getElementById('feedback');
+                        feedback.innerHTML += '<br><button class="btn btn-check" onclick="nextLevel()" style="margin-top:10px;">➡️ Sonraki Seviye</button>';
+                    }, 1000);
+                } else {
+                    setTimeout(() => {
+                        const feedback = document.getElementById('feedback');
+                        feedback.innerHTML += '<br><br>🏆 Tebrikler! Tüm seviyeleri tamamladın!<br>Toplam Puan: ' + score;
+                    }, 1000);
+                }
+            } else {
+                showFeedback('❌ Bazı aşamalar yanlış sırada. Tekrar dene!', 'error');
+            }
+        }
+
+        function nextLevel() {
+            currentLevel++;
+            initLevel();
+        }
+
+        function resetLevel() {
+            initLevel();
+        }
+
+        function giveHint() {
+            if (hintsLeft <= 0) {
+                showFeedback('💡 İpucu hakkın kalmadı!', 'hint');
+                return;
+            }
+
+            hintsLeft--;
+            document.getElementById('hints').textContent = hintsLeft;
+
+            const level = levels[currentLevel];
+            const correctOrder = level.stages;
+            const nextIndex = droppedItems.length;
+
+            if (nextIndex < correctOrder.length) {
+                const hint = correctOrder[nextIndex];
+                showFeedback(`💡 İpucu: Sıradaki aşama "${hint.emoji} ${hint.name}" - ${hint.desc}`, 'hint');
+            }
+        }
+
+        function showFeedback(text, type) {
+            const feedback = document.getElementById('feedback');
+            feedback.className = 'feedback ' + type;
+            feedback.innerHTML = text;
+        }
+
+        function showCycleAnimation() {
+            const level = levels[currentLevel];
+            const cycleDisplay = document.getElementById('cycle-display');
+            const cycleArrow = document.getElementById('cycle-arrow');
+
+            cycleDisplay.className = 'cycle-display active';
+            cycleArrow.innerHTML = '';
+
+            level.stages.forEach((stage, index) => {
+                const step = document.createElement('div');
+                step.className = 'cycle-step';
+                step.innerHTML = `<span class="emoji">${stage.emoji}</span><span class="label">${stage.name}</span>`;
+                cycleArrow.appendChild(step);
+
+                if (index < level.stages.length - 1) {
+                    const arrow = document.createElement('span');
+                    arrow.className = 'arrow';
+                    arrow.textContent = '→';
+                    cycleArrow.appendChild(arrow);
+                }
+            });
+
+            // Add circular arrow back to start
+            const arrow = document.createElement('span');
+            arrow.className = 'arrow';
+            arrow.textContent = '🔄';
+            cycleArrow.appendChild(arrow);
+        }
+
+        function showInfoSection() {
+            const level = levels[currentLevel];
+            const infoSection = document.getElementById('info-section');
+            const infoCards = document.getElementById('info-cards');
+
+            infoSection.className = 'info-section active';
+            infoCards.innerHTML = '';
+
+            level.info.forEach(info => {
+                const card = document.createElement('div');
+                card.className = 'info-card';
+                card.innerHTML = `<h3>${info.title}</h3><p>${info.text}</p>`;
+                infoCards.appendChild(card);
+            });
+        }
+
+        function createConfetti() {
+            const emojis = ['🌸', '🌺', '🌼', '🌻', '🏵️', '💐', '🎉', '⭐', '✨'];
+            for (let i = 0; i < 20; i++) {
+                setTimeout(() => {
+                    const confetti = document.createElement('div');
+                    confetti.className = 'confetti';
+                    confetti.style.left = Math.random() * 100 + 'vw';
+                    confetti.style.animationDuration = (2 + Math.random() * 2) + 's';
+                    confetti.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+                    document.body.appendChild(confetti);
+                    setTimeout(() => confetti.remove(), 4000);
+                }, i * 100);
+            }
+        }
+
+        // Initialize
+        initLevel();
+    </script>
+</body>
+</html>

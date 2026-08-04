@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>İstanbul Bilgi Kartları | Harfcan</title>
+    <meta name="description" content="İstanbul'un tarihi yapılarını ve özelliklerini öğrenmek için eğlenceli bilgi kartları.">
+    <link rel="stylesheet" href="istanbul-bilgi-kartlari.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="hc-header" role="banner">
+        <div class="hc-header__inner">
+            <a href="/" class="hc-header__logo" aria-label="Harfcan ana sayfa">
+                <img
+                    src="assets/harfcan-logo.png"
+                    alt="Harfcan"
+                    class="hc-header__logo-img"
+                    onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+                >
+                <span class="hc-header__logo-text" aria-hidden="true">harfcan</span>
+            </a>
+            <h1 class="hc-header__title">Bilgi Kartları</h1>
+            <nav class="hc-header__nav" aria-label="Üst gezinme">
+                <a href="/bilgi-kartlari" class="hc-header__link">← Kartlara Dön</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="hc-main" role="main">
+        <!-- Progress Bar (Top) -->
+        <div class="hc-progress" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" aria-label="İlerleme">
+            <div class="hc-progress__bar"></div>
+        </div>
+
+        <!-- Stats Strip -->
+        <div class="hc-stats" aria-live="polite" aria-atomic="true">
+            <span class="hc-stats__item hc-stats__item--correct">
+                <span class="hc-stats__icon">✓</span>
+                <span class="hc-stats__value" id="stat-correct">0</span>
+            </span>
+            <span class="hc-stats__item hc-stats__item--remaining">
+                <span class="hc-stats__icon">📄</span>
+                <span class="hc-stats__value" id="stat-remaining">10</span>
+            </span>
+        </div>
+
+        <!-- Card Container -->
+        <div class="hc-card" id="card-container">
+            <!-- Topic Tag -->
+            <span class="hc-card__tag" id="card-tag">İstanbul'u Tanıyalım</span>
+
+            <!-- Image Area -->
+            <div class="hc-card__image-wrap" id="card-image-wrap">
+                <img
+                    src=""
+                    alt=""
+                    class="hc-card__image"
+                    id="card-image"
+                    loading="eager"
+                >
+                <div class="hc-card__image-placeholder" id="card-placeholder" aria-hidden="true">
+                    <span class="hc-card__placeholder-icon"></span>
+                    <span class="hc-card__placeholder-text"></span>
+                </div>
+            </div>
+
+            <!-- Question -->
+            <div class="hc-card__body">
+                <h2 class="hc-card__question" id="card-question" aria-live="polite"></h2>
+
+                <!-- Choices -->
+                <div class="hc-card__choices" id="card-choices" role="group" aria-label="Cevap seçenekleri">
+                    <!-- Choices injected by JS -->
+                </div>
+
+                <!-- Feedback -->
+                <div class="hc-card__feedback" id="card-feedback" aria-live="assertive" aria-atomic="true">
+                    <p class="hc-card__feedback-msg" id="feedback-msg"></p>
+                </div>
+
+                <!-- Explanation -->
+                <div class="hc-card__explanation" id="card-explanation" aria-live="polite">
+                    <h3 class="hc-card__explanation-title" id="explanation-title"></h3>
+                    <p class="hc-card__explanation-text" id="explanation-text"></p>
+                </div>
+
+                <!-- Post-answer Buttons -->
+                <div class="hc-card__post-actions" id="card-post-actions">
+                    <button class="hc-btn hc-btn--small hc-btn--outline" data-action="knew" aria-label="Biliyordum">👍 Biliyordum</button>
+                    <button class="hc-btn hc-btn--small hc-btn--outline" data-action="learned" aria-label="Yeni öğrendim">💡 Yeni öğrendim</button>
+                    <button class="hc-btn hc-btn--small hc-btn--outline" data-action="repeat" aria-label="Bir daha göster">🔄 Bir daha göster</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <div class="hc-nav" id="card-nav">
+            <button class="hc-btn hc-btn--nav hc-btn--prev" id="btn-prev" aria-label="Önceki kart" disabled>
+                ‹ Önceki
+            </button>
+            <span class="hc-nav__counter" id="nav-counter" aria-live="polite">1 / 10</span>
+            <button class="hc-btn hc-btn--nav hc-btn--next" id="btn-next" aria-label="Sonraki kart" disabled>
+                Sonraki ›
+            </button>
+        </div>
+
+        <!-- Completion Screen -->
+        <div class="hc-complete" id="complete-screen" hidden>
+            <div class="hc-complete__inner">
+                <div class="hc-complete__icon" aria-hidden="true">🏆</div>
+                <h2 class="hc-complete__title">Tebrikler!</h2>
+                <p class="hc-complete__subtitle">İstanbul kartlarını tamamladın.</p>
+                <div class="hc-complete__stats">
+                    <div class="hc-complete__stat">
+                        <span class="hc-complete__stat-value" id="complete-correct">0</span>
+                        <span class="hc-complete__stat-label">Doğru Cevap</span>
+                    </div>
+                    <div class="hc-complete__stat">
+                        <span class="hc-complete__stat-value" id="complete-repeat">0</span>
+                        <span class="hc-complete__stat-label">Tekrar Edilecek</span>
+                    </div>
+                </div>
+                <div class="hc-complete__actions">
+                    <button class="hc-btn hc-btn--primary" id="btn-restart">🔄 Kartları Tekrarla</button>
+                    <a href="/bilgi-kartlari" class="hc-btn hc-btn--outline">← Bilgi Kartlarına Dön</a>
+                </div>
+            </div>
+            <!-- Confetti Canvas -->
+            <canvas class="hc-confetti" id="confetti-canvas" aria-hidden="true"></canvas>
+        </div>
+    </main>
+
+    <script src="istanbul-bilgi-kartlari.js"></script>
+</body>
+</html>
