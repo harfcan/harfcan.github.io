@@ -1,143 +1,45 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="tr">
 <head>
-  <!-- Google tag (gtag.js) -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-ECTE4D9MK9"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', 'G-ECTE4D9MK9');
-  </script>
-
-  <meta charset="UTF-8" />
-  <title>1, 2, 3. Sınıflar İçin Okuma Yazma Oyunları, Masallar ve Bilim Yazıları - Harfcan</title>
-  <meta name="description" content="Harfcan: 1. sınıf, 2. sınıf ve 3. sınıf öğrencileri için okuma yazma oyunları, interaktif masallar, düşünme kutuları ve eğlenceli fen yazıları sunar. Okuma alışkanlığı ve eleştirel düşünme gelişimi için özel hazırlanmış içerikler." />
-  <link rel="stylesheet" href="harfcan.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Harfcan | Keşfet, Oyna, Öğren!</title>
+  <meta name="description" content="1, 2 ve 3. sınıflar için eğlenceli okuma, yazma, matematik, masal ve bilim etkinlikleri.">
+  <link rel="stylesheet" href="harfcan.css">
 </head>
 <body>
-
-  <header>
-    <div class="logo">
-      <a href="index.html">
-        <img src="harfcan-logo.png" alt="Harfcan Logo" />
-      </a>
+  <a class="skip-link" href="#etkinlikler">Etkinliklere geç</a>
+  <header class="site-header">
+    <div class="nav-wrap">
+      <a class="brand" href="index.html" aria-label="Harfcan ana sayfa"><img src="harfcan-logo.png" alt="Harfcan"></a>
+      <nav aria-label="Ana menü"><a href="buradan-basla.html">Buradan Başla</a><a href="#oyunlar">Oyunlar</a><a href="#masallar">Masallar</a><a href="#bilim">Bilim</a><a href="#matematik">Matematik</a><a href="#eglence">Etkinlikler</a><a href="tum-icerikler.html">Tüm içerikler</a></nav>
+      <a class="nav-cta" href="mailto:info@harfcan.com">Bize ulaşın</a>
     </div>
-    <h1>1, 2 ve 3. Sınıflar İçin Okuma Yazma Oyunları, Masallar ve Bilim Yazıları</h1>
-    <p>Oyunlar, Masallar ve Düşünme Kutuları... Okumayı, keşfetmeyi ve düşünmeyi seven çocuklar için! info@harfcan.com</p>
-    <div class="harfcan-character"></div>
   </header>
-
-  <div class="container">
-
-    <!-- Bölüm 1: Okuma Yazma Oyunları -->
-    <section class="grade-section">
-      <h2>İlkokul İçin Okuma Yazma Oyunları</h2>
-      <div class="games-grid">
-        <div class="game-card">
-          <h3>Kelime Tanıma & Ses Bilgisi</h3>
-          <p>Türkçe kelimelerin seslerini dinleyin ve eğlenceli etkinliklerle yazılışlarını öğrenin!</p>
-          <a href="kelime-okuma.html" class="button">Başla</a>
-        </div>
-        <div class="game-card">
-          <h3>Cümle Anlama</h3>
-          <p>Cümleleri dinleyin ve doğru yazılmış olanı seçin.</p>
-          <a href="cumle-seviye-secimi.html" class="button">Başla</a>
-        </div>
-        <div class="game-card">
-          <h3>Okuma Anlama</h3>
-          <p>Kısa hikâyeleri okuyun ve ardından sorulan sorularla anlama becerinizi test edin.</p>
-          <a href="hikaye-secimi.html" class="button">Başla</a>
-        </div>
-        <div class="game-card">
-          <h3>Kelime Avı</h3>
-          <p>12x12 harf tablosunda gizli kelimeleri bul! Uzay, hayvanlar, meyveler ve daha fazla tema.</p>
-        <a href="kelime-avi.html" class="button">Başla</a>
-        </div>
-        <div class="game-card">
-          <h3>Hece Birleştirme</h3>
-          <p>Heceleri doğru sıraya koyarak kelimeleri oluşturun. Sürükle, birleştir, öğren!</p>
-          <a href="hece-birlestirme.html" class="button">Başla</a>
-        </div>
-        <div class="game-card">
-          <h3>Cümle Sırala</h3>
-          <p>Karışık kelimeleri doğru sıraya koyarak cümleyi oluştur!</p>
-          <a href="cumle-sirala.html" class="button">Başla</a>
-        </div>
+  <main>
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero-copy"><p class="eyebrow">1, 2 ve 3. sınıflar için</p><h1 id="hero-title">Oyun oynayarak <span>öğrenmek çok eğlenceli!</span></h1><p class="hero-text">Okuma, yazma, matematik, bilim ve masallarla dolu kısa etkinlikler keşfet. Hangi maceraya başlamak istersin?</p><div class="hero-actions"><a class="button button-primary" href="buradan-basla.html">👨‍👩‍👧 Veliler için Buradan Başlayın</a></div></div>
+      <div class="hero-art" aria-hidden="true"><span class="cloud cloud-one">A</span><span class="cloud cloud-two">B</span><span class="rocket">🚀</span><span class="book">📖</span><div class="hero-kid">🧒<span>✨</span></div><div class="hero-hill hill-one"></div><div class="hero-hill hill-two"></div></div>
+    </section>
+    <section class="grade-picker" aria-label="Sınıf seviyesine göre etkinlikler"><p>Sınıfına göre içerikleri keşfet</p><a href="#etkinlikler"><span>🐸</span>1. Sınıf</a><a href="#etkinlikler"><span>🦊</span>2. Sınıf</a><a href="#etkinlikler"><span>🐼</span>3. Sınıf</a></section>
+    <section class="paths" aria-labelledby="paths-title"><div class="section-heading"><p class="eyebrow">Bugün ne yapmak istersin?</p><h2 id="paths-title">Keşfet, Oyna, Öğren!</h2></div><div class="path-grid"><a class="path path-read" href="#oyunlar"><span>📚</span><strong>Okuma</strong><small>Kelimeleri ve hikâyeleri keşfet</small><b>Başla →</b></a><a class="path path-write" href="#oyunlar"><span>✏️</span><strong>Yazma</strong><small>Hecelerle ve cümlelerle oyna</small><b>Başla →</b></a><a class="path path-science" href="#bilim"><span>🔬</span><strong>Bilim</strong><small>Merak et, dene, öğren</small><b>Keşfet →</b></a><a class="path path-math" href="#matematik"><span>🔢</span><strong>Matematik</strong><small>Sayılarla düşün, yarış</small><b>Çöz →</b></a><a class="path path-story" href="#masallar"><span>🧠</span><strong>Düşün</strong><small>Masalları oku, soruları cevapla</small><b>Oku →</b></a><a class="path path-fun" href="#eglence"><span>🎨</span><strong>Boyama</strong><small>Renklerle sürpriz resimler yap</small><b>Oyna →</b></a></div></section>
+    <section class="activities" id="etkinlikler" aria-labelledby="activities-title"><div class="section-heading section-heading-row"><div><p class="eyebrow">Harfcan etkinlikleri</p><h2 id="activities-title">Sana uygun bir macera seç</h2></div><p class="count" id="activity-count">6 etkinlik</p></div><div class="filters" role="group" aria-label="Etkinlik türünü seç"><button class="filter active" type="button" data-filter="all" aria-pressed="true">Tümü</button><button class="filter" type="button" data-filter="oyun" aria-pressed="false">Okuma &amp; Yazma</button><button class="filter" type="button" data-filter="masal" aria-pressed="false">Masallar</button><button class="filter" type="button" data-filter="bilim" aria-pressed="false">Bilim</button><button class="filter" type="button" data-filter="matematik" aria-pressed="false">Matematik</button><button class="filter" type="button" data-filter="eglence" aria-pressed="false">Eğlence</button></div>
+      <div class="activity-grid">
+        <article class="activity-card oyun" id="oyunlar" data-category="oyun"><div class="card-icon">📚</div><p class="tag">OKUMA &amp; YAZMA OYUNLARI</p><h3>Okuma ve Yazma Oyunları</h3><p>Kelime, hece, cümle ve hikâyelerle eğlenerek öğren.</p><a href="okuma-yazma-oyunlari.html">Oyunları keşfet <span>→</span></a></article>
+        <article class="activity-card masal" id="masallar" data-category="masal"><div class="card-icon">🧚</div><p class="tag">MASALLAR</p><h3>Masal ve Hikâyeler</h3><p>Hikâyelerle öğren, sorularla düşün ve yeni dünyalar keşfet.</p><a href="masal-ve-hikaye.html">Hikâyeyi aç <span>→</span></a></article>
+        <article class="activity-card bilim" id="bilim" data-category="bilim"><div class="card-icon">💡</div><p class="tag">BİLİM</p><h3>Merak Köşesi</h3><p>Şimşek neden çarpar, kuşlar neden uçar? Cevapları keşfet.</p><a href="fen-yazilari.html">Keşfet <span>→</span></a></article>
+        <article class="activity-card bilim" data-category="bilim"><div class="card-icon">🔬</div><p class="tag">BİLİM OYUNLARI</p><h3>Bilim Oyunları</h3><p>Mıknatısları, bitkileri, kalbini ve Ay'ı oyunlarla keşfet.</p><a href="bilim-oyunlari.html">Oyunları keşfet <span>→</span></a></article>
+        <article class="activity-card matematik" id="matematik" data-category="matematik"><div class="card-icon">🐎</div><p class="tag">MATEMATİK OYUNLARI</p><h3>Matematik Derbisi</h3><p>Toplama sorularını çöz, atını güçlendir ve yeni yarış parkurlarını aç.</p><a href="matematik-oyunlari.html">Matematiği keşfet <span>→</span></a></article>
+        <article class="activity-card eglence" id="eglence" data-category="eglence"><div class="card-icon">🖍️</div><p class="tag">EĞLENCE</p><h3>Piksel Boyama</h3><p>Koordinatları takip et, kareleri boya ve sürpriz resmi keşfet.</p><a href="piksel-boyama.html">Boyamaya başla <span>→</span></a></article>
       </div>
     </section>
-
-    <!-- Bölüm 2: Hikaye ve Masallar -->
-    <section class="grade-section">
-      <h2>Çocuklar İçin Masallar ve Okuma Hikayeleri</h2>
-      <div class="games-grid">
-        <div class="game-card">
-          <h3>Hikayelerle öğren, sorularla düşün!</h3>
-          <p>Sorularla zenginleştirilmiş klasik hikayeler. Okuma alışkanlığı kazandırmak ve düşünme becerilerini geliştirmek için tasarlandı.</p>
-          <a href="masal-ve-hikaye.html" class="button">Oku</a>
-        </div>
-      </div>
-    </section>
-
-    <!-- Bölüm 3: Fen Yazıları -->
-    <section class="grade-section">
-      <h2>Bilim Yazıları – Çocuklar İçin Merak Köşesi</h2>
-      <div class="games-grid">
-        <div class="game-card">
-          <h3>Fen kavramlarını keşfet, eğlen!</h3>
-          <p>“Şimşek neden çarpar?”, “Kuşlar neden uçar?” gibi sorularla çocukların merak duygusunu harekete geçiren eğlenceli fen yazıları.</p>
-          <a href="fen-yazilari.html" class="button">Keşfet</a>
-        </div>
-
-        <div class="game-card">
-          <h3>Mıknatıs Laboratuvarı</h3>
-          <p>Mıknatıs gücünü ayarla, hangi nesnelerin çekildiğini keşfet! Quiz + deney modu.</p>
-          <a href="miknatislab.html" class="button">Deneye Başla</a>
-        </div>
-
-        <div class="game-card">
-          <h3>Bitki Yaşam Döngüsü</h3>
-          <p>Tohum ek, su ver, güneşe çıkar! Bitkinin büyüme aşamalarını interaktif olarak keşfet.</p>
-          <a href="bitki-yasam-dongusu.html" class="button">Oyna</a>
-        </div>
-
-        <div class="game-card">
-          <h3>Kalp Pompası Oyunu</h3>
-          <p>Kalbe tıkla, kanı pompala, organları mutlu tut! Ritim oyunuyla kalbin nasıl çalıştığını öğren.</p>
-          <a href="oyun-kalp-pompasi.html" class="button">Oyna</a>
-        </div>
-
-        <div class="game-card">
-          <h3>Ay Evreleri Oyunu</h3>
-          <p>Ay'ın evrelerini doğru sıraya diz! Yeni Ay'dan Dolunay'a kadar tüm evreleri öğren.</p>
-          <a href="oyun-ay-evreleri.html" class="button">Oyna</a>
-        </div>
-      </div>
-    </section>
-
-
-  <!-- Bölüm 4: ğlence Köşesi -->
-  <section class="grade-section">
-  <h2>Eğlence Köşesi – Bulmaca ve Etkinlikler</h2>
-  <div class="games-grid">
-    <div class="game-card">
-      <h3>Piksel Boyama</h3>
-      <p>Koordinatları takip et, kareleri boya, sürpriz resmi keşfet! Kalp, roket, yıldız ve daha fazlası.</p>
-      <a href="piksel-boyama.html" class="button">Başla</a>
-    </div>
-  </div>
-</section>
-
-
-    <section class="grade-section">
-      <h2>İletişim info@harfcan.com </h2>
-    </section>
-
-  </div>
-
-  <footer>
-    <p>© 2025 Harfcan. Tüm Hakları Saklıdır. info@harfcan.com </p>
-  </footer>
-
+    <section class="why" id="hakkimizda" aria-labelledby="why-title"><div class="section-heading"><p class="eyebrow">Harfcan yanında</p><h2 id="why-title">Öğrenirken eğlen!</h2></div><div class="why-grid"><div><span>🛡️</span><h3>Güvenli içerik</h3><p>Çocuklar için reklamsız ve güvenli bir ortam.</p></div><div><span>🧑‍🏫</span><h3>Öğrenme odaklı</h3><p>Temel becerileri pratik ederek geliştiren etkinlikler.</p></div><div><span>🖨️</span><h3>Her yerde öğren</h3><p>Evde, okulda veya istediğin yerde keşfe devam et.</p></div></div></section>
+    <section class="newsletter"><div><p class="eyebrow">Birlikte keşfedelim</p><h2>Yeni etkinliklerden haberdar ol!</h2><p>Öneri, soru ve görüşlerin için bize yazabilirsin.</p></div><a class="button button-primary" href="mailto:info@harfcan.com">✉️ Harfcan'a yaz</a></section>
+  </main>
+  <footer><div><a class="brand" href="index.html"><img src="harfcan-logo.png" alt="Harfcan"></a><p>Oyun oynayarak öğrenmenin neşeli yolu.</p></div><div><strong>Keşfet</strong><a href="#oyunlar">Oyunlar</a><a href="#masallar">Masallar</a><a href="#bilim">Bilim</a><a href="#matematik">Matematik</a></div><div><strong>Yardım</strong><a href="mailto:info@harfcan.com">info@harfcan.com</a><span>© 2026 Harfcan</span></div></footer>
+  <script>
+    const buttons = document.querySelectorAll('.filter'); const cards = document.querySelectorAll('.activity-card'); const count = document.getElementById('activity-count');
+    buttons.forEach(button => button.addEventListener('click', () => { const filter = button.dataset.filter; let visible = 0; buttons.forEach(item => { const active = item === button; item.classList.toggle('active', active); item.setAttribute('aria-pressed', active); }); cards.forEach(card => { const show = filter === 'all' || card.dataset.category === filter; card.hidden = !show; if (show) visible++; }); count.textContent = `${visible} etkinlik`; }));
+  </script>
 </body>
 </html>

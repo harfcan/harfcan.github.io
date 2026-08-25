@@ -1,134 +1,42 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="tr">
 <head>
-  
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-ECTE4D9MK9"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-ECTE4D9MK9');
-</script>
-
-  <meta charset="UTF-8" />
-  <title>Kelime Okuma</title>
-  <link rel="stylesheet" href="seviye-secimi.css" />
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-ECTE4D9MK9"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-ECTE4D9MK9');
+  </script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kelime Tanıma Oyunu | Harfcan</title>
+  <meta name="description" content="Kelime tanıma oyununda seviyeni ve harfini seç; dinleyerek ve oynayarak öğren.">
+  <link rel="stylesheet" href="harfcan.css">
   <style>
-    .seviye-group {
-      margin-bottom: 10px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-    }
-    .seviye-group .seviye {
-      padding: 10px;
-      background: #f7f7f7;
-      cursor: pointer;
-    }
-    .seviye-group .seviye:hover {
-      background: #eee;
-    }
-    .groups {
-      display: none;
-      margin: 0;
-      padding: 0 20px 10px;
-    }
-    .groups li {
-      list-style: none;
-      margin: 8px 0;
-    }
-    .groups a {
-      text-decoration: none;
-      color: #007bff;
-      border: 1px solid #007bff;
-      padding: 6px 12px;
-      border-radius: 4px;
-      transition: background 0.3s;
-    }
-    .groups a:hover {
-      background: #007bff;
-      color: #fff;
-    }
-
+    .word-page{background:linear-gradient(180deg,#eefaff 0,#fffdf7 37%);min-height:calc(100vh - 74px)}.word-hero{max-width:1052px;margin:auto;padding:54px 24px 35px;display:grid;grid-template-columns:1fr .72fr;gap:32px;align-items:center}.back-link{display:inline-flex;gap:7px;align-items:center;color:#6f42d8;font-size:.86rem;font-weight:900;margin-bottom:17px}.word-hero h1{font-size:clamp(2.25rem,4.4vw,3.7rem);letter-spacing:-.045em;line-height:1.04}.word-hero h1 span{color:#ee6b62}.word-hero p:not(.eyebrow){max-width:530px;color:#59617e;font-size:1rem;margin:14px 0 21px}.word-hero .button{padding:.8rem 1.18rem}.word-art{height:215px;position:relative;overflow:hidden;border-radius:28px;background:linear-gradient(135deg,#d7f4ff,#e7ddff);box-shadow:var(--shadow)}.word-art span{position:absolute;display:grid;place-items:center;width:74px;height:74px;border-radius:23px;font-size:2.7rem;font-weight:900;color:#fff;box-shadow:0 8px 15px rgba(53,65,128,.15)}.word-art .letter-a{top:32px;left:13%;background:#fb7a68;transform:rotate(-10deg)}.word-art .letter-b{top:22px;right:15%;background:#64bdf0;transform:rotate(10deg)}.word-art .letter-c{bottom:25px;left:31%;background:#7857d5;transform:rotate(8deg)}.word-art .pencil{position:absolute;right:31%;bottom:17px;font-size:4.2rem;transform:rotate(-22deg)}.word-art .sparkle{position:absolute;right:9%;bottom:31px;font-size:2rem}.level-section{max-width:1052px;margin:auto;padding:18px 24px 68px}.level-heading{text-align:center;margin-bottom:27px}.level-heading h2{font-size:clamp(1.65rem,3vw,2.25rem);letter-spacing:-.035em}.level-heading p:last-child{color:var(--muted);font-size:.93rem;margin-top:8px}.level-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}.level-card{border:1px solid #e5e7f1;border-radius:21px;background:#fff;box-shadow:0 5px 15px rgba(52,64,114,.08);overflow:hidden}.level-card.level-one{--level:#55ae72;--level-bg:#ecfae5}.level-card.level-two{--level:#368bba;--level-bg:#e8f6ff}.level-card.level-three{--level:#7654c4;--level-bg:#f1ebff}.level-toggle{width:100%;border:0;background:var(--level-bg);padding:21px 20px;text-align:left;display:flex;align-items:center;gap:13px;color:var(--ink);cursor:pointer;font:inherit}.level-toggle:hover{filter:brightness(.98)}.level-badge{width:51px;height:51px;flex:0 0 51px;display:grid;place-items:center;border-radius:16px;background:var(--level);font-size:1.75rem}.level-title{display:flex;flex-direction:column;gap:1px}.level-title strong{font-size:1.12rem}.level-title small{color:#56627a;font-weight:700;font-size:.78rem}.toggle-mark{margin-left:auto;width:29px;height:29px;border-radius:50%;display:grid;place-items:center;color:#fff;background:var(--level);font-size:1.25rem;transition:transform .2s}.level-toggle[aria-expanded="true"] .toggle-mark{transform:rotate(45deg)}.letter-area{padding:16px 18px 19px}.letter-area p{color:var(--muted);font-size:.82rem;font-weight:700;margin-bottom:11px}.groups{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;list-style:none;padding:0;margin:0}.groups a{min-height:42px;display:grid;place-items:center;border:1px solid #dedfed;border-radius:12px;background:#fff;color:var(--level);font-weight:900;font-size:1rem;transition:transform .18s,background .18s,color .18s}.groups a:hover{background:var(--level);border-color:var(--level);color:#fff;transform:translateY(-2px)}.how-to{max-width:1052px;margin:0 auto 58px;padding:28px 32px;border-radius:22px;background:#fff4cc;display:grid;grid-template-columns:auto 1fr;gap:25px;align-items:center}.how-to>span{font-size:3.6rem}.how-to h2{font-size:1.38rem;margin-bottom:13px}.steps{display:flex;gap:17px}.steps div{display:flex;align-items:center;gap:8px;font-size:.85rem;font-weight:800}.steps span{width:28px;height:28px;display:grid;place-items:center;border-radius:50%;background:#fff;color:#b07717}@media(max-width:800px){.word-hero{grid-template-columns:1fr;padding-top:39px;text-align:center}.word-hero p:not(.eyebrow){margin-inline:auto}.word-art{max-width:440px;width:100%;height:170px;margin:auto}.level-grid{grid-template-columns:1fr}.how-to{margin:0 24px 48px;grid-template-columns:1fr;text-align:center;gap:5px}.steps{justify-content:center;flex-wrap:wrap}}@media(max-width:520px){.word-hero{padding-inline:20px}.level-section{padding-inline:18px}.groups{grid-template-columns:repeat(6,1fr)}.how-to{padding:24px 18px;margin-inline:18px}.steps{justify-content:flex-start}.steps div{font-size:.76rem}}
   </style>
 </head>
 <body>
-
-<header>
-  <div class="logo">
-    <a href="index.html">
-      <img src="harfcan-logo.png" alt="Harfcan Logo" />
-    </a>
-  </div>
-  <h1>Kelime Okuma</h1>
-  <div class="harfcan-character"></div>
-</header>
-
-<div class="container seviye-container">
-  <h2>Seviye Seçin</h2>
-
-  <!-- Seviye 1 - Basit -->
-  <div class="seviye-group">
-    <div class="seviye" onclick="toggleGroups('seviye1-groups')">
-      <strong>Seviye 1 (Basit)</strong>
-    </div>
-    <ul id="seviye1-groups" class="groups">
-      <!-- Harfler A-Z -->
-      <!-- Bunu otomatik generate edeceğiz -->
-    </ul>
-  </div>
-
-  <!-- Seviye 2 - Orta -->
-  <div class="seviye-group">
-    <div class="seviye" onclick="toggleGroups('seviye2-groups')">
-      <strong>Seviye 2 (Orta)</strong>
-    </div>
-    <ul id="seviye2-groups" class="groups">
-      <!-- Harfler A-Z -->
-    </ul>
-  </div>
-
-  <!-- Seviye 3 - Zor -->
-  <div class="seviye-group">
-    <div class="seviye" onclick="toggleGroups('seviye3-groups')">
-      <strong>Seviye 3 (Zor)</strong>
-    </div>
-    <ul id="seviye3-groups" class="groups">
-      <!-- Harfler A-Z -->
-    </ul>
-  </div>
-
-</div>
-
-<footer>
-  <p>© 2025 Harfcan. Tüm Hakları Saklıdır.</p>
-</footer>
-
-<script>
-function toggleGroups(elementId) {
-  const groupsList = document.getElementById(elementId);
-  if (groupsList.style.display === 'none' || groupsList.style.display === '') {
-    groupsList.style.display = 'block';
-  } else {
-    groupsList.style.display = 'none';
-  }
-}
-
-// A-Z Harfleri otomatik üret
-const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
-
-function generateLinks(level) {
-  return alphabet.map(letter => `
-    <li><a href="kelimeler.html?level=${level}&letter=${letter}">${letter} Harfi ile Başlayanlar</a></li>
-  `).join('');
-}
-
-document.getElementById('seviye1-groups').innerHTML = generateLinks(1);
-document.getElementById('seviye2-groups').innerHTML = generateLinks(2);
-document.getElementById('seviye3-groups').innerHTML = generateLinks(3);
-
-</script>
-
+  <a class="skip-link" href="#seviyeler">Seviyelere geç</a>
+  <header class="site-header"><div class="nav-wrap"><a class="brand" href="index.html" aria-label="Harfcan ana sayfa"><img src="harfcan-logo.png" alt="Harfcan"></a><nav aria-label="Ana menü"><a href="index.html#oyunlar">Oyunlar</a><a href="index.html#masallar">Masallar</a><a href="index.html#oyunlar">Okuma</a><a href="index.html#oyunlar">Yazma</a><a href="index.html#bilim">Bilim</a><a href="index.html#eglence">Etkinlikler</a><a href="index.html#hakkimizda">Hakkımızda</a></nav><a class="nav-cta" href="mailto:info@harfcan.com">Bize ulaşın</a></div></header>
+  <main class="word-page">
+    <section class="word-hero" aria-labelledby="page-title"><div><a class="back-link" href="index.html#oyunlar">← Tüm oyunlara dön</a><p class="eyebrow">Okuma ve yazma oyunu</p><h1 id="page-title">Kelime Tanıma <span>Oyunu</span></h1><p>Harfini seç, kelimeleri dinle ve doğru yazılışını bul. Küçük adımlarla büyük bir okuma macerasına başla!</p><a class="button button-primary" href="#seviyeler">🎮 Seviyeni seç</a></div><div class="word-art" aria-hidden="true"><span class="letter-a">A</span><span class="letter-b">B</span><span class="letter-c">C</span><i class="pencil">✏️</i><i class="sparkle">✨</i></div></section>
+    <section class="level-section" id="seviyeler" aria-labelledby="level-title"><div class="level-heading"><p class="eyebrow">Haydi başlayalım</p><h2 id="level-title">Önce seviyeni seç</h2><p>Bir seviyeyi aç, sonra çalışmak istediğin harfe dokun.</p></div><div class="level-grid">
+      <article class="level-card level-one"><button class="level-toggle" type="button" aria-expanded="false" aria-controls="seviye1-groups"><span class="level-badge">🐸</span><span class="level-title"><strong>Seviye 1 · Kolay</strong><small>Kısa ve tanıdık kelimeler</small></span><span class="toggle-mark">+</span></button><div class="letter-area" id="seviye1-groups" hidden><p>Bir harf seç ve oyuna başla:</p><ul class="groups"></ul></div></article>
+      <article class="level-card level-two"><button class="level-toggle" type="button" aria-expanded="false" aria-controls="seviye2-groups"><span class="level-badge">🦊</span><span class="level-title"><strong>Seviye 2 · Orta</strong><small>Biraz daha zor kelimeler</small></span><span class="toggle-mark">+</span></button><div class="letter-area" id="seviye2-groups" hidden><p>Bir harf seç ve oyuna başla:</p><ul class="groups"></ul></div></article>
+      <article class="level-card level-three"><button class="level-toggle" type="button" aria-expanded="false" aria-controls="seviye3-groups"><span class="level-badge">🐼</span><span class="level-title"><strong>Seviye 3 · Zor</strong><small>Ustalar için kelimeler</small></span><span class="toggle-mark">+</span></button><div class="letter-area" id="seviye3-groups" hidden><p>Bir harf seç ve oyuna başla:</p><ul class="groups"></ul></div></article>
+    </div></section>
+    <section class="how-to" aria-labelledby="how-title"><span aria-hidden="true">💡</span><div><h2 id="how-title">Nasıl oynanır?</h2><div class="steps"><div><span>1</span>Seviyeni seç</div><div><span>2</span>Bir harfe dokun</div><div><span>3</span>Dinle ve doğru kelimeyi bul</div></div></div></section>
+  </main>
+  <footer><div><a class="brand" href="index.html"><img src="harfcan-logo.png" alt="Harfcan"></a><p>Oyun oynayarak öğrenmenin neşeli yolu.</p></div><div><strong>Keşfet</strong><a href="index.html#oyunlar">Oyunlar</a><a href="index.html#masallar">Masallar</a><a href="index.html#bilim">Bilim</a></div><div><strong>Yardım</strong><a href="mailto:info@harfcan.com">info@harfcan.com</a><span>© 2026 Harfcan</span></div></footer>
+  <script>
+    const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+    function generateLinks(level) { return alphabet.map(letter => `<li><a href="kelimeler.html?level=${level}&letter=${letter}" aria-label="${letter} harfi ile başlayan kelimeler">${letter}</a></li>`).join(''); }
+    [1, 2, 3].forEach(level => { document.querySelector(`#seviye${level}-groups .groups`).innerHTML = generateLinks(level); });
+    function toggleGroups(elementId) { const panel = document.getElementById(elementId); const button = document.querySelector(`[aria-controls="${elementId}"]`); const willOpen = panel.hidden; panel.hidden = !willOpen; button.setAttribute('aria-expanded', String(willOpen)); }
+    document.querySelectorAll('.level-toggle').forEach(button => button.addEventListener('click', () => toggleGroups(button.getAttribute('aria-controls'))));
+  </script>
 </body>
 </html>
