@@ -291,69 +291,15 @@
     }
   </style>
 </head>
-<body>
+<body class="harfcan-game"><style>@import url('harfcan-shell.css');
+:root{--ink:#20244c;--muted:#656b88;--purple:#6f42d8;--purple-dark:#5230b9;--card:#fff;--border:#e6e7f0;--shadow:0 12px 30px rgba(55,67,130,.12)}body.harfcan-game{min-height:100vh;margin:0;padding:82px 20px 48px;color:var(--ink);background:linear-gradient(180deg,#eaf9ff 0,#fffdf7 43%,#fff 100%);font-family:Nunito,"Avenir Next",system-ui,sans-serif}.container{width:min(100%,760px);margin:auto}header{padding:20px 20px 15px;color:var(--ink);text-align:center}header h1{margin:0;font-size:clamp(2rem,5vw,3.2rem);letter-spacing:-.05em;line-height:1.08}header p{margin:8px 0 0;color:var(--muted);font-size:1rem;opacity:1}.logo{display:none}.screen,.learn-panel{margin-bottom:20px;padding:24px;border:1px solid var(--border);border-radius:22px;background:var(--card);box-shadow:var(--shadow);text-align:center}.learn-panel{background:linear-gradient(135deg,#eefaff,#fffdf7)}.learn-panel h2{margin:0 0 8px;font-size:clamp(1.35rem,3vw,1.75rem);letter-spacing:-.03em}.learn-panel>p{max-width:680px;margin:0 auto;color:var(--muted);line-height:1.55}.learn-points{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:18px}.learn-point{padding:15px;border:1px solid var(--border);border-radius:15px;background:#fff;text-align:left}.learn-point span{display:block;margin-bottom:6px;font-size:1.7rem}.learn-point strong{display:block;font-size:.94rem}.learn-point p{margin:4px 0 0;color:var(--muted);font-size:.84rem;line-height:1.45}.start-screen h2,.end-screen h2{margin:0 0 8px;color:var(--ink);font-size:clamp(1.3rem,3vw,1.65rem)}.start-screen p,.end-screen .stats{margin:0 0 18px;color:var(--muted);line-height:1.6}.menu-title{margin:0 0 16px;font-size:1.2rem;font-weight:900}.start-btn,.play-again-btn{width:min(100%,440px);min-height:64px;border:0;border-radius:999px;color:#fff;background:var(--purple);font:900 1rem/1.25 Nunito,"Avenir Next",system-ui,sans-serif;cursor:pointer;transition:transform .2s,background .2s}.start-btn:hover,.play-again-btn:hover{background:var(--purple-dark);transform:translateY(-3px)}.hud{margin-bottom:18px}.timer,.score-display{padding:8px 12px;border-radius:999px;color:#4b416e;background:#efe9ff;font-size:.95rem;font-weight:900}.timer{font-size:1.1rem}.timer.urgent{color:#a53d48;background:#fff0f1}.streak{color:#b06b00}.word-hint{margin-bottom:18px;padding:16px;border:1px solid #dce3ee;border-radius:17px;background:#f8fbff}.word-emoji{font-size:3.5rem}.word-hint-text{color:var(--muted)}.difficulty-badge{margin-top:8px;border:1px solid #ddd0ff;color:#4b416e;background:#f4f0ff}.difficulty-badge.easy{border-color:#b9ddb9;color:#286a37;background:#e7f8e8}.difficulty-badge.medium{border-color:#f0d77a;color:#765700;background:#fff7d9}.difficulty-badge.hard{border-color:#eeb2b8;color:#a53d48;background:#fff0f1}.drop-zone{min-height:76px;padding:14px;border:2px dashed #cfcfe0;border-radius:17px;background:#f8fbff}.drop-zone .syllable{color:#fff;background:var(--purple);border-color:var(--purple)}.syllables{gap:9px;margin-bottom:18px}.syllable{border:1px solid #ddd0ff;background:#f4f0ff;padding:10px 15px;border-radius:12px;color:var(--ink);font-family:inherit;cursor:pointer}.syllable:hover{background:#e9dfff;box-shadow:none}.feedback{color:var(--muted);font-size:1rem}.feedback.correct{color:#286a37}.feedback.wrong{color:#a53d48}.game-buttons{flex-wrap:wrap}.check-btn,.skip-btn,.reset-btn{border:1px solid var(--border);border-radius:999px;padding:10px 14px;font:900 .88rem/1 Nunito,"Avenir Next",system-ui,sans-serif;cursor:pointer}.check-btn{border-color:var(--purple);color:#fff;background:var(--purple)}.skip-btn{border-color:#f0d77a;color:#765700;background:#fff7d9}.reset-btn{border-color:#eeb2b8;color:#a53d48;background:#fff0f1}.end-screen .big-score{color:var(--purple)}.end-screen .word-list{margin-bottom:18px;padding:14px;border:1px solid #dce3ee;border-radius:17px;background:#f8fbff}.end-screen .word-list span{border:1px solid #ddd0ff;color:#4b416e;background:#f4f0ff}.countdown-overlay{background:rgba(32,36,76,.76)}.celebration{position:fixed;inset:0;pointer-events:none;z-index:999}.confetti{animation:fall 1.5s ease-out forwards}@media(max-width:620px){body.harfcan-game{padding-inline:14px}.screen,.learn-panel{padding:18px}.learn-points{grid-template-columns:1fr}}@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}button:focus-visible{outline:3px solid #f18b2b;outline-offset:3px}</style><nav class="h-game-nav" aria-label="Oyun gezintisi"><a class="h-game-brand" href="index.html" aria-label="Harfcan ana sayfa"><img src="harfcan-logo.png" alt="Harfcan"></a><span class="h-game-name">Hece Birleştirme</span><a class="h-game-return" href="okuma-yazma-oyunlari.html">← Okuma ve yazma oyunları</a></nav>
   <div class="container">
-    <header>
-      <div class="logo"><a href="index.html"><img src="harfcan-logo.png" alt="Harfcan Logo" /></a></div>
-      <h1>🧩 Hece Birleştirme</h1>
-      <p>60 saniyede kaç kelime yapabilirsin?</p>
-    </header>
-
-    <!-- Start Screen -->
-    <div class="screen start-screen" id="startScreen">
-      <h2>⏱️ Zamana Karşı Yarış!</h2>
-      <p>Heceleri doğru sıraya koy, kelimeyi oluştur.<br>Kelimeler gittikçe zorlaşıyor!<br><strong>60 saniye</strong> — hazır mısın?</p>
-      <button class="start-btn" onclick="beginCountdown()">🚀 Başla!</button>
-    </div>
-
-    <!-- Game Screen -->
-    <div class="screen hidden" id="gameScreen">
-      <div class="hud">
-        <div class="timer" id="timer">60</div>
-        <div>
-          <div class="score-display">⭐ <span id="score">0</span></div>
-          <div class="streak" id="streak"></div>
-        </div>
-      </div>
-
-      <div class="word-hint">
-        <div class="word-emoji" id="wordEmoji"></div>
-        <div class="word-hint-text" id="hintText"></div>
-        <div class="difficulty-badge easy" id="diffBadge"></div>
-      </div>
-
-      <div class="drop-zone" id="dropZone">
-        <span style="color:#aaa; font-size:0.85rem;">Heceleri buraya koy</span>
-      </div>
-
-      <div class="syllables" id="syllables"></div>
-
-      <div class="feedback" id="feedback"></div>
-
-      <div class="game-buttons">
-        <button class="reset-btn" onclick="resetWord()">🔄</button>
-        <button class="check-btn" id="checkBtn" onclick="checkAnswer()">✓ Kontrol</button>
-        <button class="skip-btn" onclick="skipWord()">Atla →</button>
-      </div>
-    </div>
-
-    <!-- End Screen -->
-    <div class="screen hidden end-screen" id="endScreen">
-      <h2>⏱️ Süre Doldu!</h2>
-      <div class="big-score" id="finalScore">0</div>
-      <div class="stats" id="stats"></div>
-      <div class="word-list" id="wordList"></div>
-      <button class="play-again-btn" onclick="restartGame()">🔄 Tekrar Oyna</button>
-    </div>
-  </div>
-
-  <!-- Countdown overlay -->
-  <div class="countdown-overlay hidden" id="countdownOverlay">
-    <div class="countdown-number" id="countdownNumber">3</div>
-  </div>
-
-  <div class="celebration" id="celebration"></div>
-
+    <header><h1>🧩 Hece Birleştirme</h1><p>Heceleri sırala, kelimeleri oluştur!</p></header>
+    <article class="learn-panel" aria-labelledby="learn-title"><h2 id="learn-title">🧩 Önce öğren, sonra birleştir!</h2><p>Kelimeler hecelerden oluşur. İpucunu okuyup heceleri doğru sırayla yan yana getirerek kelimeyi tamamlayabilirsin.</p><div class="learn-points"><div class="learn-point"><span>👀</span><strong>İpucunu incele</strong><p>Emoji ve kısa açıklama sana oluşturacağın kelimeyi hatırlatır.</p></div><div class="learn-point"><span>🔤</span><strong>Heceleri sırala</strong><p>Hecelere soldan sağa dokun. Birleşince kelimeyi doğru okuyabilmelisin.</p></div><div class="learn-point"><span>↩️</span><strong>Düzelt ve devam et</strong><p>Yanlış heceye dokunup geri alabilirsin. Başlamadan önce 3–2–1 sayacı gelir; sonra 60 saniyen başlar.</p></div></div></article>
+    <div class="screen start-screen" id="startScreen"><p class="menu-title">Oyuna geç →</p><h2>⏱️ Zamana karşı yarış!</h2><p>Doğru heceleri birleştir. Kelimeler gittikçe zorlaşacak. <strong>60 saniye</strong> için hazır mısın?</p><button class="start-btn" type="button" onclick="beginCountdown()">🚀 Başla!</button></div>
+    <main class="screen hidden" id="gameScreen" aria-label="Hece birleştirme oyunu"><div class="hud"><div class="timer" id="timer">60</div><div><div class="score-display">⭐ <span id="score">0</span></div><div class="streak" id="streak"></div></div></div><div class="word-hint"><div class="word-emoji" id="wordEmoji"></div><div class="word-hint-text" id="hintText"></div><div class="difficulty-badge easy" id="diffBadge"></div></div><div class="drop-zone" id="dropZone"><span style="color:#aaa;font-size:.85rem">Heceleri buraya koy</span></div><div class="syllables" id="syllables"></div><div class="feedback" id="feedback" aria-live="polite"></div><div class="game-buttons"><button class="reset-btn" type="button" onclick="resetWord()">🔄 Temizle</button><button class="check-btn" id="checkBtn" type="button" onclick="checkAnswer()">✓ Kontrol</button><button class="skip-btn" type="button" onclick="skipWord()">Atla →</button></div></main>
+    <div class="screen hidden end-screen" id="endScreen"><h2>⏱️ Süre Doldu!</h2><div class="big-score" id="finalScore">0</div><div class="stats" id="stats"></div><div class="word-list" id="wordList"></div><button class="play-again-btn" type="button" onclick="restartGame()">🔄 Tekrar Oyna</button></div>
+  </div><div class="countdown-overlay hidden" id="countdownOverlay"><div class="countdown-number" id="countdownNumber">3</div></div><div class="celebration" id="celebration"></div>
   <script>
     // === WORD DATABASE (easy → hard) ===
     const allWords = [

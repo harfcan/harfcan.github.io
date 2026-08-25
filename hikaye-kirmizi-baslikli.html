@@ -15,49 +15,46 @@
   <meta name="description" content="Kırmızı Başlıklı Kız masalı: dikkat, güven ve sorumluluk temalarını işleyen klasik çocuk hikayesi. Kolay okunabilir metin, resim alanları ve düşünme kutusu içerir." />
   <link rel="stylesheet" href="harfcan.css" />
   <style>
-    .story-text {
-      font-size: 1.4em;
-      line-height: 1.8em;
-      white-space: pre-line;
-      background-color: white;
-      padding: 24px;
-      border-radius: 12px;
-      box-shadow: 0 0 12px rgba(0,0,0,0.05);
-      margin: 20px 0;
+    :root { --ink:#20244c; --muted:#656b88; --purple:#6f42d8; --purple-dark:#5230b9; --sky:#e9f8ff; --card:#fff; --border:#e6e7f0; --shadow:0 12px 30px rgba(55,67,130,.12); }
+    * { box-sizing:border-box; }
+    body { margin:0; min-height:100vh; color:var(--ink); background:linear-gradient(180deg,#eaf9ff 0,#fffdf7 40%,#fff 100%); font-family:Nunito,"Avenir Next",system-ui,sans-serif; }
+    header { max-width:1052px; margin:0 auto; padding:24px 24px 34px; text-align:center; }
+    header .logo { display:inline-flex; align-items:center; justify-content:center; margin-bottom:17px; }
+    header .logo img { display:block; width:126px; height:auto; }
+    header h1 { margin:0 0 9px; font-size:clamp(2rem,5vw,3.3rem); letter-spacing:-.05em; line-height:1.05; }
+    header p { max-width:600px; margin:0 auto; color:var(--muted); font-size:1rem; line-height:1.5; }
+    .container { max-width:820px; margin:0 auto; padding:0 24px 66px; }
+    .story-text { margin:0 0 22px; padding:clamp(22px,5vw,36px); border:1px solid var(--border); border-radius:20px; color:#343957; background:var(--card); box-shadow:var(--shadow); font-size:clamp(1.05rem,2.3vw,1.25rem); line-height:1.8; white-space:pre-line; }
+    .story-text img { display:block; width:min(100%,460px); max-height:340px; margin:28px auto 0; border:1px solid #e1e4ee; border-radius:16px; object-fit:contain; background:#f7fbff; box-shadow:0 8px 20px rgba(55,67,130,.12); }
+    .button { display:inline-flex; align-items:center; justify-content:center; padding:.75rem 1.12rem; border-radius:999px; color:#fff; background:var(--purple); font-weight:900; text-decoration:none; transition:transform .2s,background .2s,box-shadow .2s; }
+    .button:hover { background:var(--purple-dark); box-shadow:0 8px 18px rgba(55,67,130,.2); transform:translateY(-2px); }
+    .button:focus-visible,.print-button:focus-visible { outline:3px solid #f18b2b; outline-offset:3px; }
+    .print-button { display:inline-flex; align-items:center; justify-content:center; margin-left:10px; padding:.75rem 1.12rem; border:1px solid #d9ccfb; border-radius:999px; color:var(--purple); background:#f4f0ff; font:900 1rem/1 Nunito,"Avenir Next",system-ui,sans-serif; cursor:pointer; transition:transform .2s,background .2s,box-shadow .2s; }
+    .print-button:hover { background:#e9e0ff; box-shadow:0 8px 18px rgba(55,67,130,.15); transform:translateY(-2px); }
+    .grade-section { margin:0 0 18px; }
+    .think-box { margin:0; padding:24px; border:1px solid #ded2ff; border-radius:20px; color:#4b416e; background:#f1ecff; box-shadow:0 5px 15px rgba(52,64,114,.08); font-size:1rem; line-height:1.65; }
+    .think-box h3 { margin:0 0 10px; color:var(--ink); font-size:1.3rem; }
+    .think-box ul { margin:0; padding-left:21px; }
+    .game-card { padding:20px; border:1px solid var(--border); border-radius:18px; background:var(--card); box-shadow:0 5px 15px rgba(52,64,114,.08); text-align:center; }
+    footer { padding:26px 24px; border-top:1px solid var(--border); color:var(--muted); background:#fff; font-size:.84rem; text-align:center; }
+    @media (max-width:600px) { header { padding:20px 18px 27px; } header .logo img { width:108px; } .container { padding:0 16px 46px; } .story-text { line-height:1.72; } .story-text img { width:100%; max-height:280px; margin-top:22px; } .print-button { margin:10px 0 0; } }
+    @media print {
+      @page { margin:14mm; }
+      body { color:#111; background:#fff; font-size:11pt; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+      header { padding:0 0 7mm; text-align:center; }
+      header .logo { margin-bottom:4mm; }
+      header .logo img { width:105px; }
+      header h1 { font-size:24pt; }
+      header p { color:#444; }
+      .container { max-width:none; padding:0; }
+      .story-text,.think-box,.game-card { border:0; border-radius:0; box-shadow:none; }
+      .story-text { padding:0; margin:0 0 7mm; font-size:12pt; line-height:1.65; }
+      .story-text img { width:120mm; max-width:100%; max-height:75mm; margin:7mm auto 0; border:0; box-shadow:none; }
+      .think-box { padding:5mm; margin:0; color:#111; background:#f3f0ff; }
+      .game-card, footer, .button, .print-button { display:none!important; }
+      .grade-section { margin:0; break-inside:avoid; }
     }
-    .story-text img {
-      display: block;
-      margin: 20px auto;
-      max-width: 100%;
-      border-radius: 8px;
-    }
-    .button {
-      display: inline-block;
-      background-color: #3F51B5;
-      color: white;
-      padding: 10px 20px;
-      text-decoration: none;
-      border-radius: 6px;
-      font-weight: bold;
-    }
-    .think-box {
-      background-color: #3F51B5;
-      color: white;
-      font-size: 1.4em;
-      line-height: 1.8em;
-      padding: 24px;
-      border-radius: 12px;
-      margin: 20px 0;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    }
-    .think-box h3 {
-      color: white;
-      font-size: 1.6em;
-      margin-bottom: 12px;
-    }
-    .think-box ul {
-      padding-left: 20px;
-    }
+    @media (prefers-reduced-motion:reduce) { *,*::before,*::after { transition:none!important; } }
   </style>
 </head>
 <body>
@@ -104,7 +101,7 @@
   Bundan sonra mutlu bir hayat yaşamışlar.  
   O günden sonra Kırmızı Başlıklı Kız ormanda tanımadığı hiç kimseyle konuşmamış.  
 
-  <img src="images/kirmizi-baslikli-kiz.png" alt="Kırmızı Başlıklı Kız kurda şaşırıyor" />
+  <img src="img/kirmizi-baslikli-kiz.jpg" alt="Kırmızı Başlıklı Kız kurda şaşırıyor" />
 </section>
 
 
@@ -124,6 +121,7 @@
     <section class="grade-section">
       <div class="game-card">
         <a href="masal-ve-hikaye.html" class="button">Diğer Hikayelere Göz At</a>
+        <button class="print-button" type="button" onclick="window.print()">🖨️ Yazdır</button>
       </div>
     </section>
 

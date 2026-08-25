@@ -471,9 +471,80 @@
             .plant-stage { font-size: 80px; }
             .info-cards { grid-template-columns: 1fr; }
         }
+        /* Harfcan oyun görünümü */
+        :root { --ink:#20244c; --muted:#656b88; --purple:#6f42d8; --purple-dark:#5230b9; --sky:#e9f8ff; --yellow:#ffd35d; --green:#a9df7d; --pink:#f9a5c3; --orange:#ffc26b; --card:#fff; --border:#e6e7f0; --shadow:0 12px 30px rgba(55,67,130,.12); }
+        body.harfcan-game { min-height:100vh; color:var(--ink); background:linear-gradient(180deg,#eaf9ff 0,#fffdf7 43%,#fff 100%); font-family:Nunito,"Avenir Next",system-ui,sans-serif; }
+        .game-container { max-width:1052px; padding:28px 24px 70px; }
+        h1 { margin-bottom:9px; color:var(--ink); font-size:clamp(2rem,5vw,3.2rem); letter-spacing:-.05em; line-height:1.08; text-shadow:none; }
+        .subtitle { margin:0 auto 23px; color:var(--muted); font-size:1rem; line-height:1.5; }
+        .learn-panel { margin:0 0 22px; padding:24px; border:1px solid #dce3ee; border-radius:20px; background:linear-gradient(135deg,#eefaff,#fffdf7); box-shadow:var(--shadow); }
+        .learn-panel h2 { margin:0 0 8px; color:var(--ink); font-size:clamp(1.35rem,3vw,1.75rem); letter-spacing:-.03em; text-align:center; }
+        .learn-panel > p { max-width:740px; margin:0 auto; color:var(--muted); line-height:1.55; text-align:center; }
+        .learn-points { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-top:18px; }
+        .learn-point { padding:15px; border:1px solid var(--border); border-radius:15px; background:var(--card); text-align:left; }
+        .learn-point span { display:block; margin-bottom:6px; font-size:1.7rem; }
+        .learn-point strong { display:block; color:var(--ink); font-size:.94rem; }
+        .learn-point p { margin:4px 0 0; color:var(--muted); font-size:.84rem; line-height:1.45; }
+        .play-title { margin:0 0 12px; color:var(--purple); font-size:1.12rem; font-weight:900; letter-spacing:.01em; text-align:center; }
+        .score-board { gap:11px; flex-wrap:wrap; margin-bottom:18px; }
+        .score-item { padding:8px 15px; border:1px solid var(--border); border-radius:999px; color:var(--ink); background:var(--card); box-shadow:0 4px 10px rgba(55,67,130,.08); font-size:.91rem; font-weight:900; }
+        .level-bar { gap:9px; margin-bottom:20px; }
+        .level-dot { width:14px; height:14px; border:2px solid #c7b7f3; background:#fff; }
+        .level-dot.active { background:var(--purple); transform:scale(1.18); }
+        .level-dot.completed { border-color:#e1ac28; background:var(--yellow); }
+
+        .plant-display { min-height:290px; margin-bottom:20px; padding:20px; overflow:hidden; border:1px solid #d8e3ef; border-radius:22px; background:linear-gradient(180deg,#dff5ff 0,#f9fcff 69%,#fff7e8 69%); box-shadow:var(--shadow); }
+        .plant-stage { position:relative; z-index:2; font-size:120px; }
+        .stage-label { z-index:3; bottom:18px; padding:8px 17px; border-radius:999px; color:#fff; background:var(--purple); font-size:.95rem; font-weight:900; box-shadow:0 5px 12px rgba(81,48,185,.22); }
+        .ground { height:59px; border-radius:0 0 21px 21px; background:linear-gradient(180deg,#f4d7a0,#dba962); }
+        .grass { z-index:1; bottom:54px; }
+        .grass span { font-size:22px; }
+
+        .instruction { margin-bottom:15px; padding:16px; border:1px solid #dce3ee; border-radius:17px; color:var(--ink); background:var(--card); box-shadow:0 5px 15px rgba(52,64,114,.08); font-size:1rem; font-weight:900; }
+        .drop-zone { min-height:97px; margin-bottom:20px; padding:15px; border:2px dashed #b9a5ea; border-radius:18px; background:#f7f3ff; transition:all .25s; }
+        .drop-zone p { color:var(--muted)!important; font-weight:800; }
+        .drop-zone.drag-over { border-color:var(--purple); background:#eee8ff; box-shadow:inset 0 0 0 2px rgba(111,66,216,.12); }
+        .drag-items { gap:11px; margin-bottom:20px; }
+        .drag-item,.dropped-item { padding:11px 16px; border:1px solid #dfe1eb; border-radius:14px; color:var(--ink); background:var(--card); box-shadow:0 4px 10px rgba(55,67,130,.08); font-size:.95rem; font-weight:900; }
+        .drag-item { cursor:grab; }
+        .drag-item:hover { border-color:var(--purple); box-shadow:0 8px 17px rgba(55,67,130,.15); transform:translateY(-2px); }
+        .drag-item:active { cursor:grabbing; }
+        .drag-item.placed,.dropped-item { border-color:#8bcf91; color:#286a37; background:#e7f8e8; }
+        .dropped-item.wrong { border-color:#e7959c; color:#a53d48; background:#fff0f1; }
+        .drag-item .emoji,.dropped-item .emoji { font-size:1.45em; }
+
+        .btn { margin:5px; padding:12px 22px; border:1px solid transparent; border-radius:999px; font:900 1rem/1 Nunito,"Avenir Next",system-ui,sans-serif; transition:transform .2s,box-shadow .2s,background .2s; }
+        .btn:hover { transform:translateY(-2px); box-shadow:0 8px 17px rgba(55,67,130,.18); }
+        .btn-check { color:#fff; background:var(--purple); }
+        .btn-check:hover { background:var(--purple-dark); }
+        .btn-hint { border-color:#e7c970; color:#765700; background:#fff7d9; }
+        .btn-hint:hover { background:#ffedaf; }
+        .btn-reset { border-color:#dfd4f7; color:var(--purple); background:#f4f0ff; }
+        .btn-reset:hover { background:#e9e0ff; }
+        .feedback { margin-top:16px; border-radius:15px; font-size:1rem; font-weight:900; }
+        .feedback.success { color:#286a37; background:#e7f8e8; }
+        .feedback.error { color:#a53d48; background:#fff0f1; }
+        .feedback.hint { color:#765700; background:#fff7d9; }
+
+        .cycle-display,.info-section { margin-top:24px; }
+        .cycle-display h2,.info-section h2 { color:var(--ink)!important; font-size:clamp(1.35rem,3vw,1.8rem); letter-spacing:-.03em; }
+        .cycle-arrow { padding:20px; border:1px solid var(--border); border-radius:20px; background:var(--card); box-shadow:var(--shadow); }
+        .cycle-step .label { color:var(--ink); }
+        .arrow { color:var(--purple); }
+        .info-cards { gap:18px; }
+        .info-card { padding:20px; border:1px solid var(--border); border-left:5px solid var(--purple); border-radius:18px; background:var(--card); box-shadow:0 5px 15px rgba(52,64,114,.08); }
+        .info-card h3 { color:var(--ink); }
+        .info-card p { color:var(--muted); }
+
+        .cloud { opacity:.18; pointer-events:none; }
+        .sun { opacity:.32; pointer-events:none; }
+        .confetti { z-index:1000; }
+        .drag-item:focus-visible,.dropped-item:focus-visible,.btn:focus-visible { outline:3px solid #f18b2b; outline-offset:3px; }
+        @media (max-width:600px) { .game-container { padding:22px 16px 55px; } h1 { font-size:2rem; } .learn-panel { padding:18px; } .learn-points { grid-template-columns:1fr; } .score-board { gap:8px; } .score-item { padding:7px 10px; font-size:.81rem; } .plant-display { min-height:245px; } .plant-stage { font-size:88px; } .stage-label { max-width:calc(100% - 28px); font-size:.8rem; } .drag-item,.dropped-item { padding:10px 12px; font-size:.88rem; } .btn { width:100%; margin:5px 0; } .cycle-arrow { padding:15px 10px; } .arrow { font-size:1.3em; } }
+        @media (prefers-reduced-motion:reduce) { *,*::before,*::after { animation:none!important; transition:none!important; } }
     </style>
 </head>
-<body>
+<body class="harfcan-game"><style>@import url('harfcan-shell.css');</style><nav class="h-game-nav" aria-label="Oyun gezintisi"><a class="h-game-brand" href="index.html" aria-label="Harfcan ana sayfa"><img src="harfcan-logo.png" alt="Harfcan"></a><span class="h-game-name">Bitki Yaşam Döngüsü</span><a class="h-game-return" href="index.html#bilim">← Tüm oyunlar</a></nav>
     <!-- Background elements -->
     <div class="cloud">☁️</div>
     <div class="cloud">☁️</div>
@@ -484,10 +555,21 @@
         <h1>🌱 Bitki Yaşam Döngüsü Oyunu</h1>
         <p class="subtitle">Aşamaları doğru sıraya diz ve bitkinin büyümesini izle!</p>
 
+        <article class="learn-panel" aria-labelledby="learn-title">
+            <h2 id="learn-title">🌱 Önce öğren, sonra dene!</h2>
+            <p>Bu oyunda üç farklı yaşam döngüsünü keşfedeceksin. Çiçekli bitkiler, ağaçlar ve mantarlar farklı şekillerde büyür. Her seviyede aşamaları doğru sıraya koyarak öğren!</p>
+            <div class="learn-points">
+                <div class="learn-point"><span>🌸</span><strong>1. Seviye: Çiçekli bitki</strong><p>Tohum su ve sıcaklıkla çimlenir. Filiz büyür, çiçek açar ve sonunda yeni tohumlar oluşur.</p></div>
+                <div class="learn-point"><span>🌳</span><strong>2. Seviye: Ağaç</strong><p>Tohum veya kozalak nemlenir, fide olur ve zamanla büyük bir ağaca dönüşür. Ağaç da yeni tohumlar üretir.</p></div>
+                <div class="learn-point"><span>🍄</span><strong>3. Seviye: Mantar</strong><p>Mantarlar tohum yerine sporlarla çoğalır. Sporlar toprakta büyür, mantar oluşur ve yeniden sporlar yayılır.</p></div>
+            </div>
+        </article>
+
+        <p class="play-title">🎮 Oynayarak öğren</p>
         <div class="score-board">
             <div class="score-item">⭐ Puan: <span id="score">0</span></div>
             <div class="score-item">🏆 Seviye: <span id="level">1</span>/3</div>
-            <div class="score-item">💡 İpucu: <span id="hints">3</span></div>
+            <div class="score-item">💡 İpucu: <span id="hints">50</span></div>
         </div>
 
         <div class="level-bar">
@@ -509,7 +591,7 @@
 
         <!-- Instructions -->
         <div class="instruction" id="instruction">
-            📋 Aşağıdaki aşamaları doğru sıraya göre yukarıdaki alana sürükle!
+            📋 Aşağıdaki aşamaları doğru sıraya göre yukarıdaki alana sürükle! İstediğin kadar ipucu kullan.
         </div>
 
         <!-- Drop zone -->
@@ -600,7 +682,7 @@
 
         let currentLevel = 0;
         let score = 0;
-        let hintsLeft = 3;
+        let hintsLeft = 50;
         let droppedItems = [];
         let draggedItem = null;
 
